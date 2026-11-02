@@ -1,0 +1,6 @@
+{
+  "name": "Sistem Monitoring dan Evaluasi Proyek (M&E)",
+  "description": "Sistem Monitoring & Evaluasi (M&E) Proyek komprehensif dengan manajemen Logframe, Repositori Terpusat Bukti Verifikasi (Means of Verification / MoV) berbasis hirarki Proyek-Outcome-Output-Activity, Matriks Pembelajaran (Learning), deduplikasi penerima manfaat (anti double-counting), disagregasi gender, usia, disabilitas, status IPLC, manajemen Produk Pengetahuan, Cerita Perubahan, dan dashboard analitik interaktif.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
