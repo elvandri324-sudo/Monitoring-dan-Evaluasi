@@ -234,10 +234,10 @@ export default function IndicatorChartsView({
   return (
     <div className="space-y-6 pb-12">
       {/* Header with Project Selector */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl p-6 border border-orange-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold text-xs">
+            <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 font-bold text-xs">
               M&E Analytics
             </span>
             <h1 className="text-xl font-bold text-slate-900">
@@ -259,7 +259,7 @@ export default function IndicatorChartsView({
             <select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">{isId ? 'Semua Proyek (Portofolio Agregat)' : 'All Projects (Portfolio Aggregated)'}</option>
               {projects.map(p => (
@@ -270,7 +270,7 @@ export default function IndicatorChartsView({
 
           <button
             onClick={handleExportIndicatorCharts}
-            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition"
+            className="px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap shrink-0"
             title={isId ? 'Ekspor seluruh data capaian indikator ke file Excel (.xlsx)' : 'Export indicator dataset to Excel (.xlsx)'}
           >
             <FileSpreadsheet className="w-4 h-4" />
@@ -281,7 +281,7 @@ export default function IndicatorChartsView({
 
       {/* Overview Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs">
+        <div className="bg-white rounded-xl p-4 border border-orange-100 shadow-2xs">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
             <span className="font-semibold uppercase tracking-wider">{isId ? 'Total Indikator' : 'Total Indicators'}</span>
             <Target className="w-4 h-4 text-blue-600" />
@@ -292,7 +292,7 @@ export default function IndicatorChartsView({
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs">
+        <div className="bg-white rounded-xl p-4 border border-orange-100 shadow-2xs">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
             <span className="font-semibold uppercase tracking-wider text-emerald-700">{isId ? 'Tercapai (Achieved)' : 'Achieved'}</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -303,7 +303,7 @@ export default function IndicatorChartsView({
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs">
+        <div className="bg-white rounded-xl p-4 border border-orange-100 shadow-2xs">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
             <span className="font-semibold uppercase tracking-wider text-blue-700">{isId ? 'Sesuai Target (On-Track)' : 'On-Track'}</span>
             <TrendingUp className="w-4 h-4 text-blue-600" />
@@ -314,7 +314,7 @@ export default function IndicatorChartsView({
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-2xs">
+        <div className="bg-white rounded-xl p-4 border border-orange-100 shadow-2xs">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
             <span className="font-semibold uppercase tracking-wider text-amber-700">{isId ? 'Perlu Perhatian' : 'Needs Attention'}</span>
             <AlertTriangle className="w-4 h-4 text-amber-600" />
@@ -327,17 +327,17 @@ export default function IndicatorChartsView({
       </div>
 
       {/* Level Filter Buttons */}
-      <div className="bg-white rounded-xl p-3 border border-slate-200 shadow-2xs flex flex-wrap items-center gap-2">
+      <div className="bg-white rounded-xl p-3 border border-orange-100 shadow-2xs flex flex-wrap items-center gap-2">
         <span className="text-xs font-bold text-slate-600 mr-1 flex items-center gap-1.5">
-          <Filter className="w-3.5 h-3.5 text-blue-600" />
+          <Filter className="w-3.5 h-3.5 text-orange-600" />
           {isId ? 'Tampilkan Tingkat:' : 'Display Level:'}
         </span>
         <button
           onClick={() => setLevelFilter('ALL')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
             levelFilter === 'ALL'
-              ? 'bg-slate-900 text-white shadow-xs'
-              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              ? 'bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-xs'
+              : 'bg-orange-50/70 text-slate-700 hover:bg-orange-100'
           }`}
         >
           {isId ? 'Semua Level' : 'All Levels'} ({allIndicators.length})
@@ -379,8 +379,8 @@ export default function IndicatorChartsView({
           onClick={() => setLevelFilter('Activity')}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
             levelFilter === 'Activity'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'bg-blue-50 text-blue-800 hover:bg-blue-100 border border-blue-200/60'
+              ? 'bg-orange-600 text-white shadow-xs'
+              : 'bg-orange-50 text-orange-800 hover:bg-orange-100 border border-orange-200/60'
           }`}
         >
           <ActivityIcon className="w-3.5 h-3.5" />
@@ -390,7 +390,7 @@ export default function IndicatorChartsView({
 
       {/* SECTION 0: Grafik Indikator Goal / Impact */}
       {(levelFilter === 'ALL' || levelFilter === 'Goal') && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
             <div>
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -424,12 +424,12 @@ export default function IndicatorChartsView({
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <div className="bg-slate-900 text-white p-3 rounded-xl text-xs shadow-xl space-y-1">
-                              <p className="font-bold text-emerald-400">{data.code}: {data.fullName}</p>
-                              <p className="text-slate-300">Baseline: <strong className="text-white">{data.baseline} {data.unit}</strong></p>
-                              <p className="text-slate-300">Target Goal: <strong className="text-emerald-300">{data.target} {data.unit}</strong></p>
-                              <p className="text-slate-300">{isId ? 'Realisasi Aktual:' : 'Actual:'} <strong className="text-cyan-300">{data.actual} {data.unit}</strong></p>
-                              <p className="text-slate-300">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-white">{data.progress}%</strong> ({data.status})</p>
+                            <div className="bg-white text-slate-900 border border-orange-200 p-3 rounded-xl text-xs shadow-xl space-y-1">
+                              <p className="font-bold text-orange-700">{data.code}: {data.fullName}</p>
+                              <p className="text-slate-600">Baseline: <strong className="text-slate-900">{data.baseline} {data.unit}</strong></p>
+                              <p className="text-slate-600">Target Goal: <strong className="text-emerald-700">{data.target} {data.unit}</strong></p>
+                              <p className="text-slate-600">{isId ? 'Realisasi Aktual:' : 'Actual:'} <strong className="text-orange-600">{data.actual} {data.unit}</strong></p>
+                              <p className="text-slate-600">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-slate-900">{data.progress}%</strong> ({data.status})</p>
                             </div>
                           );
                         }
@@ -488,7 +488,7 @@ export default function IndicatorChartsView({
 
       {/* SECTION 1: Grafik Indikator Outcome */}
       {(levelFilter === 'ALL' || levelFilter === 'Outcome') && (
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
           <div>
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -519,12 +519,12 @@ export default function IndicatorChartsView({
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="bg-slate-900 text-white p-3 rounded-xl text-xs shadow-xl space-y-1">
-                            <p className="font-bold text-amber-400">{data.code}: {data.fullName}</p>
-                            <p className="text-slate-300">Baseline: <strong className="text-white">{data.baseline} {data.unit}</strong></p>
-                            <p className="text-slate-300">Target: <strong className="text-amber-300">{data.target} {data.unit}</strong></p>
-                            <p className="text-slate-300">{isId ? 'Realisasi Aktual:' : 'Actual:'} <strong className="text-emerald-400">{data.actual} {data.unit}</strong></p>
-                            <p className="text-slate-300">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-white">{data.progress}%</strong> ({data.status})</p>
+                          <div className="bg-white text-slate-900 border border-orange-200 p-3 rounded-xl text-xs shadow-xl space-y-1">
+                            <p className="font-bold text-orange-700">{data.code}: {data.fullName}</p>
+                            <p className="text-slate-600">Baseline: <strong className="text-slate-900">{data.baseline} {data.unit}</strong></p>
+                            <p className="text-slate-600">Target: <strong className="text-amber-700">{data.target} {data.unit}</strong></p>
+                            <p className="text-slate-600">{isId ? 'Realisasi Aktual:' : 'Actual:'} <strong className="text-emerald-700">{data.actual} {data.unit}</strong></p>
+                            <p className="text-slate-600">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-slate-900">{data.progress}%</strong> ({data.status})</p>
                           </div>
                         );
                       }
@@ -544,7 +544,7 @@ export default function IndicatorChartsView({
               {outcomeIndicators.map(ind => {
                 const progress = ind.target > 0 ? Math.round((ind.actual / ind.target) * 100) : 0;
                 return (
-                  <div key={ind.id} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/70 flex flex-col justify-between gap-2">
+                  <div key={ind.id} className="p-3.5 rounded-xl border border-orange-100 bg-orange-50/30 flex flex-col justify-between gap-2">
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <span className="font-bold text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
@@ -556,7 +556,7 @@ export default function IndicatorChartsView({
                       <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{ind.definition}</p>
                     </div>
 
-                    <div className="space-y-1 pt-2 border-t border-slate-200/60">
+                    <div className="space-y-1 pt-2 border-t border-orange-100/60">
                       <div className="flex justify-between text-[11px]">
                         <span className="text-slate-500">Target: <strong>{ind.target} {ind.unit}</strong></span>
                         <span className="text-slate-700 font-bold">{isId ? 'Aktual:' : 'Actual:'} <strong className="text-emerald-600">{ind.actual} {ind.unit}</strong> ({progress}%)</span>
@@ -583,7 +583,7 @@ export default function IndicatorChartsView({
 
       {/* SECTION 2: Grafik Indikator Output */}
       {(levelFilter === 'ALL' || levelFilter === 'Output') && (
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
           <div>
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -614,12 +614,12 @@ export default function IndicatorChartsView({
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="bg-slate-900 text-white p-3 rounded-xl text-xs shadow-xl space-y-1">
-                            <p className="font-bold text-purple-400">{data.code}: {data.fullName}</p>
-                            <p className="text-slate-300">Baseline: <strong className="text-white">{data.baseline} {data.unit}</strong></p>
-                            <p className="text-slate-300">Target Output: <strong className="text-purple-300">{data.target} {data.unit}</strong></p>
-                            <p className="text-slate-300">{isId ? 'Realisasi:' : 'Actual:'} <strong className="text-emerald-400">{data.actual} {data.unit}</strong></p>
-                            <p className="text-slate-300">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-white">{data.progress}%</strong> ({data.status})</p>
+                          <div className="bg-white text-slate-900 border border-orange-200 p-3 rounded-xl text-xs shadow-xl space-y-1">
+                            <p className="font-bold text-orange-700">{data.code}: {data.fullName}</p>
+                            <p className="text-slate-600">Baseline: <strong className="text-slate-900">{data.baseline} {data.unit}</strong></p>
+                            <p className="text-slate-600">Target Output: <strong className="text-purple-700">{data.target} {data.unit}</strong></p>
+                            <p className="text-slate-600">{isId ? 'Realisasi:' : 'Actual:'} <strong className="text-emerald-700">{data.actual} {data.unit}</strong></p>
+                            <p className="text-slate-600">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-slate-900">{data.progress}%</strong> ({data.status})</p>
                           </div>
                         );
                       }
@@ -638,7 +638,7 @@ export default function IndicatorChartsView({
               {outputIndicators.map(ind => {
                 const progress = ind.target > 0 ? Math.round((ind.actual / ind.target) * 100) : 0;
                 return (
-                  <div key={ind.id} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/70 flex flex-col justify-between gap-2">
+                  <div key={ind.id} className="p-3.5 rounded-xl border border-orange-100 bg-orange-50/30 flex flex-col justify-between gap-2">
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <span className="font-bold text-xs text-purple-700 bg-purple-100 px-2 py-0.5 rounded">
@@ -652,7 +652,7 @@ export default function IndicatorChartsView({
                       </p>
                     </div>
 
-                    <div className="space-y-1 pt-2 border-t border-slate-200/60">
+                    <div className="space-y-1 pt-2 border-t border-orange-100/60">
                       <div className="flex justify-between text-[11px]">
                         <span className="text-slate-500">Target: <strong>{ind.target} {ind.unit}</strong></span>
                         <span className="text-slate-700 font-bold">{isId ? 'Aktual:' : 'Actual:'} <strong className="text-purple-600">{ind.actual} {ind.unit}</strong> ({progress}%)</span>
@@ -679,11 +679,11 @@ export default function IndicatorChartsView({
 
       {/* SECTION 3: Grafik Indikator Activity */}
       {(levelFilter === 'ALL' || levelFilter === 'Activity') && (
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
           <div>
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <ActivityIcon className="w-5 h-5 text-blue-600" />
+              <ActivityIcon className="w-5 h-5 text-orange-600" />
               {isId ? 'Grafik Indikator Activity (Aktivitas Lapangan)' : 'Activity Indicators Progress (Field Activities)'}
             </h2>
             <p className="text-xs text-slate-500">
@@ -692,7 +692,7 @@ export default function IndicatorChartsView({
                 : 'Quantitative tracking of activity sessions, technical training events, and attendance targets'}
             </p>
           </div>
-          <span className="px-3 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-lg text-xs font-semibold">
+          <span className="px-3 py-1 bg-orange-50 text-orange-800 border border-orange-200 rounded-lg text-xs font-semibold">
             {activityIndicators.length} {isId ? 'Indikator Activity' : 'Activity Indicators'}
           </span>
         </div>
@@ -710,11 +710,11 @@ export default function IndicatorChartsView({
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="bg-slate-900 text-white p-3 rounded-xl text-xs shadow-xl space-y-1">
-                            <p className="font-bold text-blue-400">{data.code}: {data.fullName}</p>
-                            <p className="text-slate-300">{isId ? 'Target Kegiatan:' : 'Activity Target:'} <strong className="text-blue-300">{data.target} {data.unit}</strong></p>
-                            <p className="text-slate-300">{isId ? 'Realisasi:' : 'Actual:'} <strong className="text-emerald-400">{data.actual} {data.unit}</strong></p>
-                            <p className="text-slate-300">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-white">{data.progress}%</strong> ({data.status})</p>
+                          <div className="bg-white text-slate-900 border border-orange-200 p-3 rounded-xl text-xs shadow-xl space-y-1">
+                            <p className="font-bold text-orange-700">{data.code}: {data.fullName}</p>
+                            <p className="text-slate-600">{isId ? 'Target Kegiatan:' : 'Activity Target:'} <strong className="text-orange-600">{data.target} {data.unit}</strong></p>
+                            <p className="text-slate-600">{isId ? 'Realisasi:' : 'Actual:'} <strong className="text-emerald-700">{data.actual} {data.unit}</strong></p>
+                            <p className="text-slate-600">{isId ? 'Capaian:' : 'Progress:'} <strong className="text-slate-900">{data.progress}%</strong> ({data.status})</p>
                           </div>
                         );
                       }
@@ -722,7 +722,7 @@ export default function IndicatorChartsView({
                     }}
                   />
                   <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-                  <Bar dataKey="target" name={isId ? "Target Partisipan/Sesi" : "Target"} fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="target" name={isId ? "Target Partisipan/Sesi" : "Target"} fill="#ea580c" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="actual" name={isId ? "Realisasi Hadir" : "Actual"} fill="#10b981" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -733,10 +733,10 @@ export default function IndicatorChartsView({
               {activityIndicators.map(ind => {
                 const progress = ind.target > 0 ? Math.round((ind.actual / ind.target) * 100) : 0;
                 return (
-                  <div key={ind.id} className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/70 flex flex-col justify-between gap-2">
+                  <div key={ind.id} className="p-3.5 rounded-xl border border-orange-100 bg-orange-50/30 flex flex-col justify-between gap-2">
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="font-bold text-xs text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+                        <span className="font-bold text-xs text-orange-700 bg-orange-100 px-2 py-0.5 rounded">
                           {ind.code}
                         </span>
                         {getStatusBadge(ind.status)}
@@ -745,14 +745,14 @@ export default function IndicatorChartsView({
                       <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{ind.parentCodeTitle}</p>
                     </div>
 
-                    <div className="space-y-1 pt-2 border-t border-slate-200/60">
+                    <div className="space-y-1 pt-2 border-t border-orange-100/60">
                       <div className="flex justify-between text-[11px]">
                         <span className="text-slate-500">Target: <strong>{ind.target} {ind.unit}</strong></span>
-                        <span className="text-slate-700 font-bold">{isId ? 'Aktual:' : 'Actual:'} <strong className="text-blue-600">{ind.actual} {ind.unit}</strong> ({progress}%)</span>
+                        <span className="text-slate-700 font-bold">{isId ? 'Aktual:' : 'Actual:'} <strong className="text-orange-600">{ind.actual} {ind.unit}</strong> ({progress}%)</span>
                       </div>
                       <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                         <div 
-                          className="h-full rounded-full bg-blue-500"
+                          className="h-full rounded-full bg-orange-500"
                           style={{ width: `${Math.min(100, progress)}%` }}
                         ></div>
                       </div>

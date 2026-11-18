@@ -304,10 +304,10 @@ export default function DashboardAnalytics({
   return (
     <div className="space-y-6 pb-12">
       {/* Top Filter Bar */}
-      <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col items-stretch justify-between gap-3">
+      <div className="bg-white rounded-xl p-4 border border-orange-100 shadow-sm flex flex-col items-stretch justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mr-1">
-            <Filter className="w-3.5 h-3.5 text-emerald-600" />
+            <Filter className="w-3.5 h-3.5 text-orange-600" />
             {isId ? 'Filter Analitik:' : 'Analytics Filter:'}
           </span>
 
@@ -316,7 +316,7 @@ export default function DashboardAnalytics({
             id="dash-filter-project"
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 font-medium"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500 font-medium"
           >
             <option value="all">{isId ? '🌐 Seluruh Proyek (Portofolio Nasional)' : '🌐 All Projects (National Portfolio)'}</option>
             {projects.map(p => (
@@ -329,7 +329,7 @@ export default function DashboardAnalytics({
             id="dash-filter-target-group"
             value={filterTargetGroup}
             onChange={(e) => setFilterTargetGroup(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 font-medium"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500 font-medium"
           >
             <option value="all">{isId ? 'Semua Target Group' : 'All Target Groups'}</option>
             <option value="Population of the project communities">{isId ? 'Warga Komunitas Dampingan' : 'Project Communities'}</option>
@@ -343,7 +343,7 @@ export default function DashboardAnalytics({
             id="dash-filter-level"
             value={filterBeneficiaryLevel}
             onChange={(e) => setFilterBeneficiaryLevel(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 font-medium"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500 font-medium"
           >
             <option value="all">{isId ? 'Semua Level Dampingan' : 'All Beneficiary Levels'}</option>
             <option value="Desa">{isId ? 'Tingkat Desa' : 'Village Level'}</option>
@@ -358,7 +358,7 @@ export default function DashboardAnalytics({
             id="dash-filter-gender"
             value={filterGender}
             onChange={(e) => setFilterGender(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Gender' : 'All Genders'}</option>
             <option value="Perempuan">{isId ? 'Perempuan' : 'Female'}</option>
@@ -370,7 +370,7 @@ export default function DashboardAnalytics({
             id="dash-filter-age"
             value={filterAgeGroup}
             onChange={(e) => setFilterAgeGroup(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Usia' : 'All Ages'}</option>
             <option value="0-14">{isId ? '0-14 Tahun (Anak-anak)' : '0-14 Years (Children)'}</option>
@@ -384,7 +384,7 @@ export default function DashboardAnalytics({
             id="dash-filter-disability"
             value={filterDisability}
             onChange={(e) => setFilterDisability(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Status Disabilitas' : 'All Disability Statuses'}</option>
             <option value="yes">{isId ? 'Penyandang Disabilitas' : 'Persons with Disability'}</option>
@@ -396,7 +396,7 @@ export default function DashboardAnalytics({
             id="dash-filter-iplc"
             value={filterIplc}
             onChange={(e) => setFilterIplc(e.target.value)}
-            className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5"
+            className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Status IPLC' : 'All IPLC Statuses'}</option>
             <option value="ip">{isId ? 'Masyarakat Adat (IP)' : 'Indigenous Peoples (IP)'}</option>
@@ -414,7 +414,7 @@ export default function DashboardAnalytics({
                 setFilterTargetGroup('all');
                 setFilterBeneficiaryLevel('all');
               }}
-              className="text-xs text-rose-600 hover:text-rose-800 font-medium flex items-center gap-1 px-2 py-1 bg-rose-50 rounded"
+              className="text-xs text-rose-600 hover:text-rose-800 font-medium flex items-center gap-1 px-2 py-1 bg-rose-50 rounded whitespace-nowrap shrink-0"
             >
               <RefreshCcw className="w-3 h-3" /> {isId ? 'Reset Filter' : 'Reset Filters'}
             </button>
@@ -423,7 +423,7 @@ export default function DashboardAnalytics({
           <div className="ml-auto">
             <button
               onClick={onOpenReportModal}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap shrink-0"
             >
               <Download className="w-3.5 h-3.5" />
               {isId ? 'Ekspor M&E Summary' : 'Export M&E Summary'}
@@ -435,43 +435,43 @@ export default function DashboardAnalytics({
       {/* Zero Double Counting Banner & KPI Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Main Anti Double Counting Counter */}
-        <div className="md:col-span-2 bg-gradient-to-br from-emerald-900 to-teal-950 text-white rounded-xl p-5 border border-emerald-800 shadow-md relative overflow-hidden">
-          <div className="absolute right-2 -bottom-6 w-36 h-36 bg-emerald-500/20 rounded-full blur-xl pointer-events-none"></div>
+        <div className="md:col-span-2 bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white rounded-xl p-5 border border-orange-400/50 shadow-md shadow-orange-500/15 relative overflow-hidden">
+          <div className="absolute right-2 -bottom-6 w-36 h-36 bg-white/15 rounded-full blur-xl pointer-events-none"></div>
           
           <div className="flex items-center justify-between mb-3">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-400/30">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-white text-xs font-bold border border-white/25">
               <ShieldCheck className="w-3.5 h-3.5" />
               {isId ? 'Sistem Anti Double-Counting Aktif' : 'Anti Double-Counting Active'}
             </span>
-            <span className="text-[11px] text-slate-300">
+            <span className="text-[11px] text-orange-50">
               {isId ? 'Deduplikasi via NIK / ID Unik' : 'Deduplicated via National ID / Unique ID'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4 my-2">
             <div>
-              <span className="text-xs text-slate-300 block">{isId ? 'Penerima Manfaat Unik (Net):' : 'Unique Beneficiaries (Net):'}</span>
-              <div className="text-3xl sm:text-4xl font-extrabold text-white">
+              <span className="text-xs text-orange-100 block">{isId ? 'Penerima Manfaat Unik (Net):' : 'Unique Beneficiaries (Net):'}</span>
+              <div className="text-3xl sm:text-4xl font-extrabold text-white tabular-nums">
                 {summary.totalUniqueBeneficiaries.toLocaleString(isId ? 'id-ID' : 'en-US')}
-                <span className="text-sm font-normal text-emerald-300 ml-1">{isId ? 'orang' : 'people'}</span>
+                <span className="text-sm font-normal text-orange-100 ml-1">{isId ? 'orang' : 'people'}</span>
               </div>
             </div>
             <div>
-              <span className="text-xs text-slate-300 block">{isId ? 'Total Partisipasi (Gross):' : 'Total Participation (Gross):'}</span>
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-300">
+              <span className="text-xs text-orange-100 block">{isId ? 'Total Partisipasi (Gross):' : 'Total Participation (Gross):'}</span>
+              <div className="text-3xl sm:text-4xl font-extrabold text-orange-50 tabular-nums">
                 {summary.totalGrossParticipation.toLocaleString(isId ? 'id-ID' : 'en-US')}
-                <span className="text-sm font-normal text-slate-400 ml-1">{isId ? 'kehadiran' : 'attendances'}</span>
+                <span className="text-sm font-normal text-orange-100 ml-1">{isId ? 'kehadiran' : 'attendances'}</span>
               </div>
             </div>
           </div>
 
-          <div className="mt-3 pt-3 border-t border-emerald-800/80 flex items-center justify-between text-xs text-slate-200">
+          <div className="mt-3 pt-3 border-t border-white/20 flex items-center justify-between text-xs text-orange-50">
             <span>
               <strong>{summary.repeatedParticipantsCount}</strong> {isId ? `orang mengikuti lebih dari 1 kegiatan (${deduplicationRate}% deduplikasi)` : `people attended >1 activity (${deduplicationRate}% deduplication)`}
             </span>
             <button
               onClick={onNavigateToBeneficiaries}
-              className="text-emerald-300 hover:text-white underline text-xs font-medium"
+              className="text-white hover:text-orange-100 underline text-xs font-semibold whitespace-nowrap shrink-0"
             >
               {isId ? 'Lihat Roster Penerima Manfaat →' : 'View Beneficiary Roster →'}
             </button>
@@ -479,7 +479,7 @@ export default function DashboardAnalytics({
         </div>
 
         {/* Target Group & Level KPI Card */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               <span>{isId ? 'Target Group Proyek' : 'Project Target Group'}</span>
@@ -521,7 +521,7 @@ export default function DashboardAnalytics({
         </div>
 
         {/* GESI & IPLC Highlights */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               <span>{isId ? 'Inklusi GESI & IPLC' : 'GESI & IPLC Inclusion'}</span>
@@ -563,7 +563,7 @@ export default function DashboardAnalytics({
       {/* NEW SECTION: TARGET GROUP & BENEFICIARY LEVEL CHARTS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart A: Target Group Distribution */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -603,7 +603,7 @@ export default function DashboardAnalytics({
                     `${value} ${isId ? 'orang' : 'people'} (${item.payload.pct}%)`, 
                     name
                   ]}
-                  contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -627,7 +627,7 @@ export default function DashboardAnalytics({
         </div>
 
         {/* Chart B: Beneficiary Level (Tingkat Dampingan) Distribution */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -653,7 +653,7 @@ export default function DashboardAnalytics({
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip 
                   formatter={(value: any) => [`${value} ${isId ? 'orang' : 'people'}`, isId ? 'Penerima Manfaat' : 'Beneficiaries']}
-                  contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                 />
                 <Bar dataKey="count" name={isId ? 'Jumlah Penerima Manfaat' : 'Beneficiaries Count'} radius={[4, 4, 0, 0]}>
                   {levelBarData.map((_, index) => (
@@ -680,7 +680,7 @@ export default function DashboardAnalytics({
       {/* Visual Analytics Charts Grid: Age, Gender, IPLC, Disabilities, Indicators */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Chart 1: Age Groups Disaggregation with Gender Stack */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-bold text-slate-900">
@@ -700,7 +700,7 @@ export default function DashboardAnalytics({
                 <XAxis dataKey="ageGroup" tick={{ fontSize: 11 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
                 <Bar dataKey="LakiLaki" name={isId ? 'Laki-laki' : 'Male'} fill="#3b82f6" radius={[4, 4, 0, 0]} />
@@ -720,7 +720,7 @@ export default function DashboardAnalytics({
         </div>
 
         {/* Chart 2: IPLC Community Status */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-bold text-slate-900">
@@ -751,7 +751,7 @@ export default function DashboardAnalytics({
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -776,7 +776,7 @@ export default function DashboardAnalytics({
         </div>
 
         {/* Chart 3: Disability Barriers Breakdown */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
               <h3 className="text-sm font-bold text-slate-900">
@@ -818,7 +818,7 @@ export default function DashboardAnalytics({
                     <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
                     <YAxis type="category" dataKey="barrier" width={110} tick={{ fontSize: 10 }} />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                     />
                     <Bar dataKey="Jumlah" name={isId ? 'Jumlah' : 'Count'} fill="#f43f5e" radius={[0, 4, 4, 0]} />
                   </BarChart>
@@ -838,7 +838,7 @@ export default function DashboardAnalytics({
                     <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
                     <YAxis type="category" dataKey="level" width={140} tick={{ fontSize: 10 }} />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                     />
                     <Bar dataKey="Jumlah" name={isId ? 'Jumlah' : 'Count'} fill="#e11d48" radius={[0, 4, 4, 0]} />
                   </BarChart>
@@ -857,7 +857,7 @@ export default function DashboardAnalytics({
         </div>
 
         {/* Chart 4: Indicator Target vs Actual Comparison */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
               <h3 className="text-sm font-bold text-slate-900">
@@ -868,28 +868,28 @@ export default function DashboardAnalytics({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex bg-slate-100 p-0.5 rounded-lg text-[11px] font-semibold">
+              <div className="flex bg-orange-50 p-0.5 rounded-lg text-[11px] font-semibold border border-orange-100">
                 <button
                   onClick={() => setIndicatorLevelFilter('ALL')}
-                  className={`px-2 py-1 rounded-md transition ${indicatorLevelFilter === 'ALL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-2 py-1 rounded-md transition whitespace-nowrap shrink-0 ${indicatorLevelFilter === 'ALL' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700'}`}
                 >
                   {isId ? 'Semua' : 'All'}
                 </button>
                 <button
                   onClick={() => setIndicatorLevelFilter('Goal')}
-                  className={`px-2 py-1 rounded-md transition ${indicatorLevelFilter === 'Goal' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-2 py-1 rounded-md transition whitespace-nowrap shrink-0 ${indicatorLevelFilter === 'Goal' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700'}`}
                 >
                   Goal/Impact
                 </button>
                 <button
                   onClick={() => setIndicatorLevelFilter('Outcome')}
-                  className={`px-2 py-1 rounded-md transition ${indicatorLevelFilter === 'Outcome' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-2 py-1 rounded-md transition whitespace-nowrap shrink-0 ${indicatorLevelFilter === 'Outcome' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700'}`}
                 >
                   Outcome
                 </button>
                 <button
                   onClick={() => setIndicatorLevelFilter('Output')}
-                  className={`px-2 py-1 rounded-md transition ${indicatorLevelFilter === 'Output' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-2 py-1 rounded-md transition whitespace-nowrap shrink-0 ${indicatorLevelFilter === 'Output' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700'}`}
                 >
                   Output
                 </button>
@@ -909,7 +909,7 @@ export default function DashboardAnalytics({
                 <XAxis dataKey="code" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
                 <Bar dataKey="target" name={isId ? 'Target' : 'Target'} fill="#94a3b8" radius={[4, 4, 0, 0]} />

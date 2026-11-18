@@ -151,11 +151,11 @@ export default function ActivityFormModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 my-auto">
+      <div className="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-orange-100 animate-in fade-in zoom-in-95 duration-150 my-auto">
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-slate-100">
+        <div className="flex items-start justify-between pb-4 border-b border-orange-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center">
               <CalendarCheck2 className="w-5 h-5" />
             </div>
             <div>
@@ -172,7 +172,7 @@ export default function ActivityFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition"
+            className="text-slate-400 hover:text-orange-700 p-1.5 rounded-lg hover:bg-orange-50 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -181,9 +181,9 @@ export default function ActivityFormModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 pt-4 text-xs">
           {/* Hierarchy Selection: Project, Outcome, Output */}
-          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              <Layers className="w-3.5 h-3.5 text-blue-600" />
+          <div className="bg-orange-50/50 p-3.5 rounded-xl border border-orange-200/70 space-y-3">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-orange-800 uppercase tracking-wider">
+              <Layers className="w-3.5 h-3.5 text-orange-600" />
               <span>{isId ? 'Hierarki Logframe Proyek' : 'Project Logframe Hierarchy'}</span>
             </div>
 
@@ -196,7 +196,7 @@ export default function ActivityFormModal({
                 <select
                   value={selectedProjId}
                   onChange={(e) => setSelectedProjId(e.target.value)}
-                  className="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-800 font-medium focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 bg-white border border-orange-200 rounded-lg text-slate-800 font-medium focus:outline-hidden focus:ring-2 focus:ring-orange-500"
                 >
                   {projects.map(p => (
                     <option key={p.id} value={p.id}>{p.code} - {p.title}</option>
@@ -212,7 +212,7 @@ export default function ActivityFormModal({
                 <select
                   value={selectedOutcomeId}
                   onChange={(e) => setSelectedOutcomeId(e.target.value)}
-                  className="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-800 font-medium focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 bg-white border border-orange-200 rounded-lg text-slate-800 font-medium focus:outline-hidden focus:ring-2 focus:ring-orange-500"
                 >
                   {currentProject?.outcomes.map(o => (
                     <option key={o.id} value={o.id}>{o.code}: {o.title.substring(0, 28)}...</option>
@@ -228,7 +228,7 @@ export default function ActivityFormModal({
                 <select
                   value={selectedOutputId}
                   onChange={(e) => setSelectedOutputId(e.target.value)}
-                  className="w-full p-2 bg-white border border-slate-300 rounded-lg text-slate-800 font-medium focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 bg-white border border-orange-200 rounded-lg text-slate-800 font-medium focus:outline-hidden focus:ring-2 focus:ring-orange-500"
                   required
                 >
                   {availableOutputs.map(op => (
@@ -251,7 +251,7 @@ export default function ActivityFormModal({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="ACT-1.1.1"
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-blue-700 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl font-bold text-orange-700 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -265,7 +265,7 @@ export default function ActivityFormModal({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={isId ? 'Contoh: Pelatihan Fasilitator Pertanian Organik & Diversifikasi Pangan' : 'e.g., Organic Agriculture & Food Diversification Workshop'}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
@@ -279,7 +279,7 @@ export default function ActivityFormModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={isId ? 'Jelaskan ruang lingkup, metodologi, dan tujuan pelaksanaan kegiatan ini...' : 'Describe the methodology, scope, and objectives of this activity...'}
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
@@ -294,7 +294,7 @@ export default function ActivityFormModal({
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder={isId ? 'Gedung Balai Desa Sukajaya' : 'Community Hall'}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -307,7 +307,7 @@ export default function ActivityFormModal({
                 value={regency}
                 onChange={(e) => setRegency(e.target.value)}
                 placeholder={isId ? 'Kabupaten Garut' : 'Garut Regency'}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -320,7 +320,7 @@ export default function ActivityFormModal({
                 value={leadPerson}
                 onChange={(e) => setLeadPerson(e.target.value)}
                 placeholder={isId ? 'Nama PIC Lapangan' : 'Field Officer Name'}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
@@ -336,7 +336,7 @@ export default function ActivityFormModal({
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -349,7 +349,7 @@ export default function ActivityFormModal({
                 required
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -360,7 +360,7 @@ export default function ActivityFormModal({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 font-semibold focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               >
                 <option value="Direncanakan">📅 {isId ? 'Direncanakan' : 'Planned'}</option>
                 <option value="Sedang Berjalan">⚡ {isId ? 'Sedang Berjalan' : 'In Progress'}</option>
@@ -382,7 +382,7 @@ export default function ActivityFormModal({
                 step="1000000"
                 value={budgetAllocated}
                 onChange={(e) => setBudgetAllocated(Number(e.target.value))}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -396,13 +396,13 @@ export default function ActivityFormModal({
                 step="1000000"
                 value={budgetSpent}
                 onChange={(e) => setBudgetSpent(Number(e.target.value))}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:bg-white focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl text-slate-900 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-orange-100">
             <button
               type="button"
               onClick={onClose}
@@ -412,7 +412,7 @@ export default function ActivityFormModal({
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-500/20 transition flex items-center gap-2"
+              className="px-5 py-2.5 text-xs font-bold bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl shadow-md shadow-orange-500/20 transition flex items-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>

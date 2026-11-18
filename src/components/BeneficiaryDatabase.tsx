@@ -384,17 +384,17 @@ export default function BeneficiaryDatabase({
     <div className="space-y-6 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700 text-xs font-semibold animate-bounce">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="fixed bottom-6 right-6 z-50 bg-white text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-orange-200 text-xs font-semibold animate-bounce">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Top Header */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-md bg-purple-100 text-purple-800 font-bold text-xs border border-purple-200">
+            <span className="px-2.5 py-0.5 rounded-md bg-orange-100 text-orange-900 font-bold text-xs border border-orange-200">
               Master Beneficiary Registry
             </span>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight">
@@ -412,33 +412,33 @@ export default function BeneficiaryDatabase({
           {isAdmin && (
             <button
               onClick={() => setShowImportModal(true)}
-              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-emerald-200 shadow-2xs transition"
+              className="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-orange-200 shadow-2xs transition whitespace-nowrap shrink-0"
             >
-              <Upload className="w-4 h-4 text-emerald-600" />
+              <Upload className="w-4 h-4 text-orange-600" />
               {isId ? 'Import Excel / CSV' : 'Import Excel / CSV'}
             </button>
           )}
 
           <button
             onClick={() => handleExportXLSX(false)}
-            className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition whitespace-nowrap shrink-0"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
+            <FileSpreadsheet className="w-4 h-4 text-emerald-100" />
             {isId ? `Ekspor XLSX (${filteredList.length})` : `Export XLSX (${filteredList.length})`}
           </button>
 
           <button
             onClick={() => handleExportCSV(false)}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-300 transition"
+            className="px-3.5 py-2 bg-orange-50/70 hover:bg-orange-100 text-orange-900 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-orange-200 transition whitespace-nowrap shrink-0"
           >
-            <Download className="w-4 h-4 text-slate-600" />
+            <Download className="w-4 h-4 text-orange-600" />
             {isId ? 'Ekspor CSV' : 'Export CSV'}
           </button>
 
           {isAdmin && (
             <button
               onClick={onOpenNewBeneficiaryModal}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+              className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition whitespace-nowrap shrink-0"
             >
               <Plus className="w-4 h-4" />
               {isId ? '+ Input Penerima Baru' : '+ Add New Beneficiary'}
@@ -448,17 +448,17 @@ export default function BeneficiaryDatabase({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-2xs space-y-3">
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-orange-100 shadow-2xs space-y-3">
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
           {/* Search box */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-orange-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={isId ? 'Cari berdasarkan Nama, NIK, Desa, Suku Adat, atau Hambatan...' : 'Search by Name, ID, Village, Indigenous Community, or Barrier...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-emerald-500 font-medium"
+              className="w-full text-xs pl-10 pr-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium"
             />
           </div>
 
@@ -467,7 +467,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterGender}
               onChange={(e) => setFilterGender(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-orange-50/40 border border-orange-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">{isId ? 'Semua Gender' : 'All Genders'}</option>
               <option value="Perempuan">{isId ? 'Perempuan' : 'Female'}</option>
@@ -477,7 +477,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterAgeGroup}
               onChange={(e) => setFilterAgeGroup(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-orange-50/40 border border-orange-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">{isId ? 'Semua Rentang Usia' : 'All Age Ranges'}</option>
               <option value="0-5">0-5 {isId ? 'Thn (Balita)' : 'Yrs (Toddlers)'}</option>
@@ -492,7 +492,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterDisability}
               onChange={(e) => setFilterDisability(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-orange-50/40 border border-orange-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">{isId ? 'Status Disabilitas' : 'Disability Status'}</option>
               <option value="yes">{isId ? 'Penyandang Disabilitas (Semua)' : 'Persons with Disability (All)'}</option>
@@ -508,7 +508,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterIplc}
               onChange={(e) => setFilterIplc(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-orange-50/40 border border-orange-200 font-medium text-slate-700 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">{isId ? 'Status IPLC' : 'IPLC Status'}</option>
               <option value="ip">{isId ? 'Masyarakat Adat (IP)' : 'Indigenous Peoples (IP)'}</option>
@@ -519,7 +519,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterTargetGroup}
               onChange={(e) => setFilterTargetGroup(e.target.value)}
-              className="text-xs bg-indigo-50 border border-indigo-200 font-semibold text-indigo-900 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-orange-50 border border-orange-200 font-semibold text-orange-900 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">🎯 {isId ? 'Semua Target Group' : 'All Target Groups'}</option>
               <option value="Population of the project communities">{isId ? 'Population of project communities' : 'Population of project communities'}</option>
@@ -531,7 +531,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterLevel}
               onChange={(e) => setFilterLevel(e.target.value)}
-              className="text-xs bg-purple-50 border border-purple-200 font-semibold text-purple-900 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-amber-50 border border-amber-200 font-semibold text-amber-900 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">📊 {isId ? 'Semua Level Beneficiaries' : 'All Beneficiary Levels'}</option>
               <option value="Desa">{isId ? 'Tingkat Desa Dampingan' : 'Village Level'}</option>
@@ -544,7 +544,7 @@ export default function BeneficiaryDatabase({
             <select
               value={filterVillage}
               onChange={(e) => setFilterVillage(e.target.value)}
-              className="text-xs bg-emerald-50 border border-emerald-300 font-semibold text-emerald-950 rounded-xl px-3 py-2 outline-hidden"
+              className="text-xs bg-emerald-50 border border-emerald-300 font-semibold text-emerald-950 rounded-xl px-3 py-2 outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">🏡 {isId ? 'Semua Desa/Kelurahan' : 'All Villages'}</option>
               {allVillages.map(v => (
@@ -554,7 +554,7 @@ export default function BeneficiaryDatabase({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 pt-1 gap-2 border-t border-slate-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 pt-1 gap-2 border-t border-orange-100">
           <div className="flex items-center gap-2 flex-wrap">
             <span>
               {isId 
@@ -562,8 +562,8 @@ export default function BeneficiaryDatabase({
                 : <>Showing <strong>{filteredList.length}</strong> of <strong>{beneficiaries.length}</strong> unique direct beneficiaries.</>}
             </span>
             {selectedIds.size > 0 && (
-              <span className="inline-flex items-center gap-1 font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
-                <Check className="w-3 h-3 text-blue-600" />
+              <span className="inline-flex items-center gap-1 font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200">
+                <Check className="w-3 h-3 text-orange-600" />
                 {selectedIds.size} {isId ? 'orang sedang dipilih' : 'selected'}
               </span>
             )}
@@ -577,17 +577,17 @@ export default function BeneficiaryDatabase({
 
       {/* FLOATING / STICKY SELECTION ACTION BAR (Appears when 1+ selected) */}
       {selectedIds.size > 0 && (
-        <div className="bg-slate-900 text-white rounded-2xl p-4 shadow-xl border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white rounded-2xl p-4 shadow-xl shadow-orange-200/60 border border-orange-400 flex flex-col md:flex-row md:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-400/30 flex items-center justify-center font-bold text-xs">
+            <div className="w-8 h-8 rounded-xl bg-white/20 text-white border border-white/30 flex items-center justify-center font-bold text-xs">
               {selectedIds.size}
             </div>
             <div>
               <h4 className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-100" />
                 {selectedIds.size} {isId ? 'Penerima Manfaat Terpilih' : 'Selected Beneficiaries'}
               </h4>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-orange-50">
                 {isId 
                   ? 'Gunakan aksi cepat berikut untuk mengelola penerima manfaat terpilih sekaligus.'
                   : 'Apply batch actions for the selected beneficiaries.'}
@@ -597,25 +597,25 @@ export default function BeneficiaryDatabase({
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Quick preset selector buttons */}
-            <div className="hidden lg:flex items-center gap-1 bg-slate-800/90 p-1 rounded-xl border border-slate-700 text-[11px]">
-              <span className="text-slate-400 px-2 font-medium">{isId ? 'Pilih cepat:' : 'Quick select:'}</span>
+            <div className="hidden lg:flex items-center gap-1 bg-white/15 p-1 rounded-xl border border-white/25 text-[11px]">
+              <span className="text-orange-50 px-2 font-medium">{isId ? 'Pilih cepat:' : 'Quick select:'}</span>
               <button
                 onClick={() => handleSelectPreset('female')}
-                className="px-2 py-1 hover:bg-slate-700 rounded-lg text-pink-300 font-medium transition"
+                className="px-2 py-1 hover:bg-white/20 rounded-lg text-white font-medium transition"
                 title={isId ? 'Pilih semua perempuan di hasil filter' : 'Select all female in filter'}
               >
                 ♀ {isId ? 'Perempuan' : 'Female'}
               </button>
               <button
                 onClick={() => handleSelectPreset('disability')}
-                className="px-2 py-1 hover:bg-slate-700 rounded-lg text-rose-300 font-medium transition"
+                className="px-2 py-1 hover:bg-white/20 rounded-lg text-white font-medium transition"
                 title={isId ? 'Pilih semua disabilitas di hasil filter' : 'Select all with disability in filter'}
               >
                 ♿ {isId ? 'Disabilitas' : 'Disability'}
               </button>
               <button
                 onClick={() => handleSelectPreset('iplc')}
-                className="px-2 py-1 hover:bg-slate-700 rounded-lg text-emerald-300 font-medium transition"
+                className="px-2 py-1 hover:bg-white/20 rounded-lg text-white font-medium transition"
                 title={isId ? 'Pilih semua masyarakat adat / komunitas lokal' : 'Select all IPLC'}
               >
                 🌿 IPLC
@@ -633,9 +633,9 @@ export default function BeneficiaryDatabase({
 
             <button
               onClick={() => handleExportCSV(true)}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+              className="px-3 py-1.5 bg-white hover:bg-orange-50 text-orange-700 border border-orange-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
             >
-              <Download className="w-3.5 h-3.5 text-slate-400" />
+              <Download className="w-3.5 h-3.5 text-orange-600" />
               {isId ? `CSV (${selectedIds.size})` : `CSV (${selectedIds.size})`}
             </button>
 
@@ -653,7 +653,7 @@ export default function BeneficiaryDatabase({
             {/* Clear Selection */}
             <button
               onClick={handleClearSelection}
-              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl text-xs transition"
+              className="p-1.5 text-orange-100 hover:text-white hover:bg-white/20 rounded-xl text-xs transition"
               title={isId ? 'Batalkan Semua Pilihan' : 'Clear Selection'}
             >
               <X className="w-4 h-4" />
@@ -663,11 +663,11 @@ export default function BeneficiaryDatabase({
       )}
 
       {/* Main Beneficiaries Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-900 text-slate-200 font-semibold border-b border-slate-800">
+              <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-semibold border-b border-orange-500">
                 {/* Checkbox Column */}
                 <th className="py-3.5 px-3.5 w-10 text-center">
                   <div className="flex items-center justify-center">
@@ -676,7 +676,7 @@ export default function BeneficiaryDatabase({
                       type="checkbox"
                       checked={isAllFilteredSelected}
                       onChange={handleToggleSelectAllFiltered}
-                      className="w-4 h-4 rounded border-slate-600 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                      className="w-4 h-4 rounded border-white/60 text-orange-600 focus:ring-white cursor-pointer accent-orange-600"
                       title={isAllFilteredSelected ? (isId ? 'Batalkan pilihan semua' : 'Deselect all') : (isId ? 'Pilih semua di daftar ini' : 'Select all in this list')}
                     />
                   </div>
@@ -694,7 +694,7 @@ export default function BeneficiaryDatabase({
                 <th className="py-3.5 px-3">{isId ? 'Level of Beneficiaries' : 'Beneficiary Level'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-orange-100/70 bg-white">
               {filteredList.length > 0 ? (
                 filteredList.map(b => {
                   const attendedCount = attendances.filter(a => a.beneficiaryId === b.id).length;
@@ -709,8 +709,8 @@ export default function BeneficiaryDatabase({
                       onClick={() => handleToggleSelectOne(b.id)}
                       className={`transition cursor-pointer select-none ${
                         isChecked 
-                          ? 'bg-blue-50/70 hover:bg-blue-50/90 text-slate-900' 
-                          : 'hover:bg-slate-50/80 text-slate-800'
+                          ? 'bg-orange-50/80 hover:bg-orange-100/60 text-slate-900' 
+                          : 'hover:bg-orange-50/30 text-slate-800'
                       }`}
                     >
                       {/* Selection Checkbox */}
@@ -720,7 +720,7 @@ export default function BeneficiaryDatabase({
                             type="checkbox"
                             checked={isChecked}
                             onChange={(e) => handleToggleSelectOne(b.id, e)}
-                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
+                            className="w-4 h-4 rounded border-orange-300 text-orange-600 focus:ring-orange-500 cursor-pointer accent-orange-600"
                             aria-label={`Select ${b.fullName}`}
                           />
                         </div>
@@ -731,7 +731,7 @@ export default function BeneficiaryDatabase({
                         <div className="flex items-center justify-center gap-1">
                           <button
                             onClick={() => setSelectedBeneficiaryDetail(b)}
-                            className="p-1.5 rounded-lg hover:bg-slate-200/80 text-slate-600 hover:text-emerald-700 transition"
+                            className="p-1.5 rounded-lg hover:bg-orange-100 text-slate-600 hover:text-orange-700 transition"
                             title={isId ? 'Lihat Detail & Riwayat' : 'View Detail & History'}
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -740,7 +740,7 @@ export default function BeneficiaryDatabase({
                             <>
                               <button
                                 onClick={() => onEditBeneficiary(b)}
-                                className="p-1.5 rounded-lg hover:bg-slate-200/80 text-slate-600 hover:text-blue-700 transition"
+                                className="p-1.5 rounded-lg hover:bg-orange-100 text-slate-600 hover:text-orange-700 transition"
                                 title={isId ? 'Edit Data' : 'Edit Details'}
                               >
                                 <Edit className="w-3.5 h-3.5" />
@@ -762,7 +762,7 @@ export default function BeneficiaryDatabase({
                         <div className="font-bold text-slate-900 flex items-center gap-1.5">
                           <span>{b.fullName}</span>
                           {isChecked && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 inline-block"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-600 inline-block"></span>
                           )}
                         </div>
                         <div className="text-[10px] text-slate-400 font-mono">NIK: {b.nikOrIdentifier}</div>
@@ -1031,23 +1031,23 @@ export default function BeneficiaryDatabase({
       {/* Beneficiary Detail Modal */}
       {selectedBeneficiaryDetail && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="bg-white rounded-2xl border border-orange-100 max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-orange-100">
               <div>
-                <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-orange-700 uppercase tracking-wider">
                   {isId ? 'Profil Penerima Manfaat Terdaftar' : 'Registered Beneficiary Profile'}
                 </span>
                 <h3 className="font-bold text-slate-900 text-base">{selectedBeneficiaryDetail.fullName}</h3>
               </div>
               <button
                 onClick={() => setSelectedBeneficiaryDetail(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 text-sm font-bold"
+                className="p-1 rounded-lg text-slate-400 hover:text-orange-600 text-sm font-bold"
               >
                 ✕
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl text-xs">
+            <div className="grid grid-cols-2 gap-3 bg-orange-50/40 border border-orange-100 p-3.5 rounded-xl text-xs">
               <div>
                 <span className="text-[10px] text-slate-400 block">{isId ? 'NIK / ID:' : 'NIK / ID:'}</span>
                 <span className="font-mono font-bold text-slate-800">{selectedBeneficiaryDetail.nikOrIdentifier}</span>
@@ -1058,13 +1058,13 @@ export default function BeneficiaryDatabase({
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 block">{isId ? 'Target Group:' : 'Target Group:'}</span>
-                <span className="font-semibold text-indigo-900 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded text-[11px] inline-block">
+                <span className="font-semibold text-orange-900 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded text-[11px] inline-block">
                   {formatTargetGroup(selectedBeneficiaryDetail.targetGroup || 'Population of the project communities', language)}
                 </span>
               </div>
               <div>
                 <span className="text-[10px] text-slate-400 block">{isId ? 'Level of Beneficiaries:' : 'Beneficiary Level:'}</span>
-                <span className="font-semibold text-purple-900 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded text-[11px] inline-block">
+                <span className="font-semibold text-amber-900 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] inline-block">
                   {formatBeneficiaryLevel(selectedBeneficiaryDetail.beneficiaryLevel || 'Desa', language)}: {selectedBeneficiaryDetail.levelName || selectedBeneficiaryDetail.village}
                 </span>
               </div>
@@ -1072,7 +1072,7 @@ export default function BeneficiaryDatabase({
                 <div className="col-span-2">
                   <span className="text-[10px] text-slate-400 block">{isId ? 'Instansi / Lembaga / Dinas:' : 'Institution / Agency / Department:'}</span>
                   <span className="font-medium text-slate-800 flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-slate-500" />
+                    <Building2 className="w-3.5 h-3.5 text-orange-500" />
                     {selectedBeneficiaryDetail.institutionOrAgency}
                   </span>
                 </div>
@@ -1120,7 +1120,7 @@ export default function BeneficiaryDatabase({
                 <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                   {detailAttendances.map(att => {
                     return (
-                      <div key={att.id} className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                      <div key={att.id} className="p-2.5 rounded-xl bg-orange-50/30 border border-orange-100 text-xs">
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-slate-800">{att.roleInActivity}</span>
                           <span className="text-[10px] text-slate-400">{att.attendanceDate}</span>
@@ -1136,7 +1136,7 @@ export default function BeneficiaryDatabase({
               )}
             </div>
 
-            <div className="flex justify-between items-center pt-3 border-t border-slate-100">
+            <div className="flex justify-between items-center pt-3 border-t border-orange-100">
               {isAdmin && (
                 <button
                   onClick={() => {
@@ -1152,7 +1152,7 @@ export default function BeneficiaryDatabase({
               )}
               <button
                 onClick={() => setSelectedBeneficiaryDetail(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium rounded-xl ml-auto transition"
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-xl ml-auto transition"
               >
                 {isId ? 'Tutup' : 'Close'}
               </button>

@@ -258,8 +258,8 @@ export default function ProjectTeamManager({
 
   if (!activeProject) {
     return (
-      <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-        <Users className="w-12 h-12 text-slate-300 mx-auto" />
+      <div className="p-12 text-center bg-white rounded-2xl border border-orange-100 shadow-2xs space-y-4">
+        <Users className="w-12 h-12 text-orange-300 mx-auto" />
         <h3 className="text-base font-bold text-slate-800">{isId ? 'Belum Ada Proyek Terdaftar' : 'No Projects Registered Yet'}</h3>
         <p className="text-xs text-slate-500 max-w-md mx-auto">
           {isId ? 'Mulai dengan menambahkan proyek baru untuk mengelola struktur tim pelaksana dan kerangka kerja logframe.' : 'Start by creating a new project to manage team personnel and logframe matrices.'}
@@ -267,7 +267,7 @@ export default function ProjectTeamManager({
         {isAdmin && (
           <button
             onClick={onOpenNewProjectModal}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs transition"
+            className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shadow-2xs transition"
           >
             <Plus className="w-4 h-4" /> {isId ? 'Tambah Proyek Pertama' : 'Add First Project'}
           </button>
@@ -279,10 +279,10 @@ export default function ProjectTeamManager({
   return (
     <div className="space-y-6 pb-12">
       {/* Top Header Card */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 font-bold text-xs">
               Project Governance & Personnel
             </span>
             <span className="text-xs text-slate-400 font-medium">
@@ -304,16 +304,16 @@ export default function ProjectTeamManager({
             <>
               <button
                 onClick={onOpenNewProjectModal}
-                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+                className="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
               >
                 <Plus className="w-4 h-4" />
                 <span>{isId ? 'Tambah Proyek' : 'Add Project'}</span>
               </button>
               <button
                 onClick={handleOpenAddModal}
-                className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+                className="px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
               >
-                <UserPlus className="w-4 h-4 text-emerald-400" />
+                <UserPlus className="w-4 h-4 text-amber-100" />
                 <span>{isId ? '+ Anggota Tim' : '+ Team Member'}</span>
               </button>
             </>
@@ -322,20 +322,20 @@ export default function ProjectTeamManager({
       </div>
 
       {/* Project Switcher Navigation */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-orange-100 pb-2 overflow-x-auto">
         {projects.map(p => (
           <div key={p.id} className="flex items-center group shrink-0">
             <button
               onClick={() => setSelectedProjectId(p.id)}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-2 ${
                 activeProject.id === p.id
-                  ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-2xs'
+                  : 'bg-white text-slate-600 hover:bg-orange-50/70 border border-orange-100'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${activeProject.id === p.id ? 'bg-emerald-400' : 'bg-slate-300'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${activeProject.id === p.id ? 'bg-amber-200' : 'bg-orange-300'}`}></span>
               <span>{p.code}</span>
-              <span className="opacity-70 text-[11px]">({p.teamMembers.length} {isId ? 'Personil' : 'Personnel'})</span>
+              <span className="opacity-75 text-[11px]">({p.teamMembers.length} {isId ? 'Personil' : 'Personnel'})</span>
             </button>
             {isAdmin && projects.length > 1 && (
               <button
@@ -354,14 +354,14 @@ export default function ProjectTeamManager({
       </div>
 
       {/* Active Project Details Banner */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs p-5 sm:p-6 space-y-5">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs p-5 sm:p-6 space-y-5">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-4 border-b border-orange-100">
           <div className="space-y-1.5 max-w-3xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+              <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
                 {activeProject.code}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-800 border border-orange-100">
                 {isId ? `Status: ${activeProject.status}` : `Status: ${activeProject.status}`}
               </span>
               <span className="text-xs text-slate-400 font-medium">
@@ -373,10 +373,10 @@ export default function ProjectTeamManager({
           </div>
 
           {isAdmin && (
-            <div className="flex items-center gap-2 shrink-0 self-start">
+            <div className="flex flex-wrap items-center gap-2 shrink-0 self-start">
               <button
                 onClick={() => onEditProject(activeProject)}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-300 transition"
+                className="px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-orange-200 transition"
                 title={isId ? 'Edit data profil dan anggaran proyek' : 'Edit project profile and budget'}
               >
                 <Edit className="w-3.5 h-3.5" />
@@ -395,7 +395,7 @@ export default function ProjectTeamManager({
         </div>
 
         {/* Project Metadata Stats Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 bg-slate-50/80 p-4 rounded-xl text-xs border border-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 bg-orange-50/40 p-4 rounded-xl text-xs border border-orange-100">
           <div>
             <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">{isId ? 'Lembaga Donor:' : 'Donor Agency:'}</span>
             <span className="font-bold text-slate-800 text-xs sm:text-sm mt-0.5 block">{activeProject.donor}</span>
@@ -406,7 +406,7 @@ export default function ProjectTeamManager({
           </div>
           <div>
             <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">{isId ? 'Total Anggaran:' : 'Total Budget:'}</span>
-            <span className="font-bold text-emerald-700 text-xs sm:text-sm mt-0.5 block">
+            <span className="font-bold text-orange-700 text-xs sm:text-sm mt-0.5 block">
               Rp {activeProject.budgetTotal.toLocaleString('id-ID')}
             </span>
           </div>
@@ -420,23 +420,23 @@ export default function ProjectTeamManager({
 
         {/* Target Locations & Villages */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div className="p-3 bg-slate-50/60 rounded-xl border border-slate-200/60 space-y-1.5">
+          <div className="p-3 bg-orange-50/30 rounded-xl border border-orange-100 space-y-1.5">
             <span className="font-bold text-slate-700 flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+              <MapPin className="w-3.5 h-3.5 text-orange-600" />
               {isId ? 'Kecamatan & Wilayah Intervensi:' : 'Sub-districts & Intervention Areas:'}
             </span>
             <div className="flex flex-wrap gap-1.5">
               {activeProject.targetLocations.map((loc, idx) => (
-                <span key={idx} className="px-2.5 py-0.5 rounded-md bg-white text-slate-700 border border-slate-200 text-[11px] font-medium shadow-2xs">
+                <span key={idx} className="px-2.5 py-0.5 rounded-md bg-white text-slate-700 border border-orange-200/70 text-[11px] font-medium shadow-2xs">
                   {loc}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="p-3 bg-emerald-50/40 rounded-xl border border-emerald-200/60 space-y-1.5">
-            <span className="font-bold text-emerald-900 flex items-center gap-1">
-              <Building className="w-3.5 h-3.5 text-emerald-700" />
+          <div className="p-3 bg-orange-50/50 rounded-xl border border-orange-200/70 space-y-1.5">
+            <span className="font-bold text-orange-950 flex items-center gap-1">
+              <Building className="w-3.5 h-3.5 text-orange-600" />
               {isId ? 'Desa / Kelurahan Dampingan:' : 'Target Assisted Villages:'}
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -444,8 +444,8 @@ export default function ProjectTeamManager({
                 ? activeProject.targetVillages 
                 : activeProject.targetLocations
               ).map((v, idx) => (
-                <span key={idx} className="px-2.5 py-0.5 rounded-md bg-emerald-100/70 text-emerald-900 border border-emerald-300 text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span key={idx} className="px-2.5 py-0.5 rounded-md bg-orange-100/80 text-orange-900 border border-orange-200 text-[11px] font-semibold flex items-center gap-1 shadow-2xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-600"></span>
                   {v}
                 </span>
               ))}
@@ -455,12 +455,12 @@ export default function ProjectTeamManager({
       </div>
 
       {/* TEAM MEMBERS SECTION (FULL CRUD) */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs p-5 sm:p-6 space-y-5">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-2xs p-5 sm:p-6 space-y-5">
         {/* Team Header & Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-orange-100">
           <div>
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-emerald-600" />
+              <Users className="w-5 h-5 text-orange-600" />
               <h3 className="text-base font-bold text-slate-900">
                 {isId ? `Struktur Tim Proyek & Penanggung Jawab (${activeProject.teamMembers.length} Personil)` : `Project Team & Personnel Structure (${activeProject.teamMembers.length} Personnel)`}
               </h3>
@@ -473,7 +473,7 @@ export default function ProjectTeamManager({
           {isAdmin && (
             <button
               onClick={handleOpenAddModal}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition self-start sm:self-auto"
+              className="px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition self-start sm:self-auto"
             >
               <UserPlus className="w-4 h-4" />
               <span>{isId ? '+ Tambah Anggota Tim' : '+ Add Team Member'}</span>
@@ -484,13 +484,13 @@ export default function ProjectTeamManager({
         {/* Search & Filter Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-orange-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isId ? 'Cari nama personil, posisi/jabatan, atau email...' : 'Search personnel name, role, or email...'}
-              className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full pl-9 pr-3 py-2 text-xs bg-orange-50/40 border border-orange-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-orange-500 transition"
             />
             {searchQuery && (
               <button
@@ -508,8 +508,8 @@ export default function ProjectTeamManager({
               onClick={() => setSelectedRoleFilter('ALL')}
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
                 selectedRoleFilter === 'ALL'
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-orange-50 text-slate-600 hover:bg-orange-100'
               }`}
             >
               {isId ? 'Semua' : 'All'} ({activeProject.teamMembers.length})
@@ -520,8 +520,8 @@ export default function ProjectTeamManager({
                 onClick={() => setSelectedRoleFilter(role)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
                   selectedRoleFilter === role
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-amber-600 text-white'
+                    : 'bg-orange-50 text-slate-600 hover:bg-orange-100'
                 }`}
               >
                 {role.length > 20 ? role.substring(0, 20) + '...' : role}
@@ -545,7 +545,7 @@ export default function ProjectTeamManager({
               return (
                 <div 
                   key={member.id}
-                  className="bg-slate-50/70 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-emerald-300 hover:shadow-2xs transition flex flex-col justify-between space-y-3.5 group"
+                  className="bg-orange-50/20 hover:bg-white rounded-2xl p-4 border border-orange-100 hover:border-orange-300 hover:shadow-2xs transition flex flex-col justify-between space-y-3.5 group"
                 >
                   <div className="space-y-2.5">
                     {/* Header: Avatar, Name, Role Badge, Actions */}
@@ -557,7 +557,7 @@ export default function ProjectTeamManager({
                               src={member.avatarUrl}
                               alt={member.name}
                               referrerPolicy="no-referrer"
-                              className="w-11 h-11 rounded-xl object-cover border border-slate-200/80 shadow-2xs"
+                              className="w-11 h-11 rounded-xl object-cover border border-orange-200/80 shadow-2xs"
                               onError={(e) => {
                                 (e.target as HTMLElement).style.display = 'none';
                                 const fallback = (e.target as HTMLElement).parentElement?.querySelector('.avatar-fallback') as HTMLElement;
@@ -566,7 +566,7 @@ export default function ProjectTeamManager({
                             />
                           ) : null}
                           <span 
-                            className={`avatar-fallback w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-bold text-xs items-center justify-center shadow-2xs shrink-0 ${member.avatarUrl ? 'hidden' : 'flex'}`}
+                            className={`avatar-fallback w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white font-bold text-xs items-center justify-center shadow-2xs shrink-0 ${member.avatarUrl ? 'hidden' : 'flex'}`}
                           >
                             {initials}
                           </span>
@@ -577,8 +577,8 @@ export default function ProjectTeamManager({
                           </h4>
                           {/* Manual Inputted Role Display */}
                           <div className="mt-1">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 shadow-2xs">
-                              <Briefcase className="w-3 h-3 text-indigo-600" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-orange-50 text-orange-800 border border-orange-200 shadow-2xs">
+                              <Briefcase className="w-3 h-3 text-orange-600" />
                               {member.role}
                             </span>
                           </div>
@@ -590,7 +590,7 @@ export default function ProjectTeamManager({
                         <div className="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition">
                           <button
                             onClick={() => handleOpenEditModal(member)}
-                            className="p-1.5 text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition"
+                            className="p-1.5 text-slate-400 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition"
                             title={isId ? 'Edit data anggota tim, foto & jabatan' : 'Edit member details, photo & role'}
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -607,7 +607,7 @@ export default function ProjectTeamManager({
                     </div>
 
                     {/* Contact Details */}
-                    <div className="space-y-1.5 pt-2 border-t border-slate-200/60 text-xs text-slate-600">
+                    <div className="space-y-1.5 pt-2 border-t border-orange-100/70 text-xs text-slate-600">
                       <div className="flex items-center justify-between gap-1">
                         <div className="flex items-center gap-2 truncate">
                           <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -616,7 +616,7 @@ export default function ProjectTeamManager({
                         {member.email && (
                           <a
                             href={`mailto:${member.email}`}
-                            className="text-[10px] text-indigo-600 hover:underline font-semibold shrink-0"
+                            className="text-[10px] text-orange-600 hover:underline font-semibold shrink-0"
                           >
                             {isId ? 'Kirim Email' : 'Send Email'}
                           </a>
@@ -644,7 +644,7 @@ export default function ProjectTeamManager({
 
                     {/* Assigned Outcomes or Responsibilities if any */}
                     {member.assignedOutcomes && member.assignedOutcomes.length > 0 && (
-                      <div className="pt-2 border-t border-slate-200/60">
+                      <div className="pt-2 border-t border-orange-100/70">
                         <span className="text-[10px] text-slate-400 block font-semibold uppercase mb-1">
                           {isId ? 'Penugasan Outcome:' : 'Assigned Outcomes:'}
                         </span>
@@ -652,7 +652,7 @@ export default function ProjectTeamManager({
                           {member.assignedOutcomes.map((ocId) => {
                             const oc = activeProject.outcomes.find(o => o.id === ocId);
                             return (
-                              <span key={ocId} className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-medium border border-slate-200">
+                              <span key={ocId} className="px-2 py-0.5 rounded bg-orange-50 text-orange-800 text-[10px] font-medium border border-orange-100">
                                 {oc ? `${oc.code}: ${oc.title.substring(0, 20)}...` : ocId}
                               </span>
                             );
@@ -663,7 +663,7 @@ export default function ProjectTeamManager({
                   </div>
 
                   {/* Footer status */}
-                  <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-400">
+                  <div className="pt-2 border-t border-orange-100/70 flex items-center justify-between text-[11px] text-slate-400">
                     <span className="flex items-center gap-1 text-emerald-700 font-medium">
                       <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                       {isId ? 'Personil Aktif' : 'Active Personnel'}
@@ -675,13 +675,13 @@ export default function ProjectTeamManager({
             })}
           </div>
         ) : (
-          <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-400 text-xs space-y-2">
-            <Users className="w-8 h-8 text-slate-300 mx-auto" />
+          <div className="p-8 text-center bg-orange-50/30 rounded-2xl border border-orange-100 text-slate-400 text-xs space-y-2">
+            <Users className="w-8 h-8 text-orange-200 mx-auto" />
             <p>{isId ? 'Tidak ada personil yang sesuai dengan pencarian atau filter.' : 'No personnel matched your filter or search query.'}</p>
             {searchQuery && (
               <button
                 onClick={() => { setSearchQuery(''); setSelectedRoleFilter('ALL'); }}
-                className="text-emerald-600 font-semibold hover:underline text-xs"
+                className="text-orange-600 font-semibold hover:underline text-xs"
               >
                 {isId ? 'Reset Filter' : 'Reset Filters'}
               </button>
@@ -693,10 +693,10 @@ export default function ProjectTeamManager({
       {/* MODAL: ADD / EDIT TEAM MEMBER (WITH PHOTO UPLOAD & MANUAL ROLE INPUT) */}
       {showMemberModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 my-8 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-orange-100 space-y-5 animate-in fade-in zoom-in-95 my-8 max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-orange-100">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800">
+                <div className="p-2 rounded-xl bg-orange-100 text-orange-700">
                   <UserPlus className="w-5 h-5" />
                 </div>
                 <div>
@@ -710,7 +710,7 @@ export default function ProjectTeamManager({
               </div>
               <button
                 onClick={() => setShowMemberModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+                className="p-1 rounded-lg text-slate-400 hover:text-orange-700 hover:bg-orange-50 transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -718,10 +718,10 @@ export default function ProjectTeamManager({
 
             <div className="space-y-4 text-xs">
               {/* SECTION: FOTO PROFIL (PROFILE PHOTO UPLOAD) */}
-              <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-3">
+              <div className="p-3.5 bg-orange-50/40 rounded-2xl border border-orange-100 space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
-                    <Camera className="w-4 h-4 text-emerald-600" />
+                    <Camera className="w-4 h-4 text-orange-600" />
                     <span>{isId ? 'Foto Profil Personil' : 'Personnel Profile Photo'}</span>
                   </label>
                   {avatarUrlInput && (
@@ -740,7 +740,7 @@ export default function ProjectTeamManager({
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   {/* Photo Preview Frame */}
                   <div className="relative shrink-0 group">
-                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white border-2 border-emerald-500/40 shadow-xs flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white border-2 border-orange-500/40 shadow-xs flex items-center justify-center">
                       {avatarUrlInput ? (
                         <img 
                           src={avatarUrlInput} 
@@ -755,7 +755,7 @@ export default function ProjectTeamManager({
                         />
                       ) : null}
                       <div 
-                        className={`avatar-modal-fallback w-full h-full bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-bold text-xl flex items-center justify-center ${avatarUrlInput ? 'hidden' : 'flex'}`}
+                        className={`avatar-modal-fallback w-full h-full bg-gradient-to-br from-orange-500 to-amber-500 text-white font-bold text-xl flex items-center justify-center ${avatarUrlInput ? 'hidden' : 'flex'}`}
                       >
                         {nameInput 
                           ? nameInput.split(' ').filter(Boolean).slice(0, 2).map(n => n[0]).join('').toUpperCase() || 'TM'
@@ -767,7 +767,7 @@ export default function ProjectTeamManager({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="absolute -bottom-1 -right-1 p-1.5 bg-emerald-600 text-white rounded-xl shadow-md hover:bg-emerald-700 transition"
+                      className="absolute -bottom-1 -right-1 p-1.5 bg-orange-600 text-white rounded-xl shadow-md hover:bg-orange-700 transition"
                       title={isId ? 'Pilih foto dari komputer/HP' : 'Upload photo from device'}
                     >
                       <Camera className="w-3.5 h-3.5" />
@@ -795,11 +795,11 @@ export default function ProjectTeamManager({
                       onClick={() => fileInputRef.current?.click()}
                       className={`p-3 border-2 border-dashed rounded-xl text-center cursor-pointer transition flex flex-col items-center justify-center gap-1 ${
                         isDraggingOver 
-                          ? 'border-emerald-500 bg-emerald-50/80 text-emerald-800' 
-                          : 'border-slate-300 hover:border-emerald-400 bg-white hover:bg-slate-50/50 text-slate-600'
+                          ? 'border-orange-500 bg-orange-50/80 text-orange-800' 
+                          : 'border-orange-200 hover:border-orange-400 bg-white hover:bg-orange-50/30 text-slate-600'
                       }`}
                     >
-                      <Upload className="w-4 h-4 text-emerald-600" />
+                      <Upload className="w-4 h-4 text-orange-600" />
                       <span className="font-semibold text-[11px] text-slate-800">
                         {isId ? 'Klik untuk Unggah Foto atau Tarik File Gambar ke Sini' : 'Click to Upload Photo or Drag & Drop Image Here'}
                       </span>
@@ -812,7 +812,7 @@ export default function ProjectTeamManager({
                       <button
                         type="button"
                         onClick={() => setShowUrlInput(!showUrlInput)}
-                        className="text-[10px] text-indigo-600 hover:underline font-semibold flex items-center gap-1"
+                        className="text-[10px] text-orange-600 hover:underline font-semibold flex items-center gap-1"
                       >
                         <LinkIcon className="w-3 h-3" />
                         {showUrlInput ? (isId ? 'Tutup Input Link URL' : 'Hide URL input') : (isId ? 'Gunakan Link URL Gambar' : 'Use Image URL Link')}
@@ -823,7 +823,7 @@ export default function ProjectTeamManager({
 
                 {/* Direct Image URL input field (collapsible) */}
                 {showUrlInput && (
-                  <div className="pt-2 border-t border-slate-200/70 space-y-1">
+                  <div className="pt-2 border-t border-orange-100 space-y-1">
                     <label className="text-[11px] font-semibold text-slate-700 block">
                       {isId ? 'Tautan / Link URL Foto Langsung:' : 'Direct Image URL Link:'}
                     </label>
@@ -833,14 +833,14 @@ export default function ProjectTeamManager({
                         value={avatarUrlInput}
                         onChange={(e) => setAvatarUrlInput(e.target.value)}
                         placeholder="https://images.unsplash.com/photo-xxx atau link gambar lain"
-                        className="w-full p-2 text-[11px] bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                        className="w-full p-2 text-[11px] bg-white border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-hidden"
                       />
                     </div>
                   </div>
                 )}
 
                 {/* Preset Avatar Selection */}
-                <div className="pt-2 border-t border-slate-200/70 space-y-1.5">
+                <div className="pt-2 border-t border-orange-100 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-slate-600 flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-amber-500" />
@@ -860,8 +860,8 @@ export default function ProjectTeamManager({
                         title={preset.label}
                         className={`relative rounded-xl overflow-hidden aspect-square border-2 transition group hover:scale-105 ${
                           avatarUrlInput === preset.url 
-                            ? 'border-emerald-600 ring-2 ring-emerald-400' 
-                            : 'border-slate-200 hover:border-emerald-400'
+                            ? 'border-orange-600 ring-2 ring-orange-400' 
+                            : 'border-slate-200 hover:border-orange-400'
                         }`}
                       >
                         <img 
@@ -871,7 +871,7 @@ export default function ProjectTeamManager({
                           className="w-full h-full object-cover"
                         />
                         {avatarUrlInput === preset.url && (
-                          <div className="absolute inset-0 bg-emerald-600/30 flex items-center justify-center">
+                          <div className="absolute inset-0 bg-orange-600/30 flex items-center justify-center">
                             <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
                           </div>
                         )}
@@ -891,7 +891,7 @@ export default function ProjectTeamManager({
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
                   placeholder={isId ? 'Contoh: Rian Pangestu, S.Kom / Dr. Maria Kusuma' : 'e.g. John Doe, M.Sc / Dr. Maria Kusuma'}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-hidden font-medium text-slate-900"
+                  className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-hidden font-medium text-slate-900"
                   required
                 />
               </div>
@@ -902,7 +902,7 @@ export default function ProjectTeamManager({
                   <label className="font-bold text-slate-700 block">
                     {isId ? 'Posisi / Jabatan Proyek (Input Bebas)' : 'Role / Project Position (Custom Input)'} <span className="text-rose-500">*</span>:
                   </label>
-                  <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
+                  <span className="text-[10px] text-orange-700 font-semibold bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
                     {isId ? 'Input Bebas / Custom' : 'Custom Input'}
                   </span>
                 </div>
@@ -912,7 +912,7 @@ export default function ProjectTeamManager({
                   onChange={(e) => setRoleInput(e.target.value)}
                   list="suggested-project-roles"
                   placeholder={isId ? 'Ketik jabatan (misal: Koordinator Lapangan, Agronomis, Fasilitator)' : 'Type role (e.g. Field Coordinator, Agronomist, Facilitator)'}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-hidden font-medium text-slate-900"
+                  className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-hidden font-medium text-slate-900"
                   required
                 />
                 <datalist id="suggested-project-roles">
@@ -935,7 +935,7 @@ export default function ProjectTeamManager({
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="name.personnel@project.org"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                    className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-hidden"
                   />
                 </div>
 
@@ -948,18 +948,18 @@ export default function ProjectTeamManager({
                     value={phoneInput}
                     onChange={(e) => setPhoneInput(e.target.value)}
                     placeholder="+62 812-3456-7890"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-hidden"
+                    className="w-full p-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-orange-500 focus:outline-hidden"
                   />
                 </div>
               </div>
 
               {/* Assigned Outcomes Checkbox selector */}
               {activeProject.outcomes.length > 0 && (
-                <div className="pt-2 border-t border-slate-100">
+                <div className="pt-2 border-t border-orange-100">
                   <label className="font-semibold text-slate-700 block mb-1.5">
                     {isId ? 'Penugasan Tanggung Jawab Outcome (Opsional):' : 'Assigned Outcome Responsibilities (Optional):'}
                   </label>
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200">
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto p-2 bg-orange-50/40 rounded-xl border border-orange-200">
                     {activeProject.outcomes.map(oc => {
                       const isChecked = selectedOutcomesInput.includes(oc.id);
                       return (
@@ -974,7 +974,7 @@ export default function ProjectTeamManager({
                                 setSelectedOutcomesInput(prev => prev.filter(id => id !== oc.id));
                               }
                             }}
-                            className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
+                            className="w-4 h-4 rounded accent-orange-600 text-orange-600 focus:ring-orange-500"
                           />
                           <span className="font-bold text-slate-800">{oc.code}:</span>
                           <span className="text-slate-600 truncate">{oc.title}</span>
@@ -986,7 +986,7 @@ export default function ProjectTeamManager({
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-orange-100">
               <button
                 type="button"
                 onClick={() => setShowMemberModal(false)}
@@ -997,7 +997,7 @@ export default function ProjectTeamManager({
               <button
                 type="button"
                 onClick={handleSaveMember}
-                className="px-5 py-2 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-2xs transition"
+                className="px-5 py-2 text-xs bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-bold rounded-xl shadow-2xs transition"
               >
                 {editingMember ? (isId ? 'Simpan Perubahan' : 'Save Changes') : (isId ? 'Tambahkan Personil' : 'Add Personnel')}
               </button>
@@ -1030,13 +1030,13 @@ export default function ProjectTeamManager({
                     className="w-10 h-10 rounded-xl object-cover border border-slate-200"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-bold text-xs flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white font-bold text-xs flex items-center justify-center">
                     {memberToDelete.name.slice(0, 2).toUpperCase()}
                   </div>
                 )}
                 <div>
                   <div className="font-bold text-slate-900">{memberToDelete.name}</div>
-                  <div className="text-indigo-700 font-semibold">{memberToDelete.role}</div>
+                  <div className="text-orange-700 font-semibold">{memberToDelete.role}</div>
                 </div>
               </div>
               <div className="pt-1 border-t border-slate-200/60">Email: <span>{memberToDelete.email}</span></div>

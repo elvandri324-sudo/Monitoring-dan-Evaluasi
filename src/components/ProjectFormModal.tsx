@@ -136,13 +136,13 @@ export default function ProjectFormModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-orange-100 space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150">
         
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-3 border-b border-orange-100">
           <div>
             <div className="flex items-center gap-2">
               <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                editingProject ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                editingProject ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-orange-100 text-orange-800 border border-orange-300'
               }`}>
                 {editingProject 
                   ? (isId ? 'Edit Data Proyek' : 'Edit Project Data') 
@@ -160,14 +160,14 @@ export default function ProjectFormModal({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1 rounded-lg hover:bg-slate-100 transition"
+            className="text-slate-400 hover:text-orange-700 text-sm font-bold p-1.5 rounded-lg hover:bg-orange-50 transition"
           >
             ✕
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="font-semibold block mb-1 text-slate-700">
                 {isId ? 'Kode Proyek *:' : 'Project Code *:'}
@@ -178,10 +178,10 @@ export default function ProjectFormModal({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="PROJ-01"
-                className="w-full p-2 border border-slate-300 rounded-lg font-bold font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-2 border border-slate-300 rounded-lg font-bold font-mono focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="font-semibold block mb-1 text-slate-700">
                 {isId ? 'Nama / Judul Lengkap Proyek *:' : 'Project Full Name / Title *:'}
               </label>
@@ -191,7 +191,7 @@ export default function ProjectFormModal({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={isId ? 'Contoh: Program Pemberdayaan Petani Kopi Berkelanjutan...' : 'e.g. Sustainable Community Forestry Program...'}
-                className="w-full p-2 border border-slate-300 rounded-lg font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-2 border border-slate-300 rounded-lg font-semibold text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
           </div>
@@ -205,11 +205,11 @@ export default function ProjectFormModal({
               value={goalStatement}
               onChange={(e) => setGoalStatement(e.target.value)}
               placeholder={isId ? 'Jelaskan dampak jangka panjang yang ingin dicapai proyek...' : 'Describe the long-term impact the project aims to achieve...'}
-              className="w-full p-2 border border-slate-300 rounded-lg text-xs"
+              className="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="font-semibold block mb-1">
                 {isId ? 'Lembaga Donor / Pendana:' : 'Donor / Funding Agency:'}
@@ -219,7 +219,7 @@ export default function ProjectFormModal({
                 value={donor}
                 onChange={(e) => setDonor(e.target.value)}
                 placeholder="USAID / EU / Ford Foundation..."
-                className="w-full p-2 border border-slate-300 rounded-lg"
+                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -231,12 +231,12 @@ export default function ProjectFormModal({
                 value={partnerOrg}
                 onChange={(e) => setPartnerOrg(e.target.value)}
                 placeholder={isId ? 'Nama Yayasan / LSM Mitra' : 'Partner NGO / Consortium'}
-                className="w-full p-2 border border-slate-300 rounded-lg"
+                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="font-semibold block mb-1">
                 {isId ? 'Total Anggaran (IDR):' : 'Total Budget (IDR):'}
@@ -245,7 +245,7 @@ export default function ProjectFormModal({
                 type="number"
                 value={budgetTotal}
                 onChange={(e) => setBudgetTotal(Number(e.target.value))}
-                className="w-full p-2 border border-slate-300 rounded-lg font-bold"
+                className="w-full p-2 border border-slate-300 rounded-lg font-bold tabular-nums focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -256,7 +256,7 @@ export default function ProjectFormModal({
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full p-2 border border-slate-300 rounded-lg"
+                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -267,12 +267,12 @@ export default function ProjectFormModal({
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full p-2 border border-slate-300 rounded-lg"
+                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="font-semibold block mb-1">
                 {isId ? 'Provinsi Utama:' : 'Primary Province:'}
@@ -281,7 +281,7 @@ export default function ProjectFormModal({
                 type="text"
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
-                className="w-full p-2 border border-slate-300 rounded-lg"
+                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div>
@@ -291,7 +291,7 @@ export default function ProjectFormModal({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full p-2 border border-slate-300 rounded-lg"
+                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               >
                 <option value="Aktif">{isId ? 'Aktif' : 'Active'}</option>
                 <option value="Perencanaan">{isId ? 'Perencanaan' : 'Planning'}</option>
@@ -310,16 +310,16 @@ export default function ProjectFormModal({
               value={targetLocations}
               onChange={(e) => setTargetLocations(e.target.value)}
               placeholder={isId ? 'Contoh: Kec. Pangkajene, Kec. Tanete, Kab. Barru' : 'e.g., Pangkajene District, Tanete District'}
-              className="w-full p-2 border border-slate-300 rounded-lg text-xs"
+              className="w-full p-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
-          <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-200/80 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="font-bold text-emerald-950 text-xs block">
+          <div className="bg-orange-50/60 p-3 rounded-xl border border-orange-200/80 space-y-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
+              <label className="font-bold text-orange-950 text-xs block">
                 🏡 {isId ? 'Nama Desa / Kelurahan Dampingan:' : 'Target Village / Sub-District Names:'}
               </label>
-              <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-100 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-orange-800 font-semibold bg-orange-100 px-2 py-0.5 rounded-full">
                 {isId ? 'Wajib untuk pembagian penerima manfaat' : 'Required for disaggregation'}
               </span>
             </div>
@@ -328,27 +328,27 @@ export default function ProjectFormModal({
               value={targetVillages}
               onChange={(e) => setTargetVillages(e.target.value)}
               placeholder={isId ? 'Contoh: Desa Menjalin, Desa Siding, Kelurahan Harapan Baru (Pisahkan dengan koma)' : 'e.g. Menjalin Village, Siding Village, Harapan Baru (Comma separated)'}
-              className="w-full p-2.5 bg-white border border-emerald-300 focus:ring-2 focus:ring-emerald-500 rounded-lg text-xs font-semibold text-slate-800"
+              className="w-full p-2.5 bg-white border border-orange-300 focus:ring-2 focus:ring-orange-500 rounded-lg text-xs font-semibold text-slate-800"
               required
             />
-            <p className="text-[11px] text-emerald-800 leading-tight">
+            <p className="text-[11px] text-orange-800 leading-tight">
               {isId 
                 ? 'Daftar desa/kelurahan ini akan digunakan secara otomatis untuk mengelompokkan dan menghitung disagregasi penerima manfaat per wilayah dampingan.'
                 : 'This village list will be used automatically to categorize and compute beneficiary disaggregations per target area.'}
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-orange-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
+              className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition"
             >
               {isId ? 'Batal' : 'Cancel'}
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition"
+              className="px-5 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white shadow-xs transition"
             >
               {editingProject 
                 ? (isId ? 'Simpan Perubahan' : 'Save Changes') 

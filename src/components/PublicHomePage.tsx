@@ -320,33 +320,33 @@ export default function PublicHomePage({
   }, [targetProjects, attendances]);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="min-h-screen bg-[#FFFBF7] text-slate-900 font-sans selection:bg-orange-100 selection:text-orange-900 overflow-x-clip">
       {/* TOP HEADER */}
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200/90 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <header className="sticky top-0 z-30 bg-white border-b border-orange-100 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-2.5 sm:gap-4">
           {/* Logo and Brand Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200/80 shadow-xs flex-shrink-0">
-              <ShieldCheck className="w-6 h-6 text-emerald-600" />
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20 shrink-0">
+              <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-snug tracking-tight">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-sm sm:text-lg font-bold text-slate-900 leading-snug tracking-tight truncate">
                 M&E Platform by Elvandri
               </h1>
-              <p className="text-[11px] text-slate-500 font-medium">
+              <p className="text-[11px] text-slate-500 font-medium truncate">
                 {isId ? 'Sistem Monitoring, Evaluasi, Pembelajaran & Dampak' : 'Monitoring, Evaluation, Learning & Impact System'}
               </p>
             </div>
           </div>
 
           {/* Right Action Header Bar */}
-          <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {/* Language Switcher */}
-            <div className="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+            <div className="inline-flex items-center bg-orange-50/80 p-1 rounded-xl border border-orange-200/70 text-xs shrink-0">
               <button
                 onClick={() => setLanguage('id')}
-                className={`px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 ${
-                  isId ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 whitespace-nowrap ${
+                  isId ? 'bg-orange-600 text-white shadow-2xs' : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <span>🇮🇩</span>
@@ -354,8 +354,8 @@ export default function PublicHomePage({
               </button>
               <button
                 onClick={() => setLanguage('en')}
-                className={`px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 ${
-                  !isId ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                className={`px-2 sm:px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 whitespace-nowrap ${
+                  !isId ? 'bg-orange-600 text-white shadow-2xs' : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <span>🇬🇧</span>
@@ -363,23 +363,22 @@ export default function PublicHomePage({
               </button>
             </div>
 
-            {/* System Status Pill Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/90 text-emerald-700 text-xs font-semibold border border-emerald-200/80 shadow-xs">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            {/* System Status Pill Badge (Desktop XL only to avoid header crowding) */}
+            <div className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 text-orange-800 text-xs font-semibold border border-orange-200/80 shadow-xs whitespace-nowrap">
+              <CheckCircle2 className="w-3.5 h-3.5 text-orange-600" />
               <span>{isId ? 'Sistem Terintegrasi Tanpa Double Counting' : 'Integrated Zero Double-Counting System'}</span>
             </div>
 
             {/* Navigation Buttons */}
-            <div className="inline-flex items-center gap-2">
-              <button
-                id="btn-nav-admin-entry"
-                onClick={onGoToAdmin}
-                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold border border-emerald-600 shadow-xs flex items-center gap-1.5 transition"
-              >
-                <Lock className="w-3.5 h-3.5" />
-                <span>{isId ? 'Administrator & Entri Data' : 'Admin & Data Entry'}</span>
-              </button>
-            </div>
+            <button
+              id="btn-nav-admin-entry"
+              onClick={onGoToAdmin}
+              className="px-3 sm:px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-lg text-xs font-semibold shadow-sm shadow-orange-500/20 flex items-center gap-1.5 transition whitespace-nowrap shrink-0"
+            >
+              <Lock className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden sm:inline">{isId ? 'Administrator & Entri Data' : 'Admin & Data Entry'}</span>
+              <span className="sm:hidden">{isId ? 'Masuk Admin' : 'Admin Login'}</span>
+            </button>
           </div>
         </div>
       </header>
@@ -387,7 +386,7 @@ export default function PublicHomePage({
       {/* MAIN CONTENT CONTAINER */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
         {/* CARD 1: FILTER ANALISIS PROYEK */}
-        <section className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <section className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-base font-bold text-slate-900 tracking-tight">
@@ -401,12 +400,12 @@ export default function PublicHomePage({
             </div>
 
             {/* Dropdown Project Selector */}
-            <div className="min-w-[260px] sm:min-w-[320px]">
+            <div className="w-full sm:w-auto sm:min-w-[280px] sm:max-w-md min-w-0">
               <select
                 id="public-project-filter"
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
-                className="w-full text-xs font-semibold bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-800 shadow-2xs focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
+                className="w-full max-w-full text-xs font-semibold bg-white border border-orange-200 rounded-xl px-3.5 py-2.5 text-slate-800 shadow-2xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500 cursor-pointer truncate outline-hidden"
               >
                 <option value="all">{isId ? 'Semua Proyek (Konsolidasi Multi-Sektor)' : 'All Projects (Multi-Sector Consolidation)'}</option>
                 {projects.map(p => {
@@ -422,28 +421,28 @@ export default function PublicHomePage({
           </div>
 
           {/* Project Metadata Info Bar (4 Columns) */}
-          <div className="bg-[#f8fafc] rounded-xl p-4 border border-slate-200/70 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+          <div className="bg-orange-50/40 rounded-xl p-4 border border-orange-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
             <div>
-              <span className="text-[11px] text-slate-400 font-medium block">{isId ? 'Sektor Proyek' : 'Project Sector'}</span>
+              <span className="text-[11px] text-slate-500 font-medium block">{isId ? 'Sektor Proyek' : 'Project Sector'}</span>
               <span className="font-bold text-slate-900 block mt-0.5 leading-snug">
                 {meta.sectorLabel}
               </span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-400 font-medium block">{isId ? 'Penanggung Jawab (Lead)' : 'Team Lead'}</span>
+              <span className="text-[11px] text-slate-500 font-medium block">{isId ? 'Penanggung Jawab (Lead)' : 'Team Lead'}</span>
               <span className="font-bold text-slate-900 block mt-0.5 leading-snug">
                 {meta.teamLeadLabel}
               </span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-400 font-medium block">{isId ? 'Periode Pelaksanaan' : 'Implementation Period'}</span>
+              <span className="text-[11px] text-slate-500 font-medium block">{isId ? 'Periode Pelaksanaan' : 'Implementation Period'}</span>
               <span className="font-bold text-slate-900 block mt-0.5 leading-snug">
                 {meta.dateRange}
               </span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-400 font-medium block">{isId ? 'Total Anggaran' : 'Total Budget'}</span>
-              <span className="font-extrabold text-emerald-600 block mt-0.5 text-sm leading-snug">
+              <span className="text-[11px] text-slate-500 font-medium block">{isId ? 'Total Anggaran' : 'Total Budget'}</span>
+              <span className="font-extrabold text-orange-600 block mt-0.5 text-sm leading-snug tabular-nums">
                 Rp {meta.totalBudget.toLocaleString(isId ? 'id-ID' : 'en-US')}
               </span>
             </div>
@@ -453,57 +452,57 @@ export default function PublicHomePage({
         {/* 4 TOP KEY STATISTICAL METRIC CARDS */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {/* Card 1: Penerima Manfaat Unik */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs flex flex-col justify-between space-y-4">
             <div className="flex items-start justify-between">
               <span className="text-xs font-semibold text-slate-600">
                 {isId ? 'Penerima Manfaat Unik' : 'Unique Beneficiaries'}
               </span>
-              <div className="w-8 h-8 rounded-lg text-emerald-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                 <Users className="w-5 h-5" />
               </div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              <div className="text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
                 {disaggSummary.totalUniqueBeneficiaries}
               </div>
-              <p className="text-xs font-semibold text-emerald-600 mt-1">
+              <p className="text-xs font-semibold text-orange-600 mt-1">
                 {isId ? 'Individu unik terverifikasi (No Double Counting)' : 'Verified unique individuals (No Double Counting)'}
               </p>
             </div>
           </div>
 
           {/* Card 2: Total Partisipasi Kegiatan */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs flex flex-col justify-between space-y-4">
             <div className="flex items-start justify-between">
               <span className="text-xs font-semibold text-slate-600">
                 {isId ? 'Total Partisipasi Kegiatan' : 'Gross Activity Participation'}
               </span>
-              <div className="w-8 h-8 rounded-lg text-indigo-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
                 <Calendar className="w-5 h-5" />
               </div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              <div className="text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
                 {disaggSummary.totalGrossParticipation}
               </div>
-              <p className="text-xs font-semibold text-indigo-600 mt-1">
+              <p className="text-xs font-semibold text-amber-700 mt-1">
                 {isId ? 'Akumulasi log absensi pada seluruh sesi kegiatan' : 'Cumulative attendance logs across all sessions'}
               </p>
             </div>
           </div>
 
           {/* Card 3: Capaian Indikator Kinerja */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs flex flex-col justify-between space-y-4">
             <div className="flex items-start justify-between">
               <span className="text-xs font-semibold text-slate-600">
                 {isId ? 'Capaian Indikator Kinerja' : 'Key Indicator Achievement'}
               </span>
-              <div className="w-8 h-8 rounded-lg text-blue-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                 <TrendingUp className="w-5 h-5" />
               </div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-blue-600 tracking-tight">
+              <div className="text-3xl font-extrabold text-orange-600 tracking-tight tabular-nums">
                 {meta.avgIndicatorProgress}%
               </div>
               <p className="text-xs text-slate-500 font-medium mt-1">
@@ -513,17 +512,17 @@ export default function PublicHomePage({
           </div>
 
           {/* Card 4: Inklusi IPLC & Disabilitas */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs flex flex-col justify-between space-y-4">
             <div className="flex items-start justify-between">
               <span className="text-xs font-semibold text-slate-600">
                 {isId ? 'Inklusi IPLC & Disabilitas' : 'IPLC & Disability Inclusion'}
               </span>
-              <div className="w-8 h-8 rounded-lg text-amber-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
                 <HeartHandshake className="w-5 h-5" />
               </div>
             </div>
             <div>
-              <div className="text-3xl font-extrabold text-amber-600 tracking-tight">
+              <div className="text-3xl font-extrabold text-amber-600 tracking-tight tabular-nums">
                 {disaggSummary.iplcBreakdown.percentIplcTotal}% / {disaggSummary.disabilityBreakdown.percentDisability}%
               </div>
               <p className="text-xs text-slate-500 font-medium mt-1">
@@ -548,7 +547,7 @@ export default function PublicHomePage({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Gender Disaggregation */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
+            <div className="bg-white rounded-2xl p-5 border border-orange-100 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-800">{isId ? 'Disagregasi Gender' : 'Gender Disaggregation'}</span>
                 <span className="text-[10px] text-slate-400">{isId ? 'Total' : 'Total'}: {disaggSummary.totalUniqueBeneficiaries} {isId ? 'org' : 'ppl'}</span>
@@ -573,7 +572,7 @@ export default function PublicHomePage({
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-orange-100 text-xs">
                 <div className="bg-blue-50/60 p-2 rounded-lg border border-blue-100 text-center">
                   <span className="text-[10px] text-blue-600 block font-semibold">{isId ? 'Laki-laki' : 'Male'}</span>
                   <span className="font-bold text-blue-900 text-sm">{disaggSummary.genderBreakdown.lakiLaki}</span>
@@ -588,7 +587,7 @@ export default function PublicHomePage({
             </div>
 
             {/* 4 Age Groups Disaggregation */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
+            <div className="bg-white rounded-2xl p-5 border border-orange-100 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-800">{isId ? '4 Kelompok Usia' : '4 Age Cohorts'}</span>
                 <span className="text-[10px] text-slate-400">{isId ? 'Standar Internasional' : 'Global Standards'}</span>
@@ -596,11 +595,11 @@ export default function PublicHomePage({
               <div className="h-44 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={ageChartData} layout="vertical" margin={{ top: 5, right: 15, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#fff7ed" />
                     <XAxis type="number" tick={{ fontSize: 10, fill: '#64748b' }} />
                     <YAxis dataKey="name" type="category" tick={{ fontSize: 10, fill: '#334155', fontWeight: 500 }} width={85} />
                     <Tooltip />
-                    <Bar dataKey="count" name={isId ? 'Jumlah' : 'Count'} fill="#10b981" radius={[0, 4, 4, 0]}>
+                    <Bar dataKey="count" name={isId ? 'Jumlah' : 'Count'} fill="#ea580c" radius={[0, 4, 4, 0]}>
                       {ageChartData.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={AGE_COLORS[index % AGE_COLORS.length]} />
                       ))}
@@ -608,13 +607,13 @@ export default function PublicHomePage({
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-[10px] text-slate-400 text-center pt-2 border-t border-slate-100">
+              <p className="text-[10px] text-slate-400 text-center pt-2 border-t border-orange-100">
                 0-14 ({isId ? 'Anak' : 'Child'}), 15-24 ({isId ? 'Pemuda' : 'Youth'}), 25-64 ({isId ? 'Dewasa' : 'Adult'}), 65+ ({isId ? 'Lansia' : 'Elderly'})
               </p>
             </div>
 
             {/* IPLC & Disability Status */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
+            <div className="bg-white rounded-2xl p-5 border border-orange-100 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-800">{isId ? 'Masyarakat Adat & Lokal (IPLC)' : 'Indigenous & Local Peoples (IPLC)'}</span>
                 <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
@@ -641,7 +640,7 @@ export default function PublicHomePage({
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-100 font-medium">
+              <div className="flex justify-between items-center text-xs pt-2 border-t border-orange-100 font-medium">
                 <span className="text-purple-700">{isId ? 'Adat' : 'Indigenous'}: {disaggSummary.iplcBreakdown.indigenousPeoples}</span>
                 <span className="text-emerald-700">{isId ? 'Lokal' : 'Local'}: {disaggSummary.iplcBreakdown.localCommunities}</span>
                 <span className="text-slate-500">Non: {disaggSummary.iplcBreakdown.nonIplc}</span>
@@ -655,7 +654,7 @@ export default function PublicHomePage({
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-600" />
+                <Users className="w-5 h-5 text-orange-600" />
                 {isId ? 'Target Group & Level Penerima Manfaat' : 'Target Group & Beneficiary Level'}
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -668,11 +667,11 @@ export default function PublicHomePage({
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Chart 1: Target Group Breakdown */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-white rounded-2xl p-5 border border-orange-100 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-orange-100 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <Users className="w-4 h-4 text-emerald-600" />
+                    <Users className="w-4 h-4 text-orange-600" />
                     {isId ? 'Distribusi Target Group (Kelompok Sasaran)' : 'Target Group Distribution'}
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
@@ -703,15 +702,15 @@ export default function PublicHomePage({
                         `${value} ${isId ? 'orang' : 'people'} (${item.payload.pct}%)`, 
                         name
                       ]}
-                      contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-orange-100 text-xs">
                 {targetGroupChartData.map((tg, idx) => (
-                  <div key={idx} className="bg-slate-50 p-2 rounded-lg border border-slate-100 flex items-start gap-2">
+                  <div key={idx} className="bg-orange-50/40 p-2 rounded-lg border border-orange-100/70 flex items-start gap-2">
                     <span 
                       className="w-2.5 h-2.5 rounded-full mt-0.5 flex-shrink-0" 
                       style={{ backgroundColor: TARGET_GROUP_COLORS[idx % TARGET_GROUP_COLORS.length] }}
@@ -726,11 +725,11 @@ export default function PublicHomePage({
             </div>
 
             {/* Chart 2: Beneficiary Level (Tingkat Dampingan) */}
-            <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-white rounded-2xl p-5 border border-orange-100 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-orange-100 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <Compass className="w-4 h-4 text-blue-600" />
+                    <Compass className="w-4 h-4 text-orange-600" />
                     {isId ? 'Level Penerima Manfaat (Tingkat Dampingan)' : 'Level of Beneficiaries (Jurisdiction)'}
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
@@ -742,14 +741,14 @@ export default function PublicHomePage({
               <div className="h-52 w-full pt-1">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={levelChartData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#fff7ed" />
                     <XAxis dataKey="level" tick={{ fontSize: 11 }} />
                     <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                     <Tooltip 
                       formatter={(value: any) => [`${value} ${isId ? 'orang' : 'people'}`, isId ? 'Jumlah' : 'Count']}
-                      contentStyle={{ backgroundColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '12px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', borderRadius: '10px', border: '1px solid #fed7aa', color: '#0f172a', fontSize: '12px' }}
                     />
-                    <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]}>
+                    <Bar dataKey="count" fill="#ea580c" radius={[4, 4, 0, 0]}>
                       {levelChartData.map((_, index) => (
                         <Cell key={`pub-lvl-${index}`} fill={LEVEL_COLORS[index % LEVEL_COLORS.length]} />
                       ))}
@@ -758,9 +757,9 @@ export default function PublicHomePage({
                 </ResponsiveContainer>
               </div>
 
-              <div className="grid grid-cols-5 gap-1.5 pt-2 border-t border-slate-100 text-center text-xs">
+              <div className="grid grid-cols-5 gap-1.5 pt-2 border-t border-orange-100 text-center text-xs">
                 {levelChartData.map((lvl, idx) => (
-                  <div key={idx} className="bg-slate-50 p-1.5 rounded-lg border border-slate-100">
+                  <div key={idx} className="bg-orange-50/40 p-1.5 rounded-lg border border-orange-100/70">
                     <span className="text-[10px] text-slate-500 font-medium block truncate">{lvl.level}</span>
                     <span className="text-xs font-bold text-slate-900">{lvl.count}</span>
                   </div>
@@ -771,18 +770,18 @@ export default function PublicHomePage({
         </section>
 
         {/* SECTION: PEMBAGIAN PENERIMA MANFAAT PER DESA / KELURAHAN DAMPINGAN */}
-        <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <section className="bg-white rounded-2xl border border-orange-100 p-5 sm:p-6 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-orange-100 pb-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0 border border-emerald-100 mt-0.5">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0 border border-orange-100 mt-0.5">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="font-bold text-slate-900 text-base">
                     {isId ? 'Pembagian Penerima Manfaat Sesuai Desa / Kelurahan Dampingan' : 'Beneficiary Distribution by Assisted Village / Sub-District'}
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 text-[11px] font-bold">
                     {disaggSummary.villageBreakdown.length} {isId ? 'Desa Terdaftar' : 'Registered Villages'}
                   </span>
                 </div>
@@ -797,7 +796,7 @@ export default function PublicHomePage({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Chart */}
-            <div className="lg:col-span-5 bg-slate-50/80 p-4 rounded-xl border border-slate-200/70 space-y-2">
+            <div className="lg:col-span-5 bg-orange-50/30 p-4 rounded-xl border border-orange-100 space-y-2">
               <span className="text-xs font-bold text-slate-700 block">
                 {isId ? 'Grafik Penerima Manfaat per Desa' : 'Beneficiary Chart by Village'}
               </span>
@@ -808,7 +807,7 @@ export default function PublicHomePage({
                     layout="vertical"
                     margin={{ top: 5, right: 15, left: 10, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#fed7aa" />
                     <XAxis type="number" tick={{ fontSize: 10, fill: '#64748b' }} />
                     <YAxis 
                       dataKey="village" 
@@ -821,13 +820,13 @@ export default function PublicHomePage({
                         if (active && payload && payload.length) {
                           const d = payload[0].payload;
                           return (
-                            <div className="bg-slate-900 text-white p-2.5 rounded-xl text-xs shadow-xl space-y-1">
-                              <p className="font-bold text-emerald-400">{d.village}</p>
+                            <div className="bg-white text-slate-900 border border-orange-200 p-2.5 rounded-xl text-xs shadow-xl space-y-1">
+                              <p className="font-bold text-orange-700">{d.village}</p>
                               <p>{isId ? 'Total Unik' : 'Unique Total'}: <strong>{d.totalUnique} {isId ? 'orang' : 'people'}</strong> ({d.percentage}%)</p>
-                              <p className="text-blue-300">{isId ? 'Laki-laki' : 'Male'}: {d.lakiLaki}</p>
-                              <p className="text-pink-300">{isId ? 'Perempuan' : 'Female'}: {d.perempuan}</p>
-                              <p className="text-rose-300">{isId ? 'Disabilitas' : 'Disability'}: {d.disabilityCount}</p>
-                              <p className="text-purple-300">IPLC: {d.iplcCount}</p>
+                              <p className="text-blue-600">{isId ? 'Laki-laki' : 'Male'}: {d.lakiLaki}</p>
+                              <p className="text-pink-600">{isId ? 'Perempuan' : 'Female'}: {d.perempuan}</p>
+                              <p className="text-rose-600">{isId ? 'Disabilitas' : 'Disability'}: {d.disabilityCount}</p>
+                              <p className="text-purple-600">IPLC: {d.iplcCount}</p>
                             </div>
                           );
                         }
@@ -843,11 +842,11 @@ export default function PublicHomePage({
             </div>
 
             {/* Detailed Table */}
-            <div className="lg:col-span-7 overflow-hidden rounded-xl border border-slate-200">
+            <div className="lg:col-span-7 overflow-hidden rounded-xl border border-orange-100">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                    <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold">
                       <th className="py-2.5 px-3">{isId ? 'Desa / Kelurahan' : 'Village / Sub-District'}</th>
                       <th className="py-2.5 px-2 text-center">{isId ? 'Total Unik' : 'Unique Total'}</th>
                       <th className="py-2.5 px-2">{isId ? 'Proporsi (%)' : 'Proportion (%)'}</th>
@@ -856,25 +855,25 @@ export default function PublicHomePage({
                       <th className="py-2.5 px-2 text-center">IPLC</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-orange-100/60">
                     {disaggSummary.villageBreakdown.map((item, idx) => (
-                      <tr key={item.village} className={idx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-100/60'}>
+                      <tr key={item.village} className={idx % 2 === 0 ? 'bg-white hover:bg-orange-50/40' : 'bg-orange-50/20 hover:bg-orange-50/60'}>
                         <td className="py-2.5 px-3">
                           <div className="font-bold text-slate-800 flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                             {item.village}
                           </div>
                         </td>
                         <td className="py-2.5 px-2 text-center">
-                          <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-xs">
+                          <span className="font-bold text-slate-900 bg-orange-50 border border-orange-100 px-2 py-0.5 rounded text-xs">
                             {item.totalUnique}
                           </span>
                         </td>
                         <td className="py-2.5 px-2 min-w-[100px]">
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div className="flex-1 bg-orange-100/70 h-2 rounded-full overflow-hidden">
                               <div 
-                                className="bg-emerald-500 h-full rounded-full" 
+                                className="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full" 
                                 style={{ width: `${Math.min(100, item.percentage)}%` }}
                               />
                             </div>
@@ -918,12 +917,12 @@ export default function PublicHomePage({
         </section>
 
         {/* SECTION: CAPAIAN INDIKATOR UTAMA LOGFRAME (GOAL, OUTCOME & OUTPUT) */}
-        <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <section className="bg-white rounded-2xl border border-orange-100 p-5 sm:p-6 shadow-xs space-y-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-orange-100 pb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+                <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse"></span>
+                <span className="text-xs font-bold text-orange-700 uppercase tracking-wider">
                   {isId ? 'Matriks Capaian Kinerja' : 'Performance Logframe Matrix'}
                 </span>
               </div>
@@ -938,62 +937,62 @@ export default function PublicHomePage({
             </div>
 
             {/* Level Filter Tabs */}
-            <div className="flex items-center gap-1.5 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200 self-start md:self-auto overflow-x-auto max-w-full">
+            <div className="flex items-center gap-1.5 bg-orange-50/70 p-1.5 rounded-xl border border-orange-100 self-start md:self-auto overflow-x-auto max-w-full">
               <button
                 onClick={() => setPublicIndicatorLevelFilter('ALL')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                   publicIndicatorLevelFilter === 'ALL'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-orange-700 shadow-xs'
+                    : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <span>{isId ? 'Semua Indikator' : 'All Indicators'}</span>
-                <span className="px-1.5 py-0.2 bg-slate-200/70 text-slate-700 rounded-full text-[10px]">{indicatorCounts.all}</span>
+                <span className="px-1.5 py-0.2 bg-orange-100 text-orange-800 rounded-full text-[10px]">{indicatorCounts.all}</span>
               </button>
               <button
                 onClick={() => setPublicIndicatorLevelFilter('GOAL')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                   publicIndicatorLevelFilter === 'GOAL'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-emerald-700 hover:bg-emerald-50'
+                    ? 'bg-orange-600 text-white shadow-xs'
+                    : 'text-orange-700 hover:bg-orange-100/70'
                 }`}
               >
                 <span>🎯 Goal / Impact</span>
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                  publicIndicatorLevelFilter === 'GOAL' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-800'
+                  publicIndicatorLevelFilter === 'GOAL' ? 'bg-orange-700 text-white' : 'bg-orange-100 text-orange-800'
                 }`}>{indicatorCounts.goal}</span>
               </button>
               <button
                 onClick={() => setPublicIndicatorLevelFilter('OUTCOME')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                   publicIndicatorLevelFilter === 'OUTCOME'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-blue-700 hover:bg-blue-50'
+                    ? 'bg-amber-600 text-white shadow-xs'
+                    : 'text-amber-700 hover:bg-amber-100/70'
                 }`}
               >
                 <span>🌟 Outcome</span>
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                  publicIndicatorLevelFilter === 'OUTCOME' ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-800'
+                  publicIndicatorLevelFilter === 'OUTCOME' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800'
                 }`}>{indicatorCounts.outcome}</span>
               </button>
               <button
                 onClick={() => setPublicIndicatorLevelFilter('OUTPUT')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                   publicIndicatorLevelFilter === 'OUTPUT'
-                    ? 'bg-purple-600 text-white shadow-xs'
-                    : 'text-purple-700 hover:bg-purple-50'
+                    ? 'bg-rose-600 text-white shadow-xs'
+                    : 'text-rose-700 hover:bg-rose-100/70'
                 }`}
               >
                 <span>📦 Output</span>
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                  publicIndicatorLevelFilter === 'OUTPUT' ? 'bg-purple-700 text-white' : 'bg-purple-100 text-purple-800'
+                  publicIndicatorLevelFilter === 'OUTPUT' ? 'bg-rose-700 text-white' : 'bg-rose-100 text-rose-800'
                 }`}>{indicatorCounts.output}</span>
               </button>
             </div>
 
             <button
               onClick={handleExportPublicIndicators}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition whitespace-nowrap self-start md:self-auto"
+              className="px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition whitespace-nowrap self-start md:self-auto"
               title={isId ? 'Unduh seluruh laporan capaian indikator dalam format Excel (.xlsx)' : 'Download all indicator achievement reports in Excel (.xlsx)'}
             >
               <FileSpreadsheet className="w-4 h-4" />
@@ -1004,7 +1003,7 @@ export default function PublicHomePage({
           {/* Indicators Content: Chart + Detailed Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Chart */}
-            <div className="lg:col-span-5 bg-slate-50/70 p-4 rounded-xl border border-slate-200/80 space-y-3">
+            <div className="lg:col-span-5 bg-orange-50/30 p-4 rounded-xl border border-orange-100 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-700">
                   {isId ? 'Grafik Perbandingan Target vs Capaian' : 'Target vs Actual Comparison Chart'}
@@ -1019,7 +1018,7 @@ export default function PublicHomePage({
                     data={filteredPublicIndicators.slice(0, 10)} 
                     margin={{ top: 10, right: 10, left: -20, bottom: 25 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffedd5" />
                     <XAxis 
                       dataKey="code" 
                       tick={{ fontSize: 10, fill: '#475569', fontWeight: 600 }} 
@@ -1034,22 +1033,22 @@ export default function PublicHomePage({
                           const data = payload[0].payload;
                           const pct = data.target > 0 ? Math.round((data.actual / data.target) * 100) : 0;
                           return (
-                            <div className="bg-slate-900 text-white p-3 rounded-xl text-xs shadow-xl space-y-1.5 max-w-xs">
+                            <div className="bg-white text-slate-900 p-3 rounded-xl text-xs shadow-xl border border-orange-200 space-y-1.5 max-w-xs">
                               <div className="flex items-center gap-1.5">
-                                <span className="font-bold text-emerald-400">{data.code}</span>
+                                <span className="font-bold text-orange-600">{data.code}</span>
                                 <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
-                                  data.level === 'Goal' ? 'bg-emerald-500/30 text-emerald-300' :
-                                  data.level === 'Outcome' ? 'bg-blue-500/30 text-blue-300' :
-                                  'bg-purple-500/30 text-purple-300'
+                                  data.level === 'Goal' ? 'bg-orange-100 text-orange-800' :
+                                  data.level === 'Outcome' ? 'bg-amber-100 text-amber-800' :
+                                  'bg-rose-100 text-rose-800'
                                 }`}>
                                   {data.levelLabel}
                                 </span>
                               </div>
-                              <p className="font-medium text-slate-200 line-clamp-2">{data.name}</p>
-                              <div className="pt-1 border-t border-slate-700/80 space-y-0.5">
+                              <p className="font-medium text-slate-700 line-clamp-2">{data.name}</p>
+                              <div className="pt-1 border-t border-orange-100 space-y-0.5">
                                 <p>Target: <strong>{data.target} {data.unit}</strong></p>
-                                <p>{isId ? 'Aktual' : 'Actual'}: <strong className="text-emerald-300">{data.actual} {data.unit}</strong></p>
-                                <p className="text-cyan-300 font-bold">{pct}% {isId ? 'Tercapai' : 'Achieved'}</p>
+                                <p>{isId ? 'Aktual' : 'Actual'}: <strong className="text-orange-600">{data.actual} {data.unit}</strong></p>
+                                <p className="text-amber-700 font-bold">{pct}% {isId ? 'Tercapai' : 'Achieved'}</p>
                               </div>
                             </div>
                           );
@@ -1058,11 +1057,11 @@ export default function PublicHomePage({
                       }}
                     />
                     <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                    <Bar dataKey="target" name={isId ? 'Target' : 'Target'} fill="#94a3b8" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="target" name={isId ? 'Target' : 'Target'} fill="#cbd5e1" radius={[4, 4, 0, 0]} />
                     <Bar 
                       dataKey="actual" 
                       name={isId ? 'Realisasi Aktual' : 'Actual Reached'} 
-                      fill="#059669" 
+                      fill="#ea580c" 
                       radius={[4, 4, 0, 0]} 
                     />
                   </BarChart>
@@ -1145,10 +1144,10 @@ export default function PublicHomePage({
         </section>
 
         {/* SECTION: KALENDER PELAKSANAAN KEGIATAN PUBLIK */}
-        <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <section className="bg-white rounded-2xl border border-orange-100 p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-orange-100 pb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center flex-shrink-0 border border-indigo-100">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0 border border-orange-100">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
@@ -1162,21 +1161,21 @@ export default function PublicHomePage({
                 </p>
               </div>
             </div>
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-800 font-bold text-xs rounded-full border border-indigo-200 self-start sm:self-auto">
+            <span className="px-3 py-1 bg-orange-50 text-orange-800 font-bold text-xs rounded-full border border-orange-200 self-start sm:self-auto">
               {allActivities.length} {isId ? 'Agenda Kegiatan' : 'Activities Scheduled'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {allActivities.map(act => (
-              <div key={act.id} className="p-4 rounded-xl border border-slate-200 bg-white hover:shadow-xs transition space-y-2 flex flex-col justify-between">
+              <div key={act.id} className="p-4 rounded-xl border border-orange-100 bg-white hover:border-orange-200 hover:shadow-xs transition space-y-2 flex flex-col justify-between">
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-50 text-orange-800 border border-orange-100">
                       {act.code}
                     </span>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                      act.status === 'Selesai' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
+                      act.status === 'Selesai' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                     }`}>
                       {act.status}
                     </span>
@@ -1185,13 +1184,13 @@ export default function PublicHomePage({
                   <p className="text-[11px] text-slate-500 line-clamp-1">{act.projectTitle}</p>
                 </div>
 
-                <div className="space-y-1 pt-2 border-t border-slate-100 text-[11px] text-slate-600">
+                <div className="space-y-1 pt-2 border-t border-orange-100/70 text-[11px] text-slate-600">
                   <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-orange-600 flex-shrink-0" />
                     <span className="truncate">{act.location}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-indigo-600 flex-shrink-0" />
+                    <Clock className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
                     <span>{act.startDate} {act.endDate ? `${isId ? 's/d' : 'to'} ${act.endDate}` : ''}</span>
                   </div>
                 </div>
@@ -1201,10 +1200,10 @@ export default function PublicHomePage({
         </section>
 
         {/* SECTION: PUBLIKASI, PRODUK PENGETAHUAN & CERITA PERUBAHAN */}
-        <section className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+        <section className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-orange-100">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold mb-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 text-xs font-semibold mb-1">
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>{isId ? 'Pusat Pengetahuan & Pembelajaran' : 'Knowledge & Learning Hub'}</span>
               </div>
@@ -1219,13 +1218,13 @@ export default function PublicHomePage({
             </div>
 
             {/* Sub Tab Switcher */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl self-start sm:self-auto">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-1 bg-orange-50/70 border border-orange-100 p-1 rounded-xl self-start sm:self-auto max-w-full overflow-x-auto">
               <button
                 onClick={() => setPublicPubTab('products')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition whitespace-nowrap ${
                   publicPubTab === 'products'
-                    ? 'bg-white text-emerald-700 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-orange-700 shadow-xs'
+                    : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
@@ -1233,10 +1232,10 @@ export default function PublicHomePage({
               </button>
               <button
                 onClick={() => setPublicPubTab('stories')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition whitespace-nowrap ${
                   publicPubTab === 'stories'
                     ? 'bg-white text-amber-700 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
@@ -1244,10 +1243,10 @@ export default function PublicHomePage({
               </button>
               <button
                 onClick={() => setPublicPubTab('media')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition whitespace-nowrap ${
                   publicPubTab === 'media'
-                    ? 'bg-white text-blue-700 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-orange-700 shadow-xs'
+                    : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <Newspaper className="w-3.5 h-3.5" />
@@ -1255,10 +1254,10 @@ export default function PublicHomePage({
               </button>
               <button
                 onClick={() => setPublicPubTab('learnings')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition whitespace-nowrap ${
                   publicPubTab === 'learnings'
-                    ? 'bg-white text-emerald-800 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-orange-800 shadow-xs'
+                    : 'text-slate-600 hover:text-orange-800'
                 }`}
               >
                 <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
@@ -1273,11 +1272,11 @@ export default function PublicHomePage({
               {knowledgeProducts.map((kp) => (
                 <div 
                   key={kp.id} 
-                  className="bg-slate-50/70 hover:bg-white rounded-xl p-4 border border-slate-200 hover:border-emerald-300 hover:shadow-sm transition flex flex-col justify-between space-y-3"
+                  className="bg-orange-50/30 hover:bg-white rounded-xl p-4 border border-orange-100 hover:border-orange-300 hover:shadow-sm transition flex flex-col justify-between space-y-3"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-1.5">
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">
+                      <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded text-[10px] font-bold">
                         {kp.type}
                       </span>
                       <span className="text-[10px] text-slate-400 font-medium">
@@ -1311,7 +1310,7 @@ export default function PublicHomePage({
                         href={kp.linkDocument}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs"
+                        className="w-full py-1.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-2xs"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>{isId ? 'Unduh / Buka Dokumen' : 'Download / Open Document'}</span>
@@ -1329,11 +1328,11 @@ export default function PublicHomePage({
               {storiesOfChange.map((soc) => (
                 <div 
                   key={soc.id} 
-                  className="bg-slate-50/70 hover:bg-white rounded-xl p-4 sm:p-5 border border-slate-200 hover:border-amber-300 hover:shadow-sm transition flex flex-col justify-between space-y-3.5"
+                  className="bg-orange-50/30 hover:bg-white rounded-xl p-4 sm:p-5 border border-orange-100 hover:border-orange-300 hover:shadow-sm transition flex flex-col justify-between space-y-3.5"
                 >
                   <div className="space-y-2.5">
                     <div className="flex flex-wrap items-center justify-between gap-1.5">
-                      <span className="px-2.5 py-0.5 bg-amber-100 text-amber-900 rounded-full text-[10px] font-bold">
+                      <span className="px-2.5 py-0.5 bg-orange-100 text-orange-900 rounded-full text-[10px] font-bold">
                         {soc.categoryTheme || (isId ? 'Cerita Perubahan' : 'Story of Change')}
                       </span>
                       <span className="text-[11px] text-slate-500 flex items-center gap-1">
@@ -1363,21 +1362,21 @@ export default function PublicHomePage({
                     </div>
 
                     {soc.importantQuotes && (
-                      <div className="p-2.5 bg-amber-50/80 border-l-3 border-amber-500 rounded-r-lg">
-                        <p className="text-xs italic text-amber-950 font-medium line-clamp-2">
+                      <div className="p-2.5 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p className="text-xs italic text-orange-950 font-medium line-clamp-2">
                           {soc.importantQuotes}
                         </p>
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-2 border-t border-slate-200/70 flex items-center justify-between text-xs">
+                  <div className="pt-2 border-t border-orange-100 flex items-center justify-between text-xs">
                     <span className="text-[11px] text-slate-400">
                       {soc.dateRecorded ? `${isId ? 'Direkam' : 'Recorded'}: ${soc.dateRecorded}` : ''}
                     </span>
                     <button
                       onClick={() => setSelectedStoryModal(soc)}
-                      className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition"
+                      className="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold transition"
                     >
                       {isId ? 'Baca Cerita Lengkap →' : 'Read Full Story →'}
                     </button>
@@ -1393,11 +1392,11 @@ export default function PublicHomePage({
               {mediaCoverages.map((mc) => (
                 <div 
                   key={mc.id} 
-                  className="bg-slate-50/70 hover:bg-white rounded-xl p-3.5 sm:p-4 border border-slate-200 hover:border-blue-300 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="bg-orange-50/30 hover:bg-white rounded-xl p-3.5 sm:p-4 border border-orange-100 hover:border-orange-300 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="space-y-1 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">
+                      <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded text-[10px] font-bold">
                         {mc.platform}
                       </span>
                       <span className="text-[10px] text-slate-400 font-medium">
@@ -1430,7 +1429,7 @@ export default function PublicHomePage({
                       href={mc.linkToPublication}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+                      className="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
                     >
                       <span>{isId ? 'Buka Artikel' : 'Open Article'}</span>
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -1444,20 +1443,20 @@ export default function PublicHomePage({
           {/* Tab 4: Project Learning Matrix */}
           {publicPubTab === 'learnings' && (
             <div className="space-y-4">
-              <div className="p-3.5 bg-emerald-900 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="p-3.5 bg-gradient-to-r from-orange-600 to-amber-500 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs shadow-xs">
                 <div className="flex items-center gap-2 font-bold">
-                  <Lightbulb className="w-4 h-4 text-amber-300" />
+                  <Lightbulb className="w-4 h-4 text-amber-100" />
                   <span>{isId ? 'Matriks Temuan Kunci & Praktik Pembelajaran Proyek' : 'Project Key Learnings & Reflection Matrix'} (*Project Learning Matrix*)</span>
                 </div>
-                <div className="text-[11px] text-emerald-200">
+                <div className="text-[11px] text-orange-50 font-semibold">
                   {learnings.length} {isId ? 'Catatan Pembelajaran Terdokumentasi' : 'Documented Learnings'}
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-xs">
+              <div className="overflow-x-auto rounded-xl border border-orange-200/80 shadow-xs">
                 <table className="w-full text-left text-xs border-collapse min-w-[1000px] bg-white">
                   <thead>
-                    <tr className="bg-emerald-800 text-white border-b border-emerald-950 font-bold divide-x divide-emerald-700">
+                    <tr className="bg-gradient-to-r from-orange-600 to-amber-600 text-white border-b border-orange-700 font-bold divide-x divide-orange-500/50">
                       <th className="p-3 w-52">{isId ? 'Fokus Pembelajaran' : 'Learning Focus'}</th>
                       <th className="p-3 w-64">{isId ? 'Temuan Kunci (Key Learning)' : 'Key Learning'}</th>
                       <th className="p-3 w-64">{isId ? 'Tindakan Berbeda (Differently)' : 'What we did differently'}</th>
@@ -1466,39 +1465,39 @@ export default function PublicHomePage({
                       <th className="p-3 w-40">{isId ? 'Waktu Implementasi' : 'When to implement'}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody className="divide-y divide-orange-100">
                     {learnings.map((lrn, idx) => {
                       const proj = projects.find(p => p.id === lrn.projectId);
                       return (
-                        <tr key={lrn.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}>
+                        <tr key={lrn.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-orange-50/30'}>
                           <td className="p-3 align-top divide-x-0 space-y-1">
                             <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-200">
                               {lrn.learningFocus}
                             </span>
                             <div className="font-bold text-slate-900 text-xs">{lrn.title}</div>
                             {proj && (
-                              <div className="text-[10px] text-emerald-700 font-semibold">{proj.code}</div>
+                              <div className="text-[10px] text-orange-700 font-semibold">{proj.code}</div>
                             )}
                           </td>
-                          <td className="p-3 align-top text-slate-700 leading-relaxed border-l border-slate-200">
+                          <td className="p-3 align-top text-slate-700 leading-relaxed border-l border-orange-100">
                             {lrn.keyLearning}
                           </td>
-                          <td className="p-3 align-top border-l border-slate-200">
+                          <td className="p-3 align-top border-l border-orange-100">
                             <div className="p-2 bg-emerald-50 text-emerald-950 rounded-lg text-[11px] leading-relaxed border border-emerald-200">
                               {lrn.whatWeDidDifferently || '-'}
                             </div>
                           </td>
-                          <td className="p-3 align-top border-l border-slate-200">
-                            <div className="p-2 bg-blue-50 text-blue-950 rounded-lg text-[11px] leading-relaxed border border-blue-200">
+                          <td className="p-3 align-top border-l border-orange-100">
+                            <div className="p-2 bg-orange-50 text-orange-950 rounded-lg text-[11px] leading-relaxed border border-orange-200">
                               {lrn.nextPhaseConduct || '-'}
                             </div>
                           </td>
-                          <td className="p-3 align-top text-slate-600 text-[11px] border-l border-slate-200">
+                          <td className="p-3 align-top text-slate-600 text-[11px] border-l border-orange-100">
                             {lrn.internalCapacityAdvocacyComm || '-'}
                           </td>
-                          <td className="p-3 align-top border-l border-slate-200 space-y-1">
+                          <td className="p-3 align-top border-l border-orange-100 space-y-1">
                             <div className="font-semibold text-slate-800 text-[11px] flex items-center gap-1">
-                              <Calendar className="w-3 h-3 text-slate-400" />
+                              <Calendar className="w-3 h-3 text-orange-500" />
                               {lrn.whenToLearnImplement}
                             </div>
                             {lrn.status && (
@@ -1520,8 +1519,8 @@ export default function PublicHomePage({
         {/* Public Modal for Full Story */}
         {selectedStoryModal && (
           <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200">
-              <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-t-2xl">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-orange-200">
+              <div className="p-5 border-b border-orange-100 flex items-center justify-between bg-gradient-to-r from-orange-600 to-amber-500 text-white rounded-t-2xl">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5" />
                   <h3 className="font-bold text-base">{isId ? 'Cerita Perubahan' : 'Story of Change'}</h3>
@@ -1537,7 +1536,7 @@ export default function PublicHomePage({
               <div className="p-6 overflow-y-auto space-y-4 text-slate-800 text-xs leading-relaxed">
                 <div>
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full font-semibold">
+                    <span className="px-2.5 py-0.5 bg-orange-100 text-orange-800 rounded-full font-semibold">
                       {selectedStoryModal.categoryTheme}
                     </span>
                     <span className="px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-full font-medium flex items-center gap-1">
@@ -1566,23 +1565,23 @@ export default function PublicHomePage({
                 </div>
 
                 {selectedStoryModal.importantQuotes && (
-                  <div className="p-3.5 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl">
-                    <div className="font-semibold text-amber-800 mb-0.5">{isId ? 'Testimoni:' : 'Quote / Testimonial:'}</div>
-                    <p className="italic text-amber-950 font-medium">
+                  <div className="p-3.5 bg-orange-50 border border-orange-200 rounded-xl">
+                    <div className="font-semibold text-orange-800 mb-0.5">{isId ? 'Testimoni:' : 'Quote / Testimonial:'}</div>
+                    <p className="italic text-orange-950 font-medium">
                       {selectedStoryModal.importantQuotes}
                     </p>
                   </div>
                 )}
 
-                <div className="text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <div className="text-slate-500 bg-orange-50/40 p-3 rounded-xl border border-orange-100">
                   <span>{selectedStoryModal.noteFullStory || (isId ? 'Terdokumentasi dalam sistem M&E program.' : 'Documented in the project M&E system.')}</span>
                 </div>
               </div>
 
-              <div className="p-4 border-t border-slate-100 flex justify-end">
+              <div className="p-4 border-t border-orange-100 flex justify-end">
                 <button
                   onClick={() => setSelectedStoryModal(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition"
+                  className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold transition"
                 >
                   {isId ? 'Tutup' : 'Close'}
                 </button>
@@ -1606,20 +1605,20 @@ export default function PublicHomePage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {projects.map(p => (
-              <div key={p.id} className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4 flex flex-col justify-between">
+              <div key={p.id} className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-xs space-y-4 flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
                         {p.code}
                       </span>
                       {p.startDate && (
-                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                           🗓️ {isId ? 'Mulai' : 'Start'}: {p.startDate}
                         </span>
                       )}
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-700">
                       {p.status}
                     </span>
                   </div>
@@ -1627,14 +1626,14 @@ export default function PublicHomePage({
                   <p className="text-xs text-slate-600 leading-relaxed">{p.goalStatement}</p>
                 </div>
 
-                <div className="space-y-3 pt-3 border-t border-slate-100 text-xs">
-                  <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl">
+                <div className="space-y-3 pt-3 border-t border-orange-100 text-xs">
+                  <div className="grid grid-cols-2 gap-2 bg-orange-50/40 p-3 rounded-xl border border-orange-100/80">
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-medium">{isId ? 'Lembaga Donor:' : 'Donor Organization:'}</span>
+                      <span className="text-[10px] text-slate-500 block font-medium">{isId ? 'Lembaga Donor:' : 'Donor Organization:'}</span>
                       <span className="font-semibold text-slate-800">{p.donor}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-medium">{isId ? 'Mitra Pelaksana:' : 'Implementing Partner:'}</span>
+                      <span className="text-[10px] text-slate-500 block font-medium">{isId ? 'Mitra Pelaksana:' : 'Implementing Partner:'}</span>
                       <span className="font-semibold text-slate-800">{p.partnerOrg}</span>
                     </div>
                   </div>
@@ -1643,7 +1642,7 @@ export default function PublicHomePage({
                     <span className="text-[11px] text-slate-500 font-medium block mb-1">🏡 {isId ? 'Desa / Kelurahan Dampingan:' : 'Assisted Target Villages:'}</span>
                     <div className="flex flex-wrap gap-1.5">
                       {(p.targetVillages || p.targetLocations).map((v, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-emerald-50 text-emerald-800 text-[11px] font-semibold rounded-md border border-emerald-200">
+                        <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-800 text-[11px] font-semibold rounded-md border border-orange-200">
                           {v}
                         </span>
                       ))}
@@ -1657,10 +1656,10 @@ export default function PublicHomePage({
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-white border-t border-slate-200 mt-12 py-8 text-xs text-slate-500">
+      <footer className="bg-white border-t border-orange-100 mt-12 py-8 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-orange-600" />
             <span className="font-semibold text-slate-700">M&E Platform by Elvandri</span>
             <span>&bull;</span>
             <span>{isId ? 'Verifikasi Tanpa Double Counting' : 'Verified Zero Double-Counting'}</span>
@@ -1669,7 +1668,7 @@ export default function PublicHomePage({
           <div className="flex items-center gap-4">
             <button 
               onClick={onGoToAdmin}
-              className="text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1 hover:underline"
+              className="text-orange-700 hover:text-orange-800 font-semibold flex items-center gap-1 hover:underline"
             >
               <Lock className="w-3.5 h-3.5" />
               {isId ? 'Login Administrator & Entri Data' : 'Admin Login & Data Entry'}

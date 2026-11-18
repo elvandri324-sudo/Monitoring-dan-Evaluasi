@@ -241,12 +241,12 @@ export default function BeneficiaryFormModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-orange-100 space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-3 border-b border-orange-100">
           <div>
-            <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">
               {editingBeneficiary 
                 ? (isId ? 'Edit Profil Penerima Manfaat' : 'Edit Beneficiary Profile') 
                 : (isId ? 'Pendaftaran Penerima Manfaat Baru' : 'New Beneficiary Registration')}
@@ -257,7 +257,7 @@ export default function BeneficiaryFormModal({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1"
+            className="text-slate-400 hover:text-orange-700 hover:bg-orange-50 rounded-lg text-sm font-bold p-1.5 transition"
           >
             ✕
           </button>
@@ -287,7 +287,7 @@ export default function BeneficiaryFormModal({
           )}
           
           {/* Section 1: Identitas Dasar */}
-          <div className="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <div className="space-y-3 bg-orange-50/30 p-3.5 rounded-xl border border-orange-100">
             <span className="font-bold text-slate-800 text-xs block">
               1. {isId ? 'Identitas Unik & Biodata' : 'Unique Identity & Demographics'}
             </span>
@@ -303,7 +303,7 @@ export default function BeneficiaryFormModal({
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder={isId ? 'Nama sesuai KTP / Dokumen Resmi' : 'Full name as per official ID'}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -317,7 +317,7 @@ export default function BeneficiaryFormModal({
                   value={nikOrIdentifier}
                   onChange={(e) => setNikOrIdentifier(e.target.value)}
                   placeholder={isId ? '16 digit NIK atau ID Komunitas/Pegawai' : '16-digit National ID or Staff Code'}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs font-mono font-medium focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs font-mono font-medium focus:ring-2 focus:ring-orange-500"
                 />
                 {duplicateBeneficiary && (
                   <span className="text-[10px] text-rose-600 font-bold block mt-1 flex items-center gap-1">
@@ -335,7 +335,7 @@ export default function BeneficiaryFormModal({
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value as Gender)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs font-medium"
+                  className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="Perempuan">{isId ? 'Perempuan (Women)' : 'Female (Perempuan)'}</option>
                   <option value="Laki-laki">{isId ? 'Laki-laki (Men)' : 'Male (Laki-laki)'}</option>
@@ -349,7 +349,7 @@ export default function BeneficiaryFormModal({
                 <select
                   value={ageGroup}
                   onChange={(e) => setAgeGroup(e.target.value as AgeGroup)}
-                  className="w-full p-2.5 bg-white border border-emerald-300 rounded-lg text-xs font-bold text-emerald-900 bg-emerald-50/50 focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 border border-orange-300 rounded-lg text-xs font-bold text-orange-950 bg-orange-50/50 focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="0-5">0-5 {isId ? 'Tahun (Balita / Anak Usia Dini)' : 'Years (Toddlers / Early)'}</option>
                   <option value="6-12">6-12 {isId ? 'Tahun (Anak-anak / Sekolah Dasar)' : 'Years (Children)'}</option>
@@ -364,8 +364,8 @@ export default function BeneficiaryFormModal({
           </div>
 
           {/* Section 2: Disabilitas & Ragam Hambatan */}
-          <div className="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-            <div className="flex items-center justify-between">
+          <div className="space-y-3 bg-orange-50/30 p-3.5 rounded-xl border border-orange-100">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="font-bold text-slate-800 text-xs block">
                 2. {isId ? 'Status Disabilitas & Ragam Hambatan' : 'Disability Status & Barrier Types'}
               </span>
@@ -374,7 +374,7 @@ export default function BeneficiaryFormModal({
                   type="checkbox"
                   checked={hasDisability}
                   onChange={(e) => setHasDisability(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                  className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500 accent-orange-600"
                 />
                 <span className="font-bold text-rose-700 text-xs">
                   {isId ? 'Penyandang Disabilitas' : 'Person with Disability (PwD)'}
@@ -441,7 +441,7 @@ export default function BeneficiaryFormModal({
           </div>
 
           {/* Section 3: Status IPLC (Masyarakat Adat & Komunitas Lokal) */}
-          <div className="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <div className="space-y-3 bg-orange-50/30 p-3.5 rounded-xl border border-orange-100">
             <span className="font-bold text-slate-800 text-xs block">
               3. {isId ? 'Status IPLC (Masyarakat Adat & Komunitas Lokal)' : 'IPLC Status (Indigenous & Local Communities)'}
             </span>
@@ -480,7 +480,7 @@ export default function BeneficiaryFormModal({
           </div>
 
           {/* Section 4: Lokasi Administrasi & Pekerjaan */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-orange-50/30 p-3.5 rounded-xl border border-orange-100">
             <div>
               <label className="font-semibold block mb-1">
                 {isId ? 'Provinsi:' : 'Province:'}
@@ -652,17 +652,17 @@ export default function BeneficiaryFormModal({
           </div>
 
           {/* Modal Actions */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-orange-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100"
+              className="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition"
             >
               {isId ? 'Batal' : 'Cancel'}
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition"
+              className="px-5 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white shadow-xs transition"
             >
               {editingBeneficiary 
                 ? (isId ? 'Simpan Perubahan' : 'Save Changes') 

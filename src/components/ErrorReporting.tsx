@@ -213,100 +213,100 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
     <div className="space-y-6 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-bounce">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 bg-orange-700 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-orange-500 animate-bounce">
+          <CheckCircle2 className="w-5 h-5 text-amber-200 shrink-0" />
           <span className="text-sm font-medium">{toastMessage}</span>
-          <button onClick={() => setToastMessage(null)} className="ml-2 text-slate-400 hover:text-white">
+          <button onClick={() => setToastMessage(null)} className="ml-2 text-orange-200 hover:text-white">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Main Header Banner */}
-      <div className="bg-gradient-to-r from-rose-950 via-slate-900 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+      <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 rounded-2xl p-5 sm:p-8 text-white shadow-lg shadow-orange-500/15 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-white/15 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold tracking-wide text-rose-200 border border-white/15">
-              <Bug className="w-3.5 h-3.5 text-rose-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-semibold tracking-wide text-white border border-white/25">
+              <Bug className="w-3.5 h-3.5 text-amber-200" />
               <span>{isId ? 'Pusat Bantuan & Laporan Kendala Sistem' : 'System Error & Bug Reporting'}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               {isId ? 'Menu Laporan Error & Bug' : 'Error & Issue Tracker'}
             </h1>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-orange-50 leading-relaxed">
               {isId 
                 ? 'Laporkan kendala teknis, error impor data, atau ketidaksesuaian perhitungan langsung ke tim teknis M&E. Pantau status investigasi dan resolusi tiket.'
                 : 'Report technical glitches, data import errors, or calculation issues directly to the M&E engineering team. Track ticket investigation and resolution status.'}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <button
               onClick={handleExportXLSX}
               className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-md"
               title={isId ? 'Ekspor Daftar Error ke Excel (.xlsx)' : 'Export Error Tickets to Excel (.xlsx)'}
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
+              <FileSpreadsheet className="w-4 h-4 text-emerald-100" />
               <span>{isId ? 'Ekspor Excel (XLSX)' : 'Export Excel (XLSX)'}</span>
             </button>
 
             <button
               onClick={handleExportCSV}
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-semibold transition flex items-center gap-2 backdrop-blur-sm"
+              className="px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl text-sm font-semibold transition flex items-center gap-2 backdrop-blur-sm"
               title={isId ? 'Ekspor CSV' : 'Export CSV'}
             >
-              <Download className="w-4 h-4 text-slate-300" />
+              <Download className="w-4 h-4 text-white" />
               <span>CSV</span>
             </button>
 
             <button
               onClick={() => setIsSubmitModalOpen(true)}
-              className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95"
+              className="px-5 py-2.5 bg-white hover:bg-orange-50 text-orange-700 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              <span>{isId ? '+ Buat Laporan Kendala' : '+ Report an Issue'}</span>
+              <span>{isId ? 'Buat Laporan Kendala' : 'Report an Issue'}</span>
             </button>
           </div>
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6 pt-6 border-t border-white/10">
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-slate-300 font-medium">{isId ? 'Total Laporan' : 'Total Reports'}</div>
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-5 gap-3 mt-6 pt-6 border-t border-white/20">
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-100 font-medium">{isId ? 'Total Laporan' : 'Total Reports'}</div>
             <div className="text-2xl font-bold mt-0.5 text-white">{stats.total}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-blue-300 font-medium">🔵 {isId ? 'Baru / Terbuka' : 'Open Tickets'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-blue-300">{stats.open}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-50 font-medium">🔵 {isId ? 'Baru / Terbuka' : 'Open Tickets'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white">{stats.open}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-purple-300 font-medium">🟣 {isId ? 'Investigasi' : 'Investigating'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-purple-300">{stats.investigating}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-50 font-medium">🟣 {isId ? 'Investigasi' : 'Investigating'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white">{stats.investigating}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-emerald-300 font-medium">🟢 {isId ? 'Selesai / Ditutup' : 'Resolved'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-emerald-400">{stats.resolved}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-emerald-100 font-medium">🟢 {isId ? 'Selesai / Ditutup' : 'Resolved'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-emerald-100">{stats.resolved}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10 col-span-2 sm:col-span-1">
-            <div className="text-[11px] text-rose-300 font-medium">🚨 {isId ? 'Kendala Kritis' : 'Critical Issues'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-rose-400">{stats.critical}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20 col-span-2 sm:col-span-1">
+            <div className="text-[11px] text-rose-100 font-medium">🚨 {isId ? 'Kendala Kritis' : 'Critical Issues'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white">{stats.critical}</div>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex-1 w-full flex flex-wrap items-center gap-3">
+      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-orange-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex-1 w-full flex flex-wrap items-center gap-2.5 sm:gap-3 min-w-0">
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[240px]">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full sm:w-auto sm:flex-1 sm:min-w-[220px] min-w-0">
+            <Search className="w-4 h-4 text-orange-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={isId ? 'Cari judul kendala, nomor tiket, deskripsi, pelapor...' : 'Search issues, ticket ID, reporter...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:bg-white transition"
+              className="w-full pl-9 pr-8 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
             />
             {searchQuery && (
               <button 
@@ -322,7 +322,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
           <select
             value={moduleFilter}
             onChange={(e) => setModuleFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-rose-500"
+            className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Modul' : 'All Modules'}</option>
             <option value="Penerima Manfaat & GESI">Penerima Manfaat & GESI</option>
@@ -340,7 +340,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-rose-500"
+            className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Keparahan' : 'All Severities'}</option>
             <option value="Kritis (Critical)">🚨 Kritis (Critical)</option>
@@ -353,7 +353,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-rose-500"
+            className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Status' : 'All Status'}</option>
             <option value="Baru (Open)">🔵 Baru (Open)</option>
@@ -363,17 +363,17 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
           </select>
         </div>
 
-        <div className="text-xs text-slate-500 font-medium">
+        <div className="text-xs text-slate-500 font-medium shrink-0">
           {isId ? `${filteredReports.length} laporan ditampilkan` : `${filteredReports.length} reports showing`}
         </div>
       </div>
 
       {/* Reports Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-orange-100 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-900 text-slate-200 font-semibold border-b border-slate-800">
+              <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-semibold border-b border-orange-500">
                 <th className="py-3.5 px-4 w-28">{isId ? 'ID Tiket' : 'Ticket ID'}</th>
                 <th className="py-3.5 px-3">{isId ? 'Judul Kendala & Modul' : 'Issue Title & Module'}</th>
                 <th className="py-3.5 px-3">{isId ? 'Keparahan' : 'Severity'}</th>
@@ -483,16 +483,16 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
       {/* Modal: Submit New Error Ticket */}
       {isSubmitModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-7 border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200 my-8">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 sm:p-7 border border-orange-100 relative animate-in fade-in zoom-in-95 duration-200 my-8">
             <button
               onClick={() => setIsSubmitModalOpen(false)}
-              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-orange-50 hover:text-orange-700 transition"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-5">
-              <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100">
+              <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl border border-orange-200">
                 <Bug className="w-6 h-6" />
               </div>
               <div>
@@ -517,7 +517,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                   placeholder={isId ? 'Contoh: Tombol ekspor data Excel tidak merespons saat filter disabilitas aktif' : 'e.g. Excel export button not responding when disability filter is active'}
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-medium"
+                  className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium"
                 />
               </div>
 
@@ -530,7 +530,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                   <select
                     value={formData.module}
                     onChange={(e) => setFormData({ ...formData, module: e.target.value as ErrorModule })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium"
                   >
                     <option value="Penerima Manfaat & GESI">Penerima Manfaat & GESI</option>
                     <option value="Kegiatan & Presensi">Kegiatan & Presensi</option>
@@ -550,7 +550,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                   <select
                     value={formData.severity}
                     onChange={(e) => setFormData({ ...formData, severity: e.target.value as ErrorSeverity })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-semibold"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-semibold"
                   >
                     <option value="Kritis (Critical)">🚨 Kritis (Critical) - Sistem macet / tidak bisa dipakai</option>
                     <option value="Tinggi (High)">⚠️ Tinggi (High) - Fitur utama terganggu</option>
@@ -571,7 +571,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                   placeholder={isId ? 'Jelaskan secara rinci kendala yang terjadi...' : 'Describe in detail what happened...'}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-medium resize-none"
+                  className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium resize-none"
                 />
               </div>
 
@@ -585,7 +585,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                   placeholder={isId ? '1. Buka menu Penerima Manfaat\n2. Klik tombol Ekspor XLSX\n3. Halaman tidak memuat unduhan' : '1. Open Beneficiary menu\n2. Click Export XLSX\n3. Nothing downloads'}
                   value={formData.stepsToReproduce}
                   onChange={(e) => setFormData({ ...formData, stepsToReproduce: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-mono text-[11px] resize-none"
+                  className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-mono text-[11px] resize-none"
                 />
               </div>
 
@@ -599,7 +599,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                     type="text"
                     value={formData.reportedBy}
                     onChange={(e) => setFormData({ ...formData, reportedBy: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium"
                   />
                 </div>
                 <div>
@@ -611,13 +611,13 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                     placeholder="nama@monitoring.org"
                     value={formData.reporterEmail}
                     onChange={(e) => setFormData({ ...formData, reporterEmail: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-rose-500 font-medium"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/30 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium"
                   />
                 </div>
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-orange-100">
                 <button
                   type="button"
                   onClick={() => setIsSubmitModalOpen(false)}
@@ -627,7 +627,7 @@ export const ErrorReporting: React.FC<ErrorReportingProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95"
+                  className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-md shadow-orange-500/20 transition flex items-center gap-2 active:scale-95"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{isId ? 'Kirim Laporan Kendala' : 'Submit Error Report'}</span>

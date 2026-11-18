@@ -65,16 +65,16 @@ export default function Navbar({
   ] as const;
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 text-slate-100 shadow-md">
+    <header className="sticky top-0 z-40 bg-white border-b border-orange-100 text-slate-900 shadow-xs">
       {/* Top utility bar */}
-      <div className="bg-slate-950 px-4 sm:px-6 py-1.5 border-b border-slate-800/80 text-xs flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-3 text-slate-400">
-          <span className="inline-flex items-center gap-1.5 font-medium text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            M&E Engine v2.6 • {isId ? 'Zero Double-Counting Aktif' : 'Zero Double-Counting Active'}
+      <div className="bg-orange-50/80 px-4 sm:px-6 py-1.5 border-b border-orange-100 text-xs flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-3 text-slate-600">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-orange-700">
+            <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+            M&E Engine • {isId ? 'Zero Double-Counting Aktif' : 'Zero Double-Counting Active'}
           </span>
-          <span className="hidden md:inline text-slate-600">|</span>
-          <span className="hidden md:inline text-slate-400">
+          <span className="hidden md:inline text-orange-200">|</span>
+          <span className="hidden md:inline text-slate-500">
             {isId 
               ? 'Standar Disagregasi: GESI (Gender, Usia 0-14/15-24/25-64/65+, Ragam Disabilitas) & IPLC'
               : 'Disaggregation Standard: GESI (Gender, Age 0-14/15-24/25-64/65+, Disability Types) & IPLC'}
@@ -83,11 +83,11 @@ export default function Navbar({
 
         <div className="flex items-center gap-2">
           {/* Language Switcher Button */}
-          <div className="inline-flex items-center rounded-lg bg-slate-800 p-0.5 border border-slate-700">
+          <div className="inline-flex items-center rounded-lg bg-white p-0.5 border border-orange-200">
             <button
               onClick={() => setLanguage('id')}
               className={`px-2 py-0.5 rounded text-[11px] font-semibold transition ${
-                isId ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-slate-200'
+                isId ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700'
               }`}
               title="Bahasa Indonesia"
             >
@@ -96,7 +96,7 @@ export default function Navbar({
             <button
               onClick={() => setLanguage('en')}
               className={`px-2 py-0.5 rounded text-[11px] font-semibold transition ${
-                !isId ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-slate-200'
+                !isId ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-700'
               }`}
               title="English"
             >
@@ -105,12 +105,12 @@ export default function Navbar({
           </div>
 
           {/* Admin toggle pill */}
-          <div className="inline-flex items-center rounded-full bg-slate-800 p-0.5 border border-slate-700">
+          <div className="inline-flex items-center rounded-full bg-white p-0.5 border border-orange-200">
             <button
               id="role-public-btn"
               onClick={() => setIsAdmin(false)}
               className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
-                !isAdmin ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                !isAdmin ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               {isId ? 'Pengunjung Publik' : 'Public Viewer'}
@@ -119,7 +119,7 @@ export default function Navbar({
               id="role-admin-btn"
               onClick={() => setIsAdmin(true)}
               className={`px-2.5 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 transition-colors ${
-                isAdmin ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                isAdmin ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <ShieldCheck className="w-3 h-3" />
@@ -130,17 +130,17 @@ export default function Navbar({
           <button
             id="report-gen-btn"
             onClick={onOpenReportModal}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
+            className="flex items-center gap-1 px-2.5 py-1 rounded bg-white hover:bg-orange-100/70 text-orange-800 border border-orange-200 transition"
             title={isId ? 'Generate Laporan M&E Otomatis' : 'Generate Automated M&E Report'}
           >
-            <FileText className="w-3.5 h-3.5 text-amber-400" />
+            <FileText className="w-3.5 h-3.5 text-orange-600" />
             <span className="hidden sm:inline">{isId ? 'Laporan M&E' : 'M&E Report'}</span>
           </button>
 
           <button
             id="reset-demo-btn"
             onClick={onResetData}
-            className="text-slate-400 hover:text-slate-200 px-2 py-1 text-xs"
+            className="text-slate-500 hover:text-orange-700 px-2 py-1 text-xs"
             title={isId ? 'Reset ke Data Standar Demo' : 'Reset to Standard Demo Data'}
           >
             {isId ? 'Reset Demo' : 'Reset Demo'}
@@ -158,14 +158,14 @@ export default function Navbar({
               onClick={() => setCurrentTab('home')}
               className="flex items-center gap-2.5 cursor-pointer select-none group"
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-900/30 ring-1 ring-emerald-400/30">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
                 <BarChart3 className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors">
+                <span className="font-bold text-base tracking-tight text-slate-900 group-hover:text-orange-600 transition-colors">
                   SIMEV PROYEK
                 </span>
-                <span className="block text-[10px] text-slate-400 font-normal leading-none tracking-wider uppercase">
+                <span className="block text-[10px] text-orange-600 font-semibold leading-none tracking-wider uppercase">
                   {isId ? 'Monitoring & Evaluasi' : 'Monitoring & Evaluation'}
                 </span>
               </div>
@@ -176,18 +176,18 @@ export default function Navbar({
               <button
                 id="project-selector-dropdown-btn"
                 onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50/70 hover:bg-orange-50 border border-orange-200 text-xs font-medium text-slate-700 transition"
               >
-                <FolderKanban className="w-3.5 h-3.5 text-emerald-400" />
+                <FolderKanban className="w-3.5 h-3.5 text-orange-600" />
                 <span className="max-w-[200px] truncate">
                   {selectedProjectId === 'all' ? (isId ? '🌐 Semua Portofolio Proyek' : '🌐 All Project Portfolios') : selectedProject?.title || (isId ? 'Pilih Proyek' : 'Select Project')}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-orange-400" />
               </button>
 
               {projectDropdownOpen && (
                 <div 
-                  className="absolute left-0 mt-1 w-80 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute left-0 mt-1 w-80 bg-white border border-orange-100 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                   onMouseLeave={() => setProjectDropdownOpen(false)}
                 >
                   <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
@@ -198,19 +198,19 @@ export default function Navbar({
                       setSelectedProjectId('all');
                       setProjectDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-700/60 ${
-                      selectedProjectId === 'all' ? 'text-emerald-400 bg-emerald-950/40 font-semibold' : 'text-slate-300'
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-orange-50 ${
+                      selectedProjectId === 'all' ? 'text-orange-700 bg-orange-50 font-semibold' : 'text-slate-700'
                     }`}
                   >
                     <span>🌐 {isId ? 'Seluruh Portofolio (Agregat Nasional)' : 'Entire Portfolio (National Aggregate)'}</span>
-                    {selectedProjectId === 'all' && <span className="text-emerald-400 text-xs">✓</span>}
+                    {selectedProjectId === 'all' && <span className="text-orange-600 text-xs">✓</span>}
                   </button>
-                  <div className="border-t border-slate-700/60 my-1"></div>
+                  <div className="border-t border-orange-100 my-1"></div>
                   {projects.map(proj => (
                     <div
                       key={proj.id}
-                      className={`w-full px-3 py-2 text-xs flex items-center justify-between gap-2 hover:bg-slate-700/60 transition ${
-                        selectedProjectId === proj.id ? 'text-emerald-400 bg-emerald-950/40 font-semibold' : 'text-slate-300'
+                      className={`w-full px-3 py-2 text-xs flex items-center justify-between gap-2 hover:bg-orange-50 transition ${
+                        selectedProjectId === proj.id ? 'text-orange-700 bg-orange-50 font-semibold' : 'text-slate-700'
                       }`}
                     >
                       <button
@@ -220,7 +220,7 @@ export default function Navbar({
                         }}
                         className="flex-1 text-left flex items-start gap-2 truncate min-w-0"
                       >
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1 flex-shrink-0"></span>
+                        <span className="w-2 h-2 rounded-full bg-orange-500 mt-1 flex-shrink-0"></span>
                         <div className="flex-1 truncate">
                           <p className="truncate font-medium">{proj.title}</p>
                           <p className="text-[10px] text-slate-400">{proj.code} • {proj.province}</p>
@@ -236,25 +236,25 @@ export default function Navbar({
                               setProjectDropdownOpen(false);
                               onEditProject(proj);
                             }}
-                            className="p-1 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 rounded transition"
+                            className="p-1 text-slate-400 hover:text-orange-600 hover:bg-orange-100 rounded transition"
                             title={isId ? `Edit Nama Proyek ${proj.code}` : `Edit Project Name ${proj.code}`}
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                         )}
-                        {selectedProjectId === proj.id && <span className="text-emerald-400 text-xs">✓</span>}
+                        {selectedProjectId === proj.id && <span className="text-orange-600 text-xs">✓</span>}
                       </div>
                     </div>
                   ))}
 
                   {isAdmin && (
-                    <div className="border-t border-slate-700/60 pt-1 mt-1 px-2">
+                    <div className="border-t border-orange-100 pt-1 mt-1 px-2">
                       <button
                         onClick={() => {
                           setProjectDropdownOpen(false);
                           onOpenNewProjectModal();
                         }}
-                        className="w-full text-center py-1.5 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 text-xs font-medium flex items-center justify-center gap-1"
+                        className="w-full text-center py-1.5 rounded bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-medium flex items-center justify-center gap-1"
                       >
                         <Plus className="w-3.5 h-3.5" /> {isId ? 'Tambah Proyek Baru' : 'Add New Project'}
                       </button>
@@ -277,11 +277,11 @@ export default function Navbar({
                   onClick={() => setCurrentTab(item.id)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                     isActive
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-inner'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                      ? 'bg-orange-50 text-orange-700 border border-orange-200 font-semibold'
+                      : 'text-slate-600 hover:text-orange-700 hover:bg-orange-50/50'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-orange-600' : 'text-slate-400'}`} />
                   {item.label}
                 </button>
               );
@@ -295,7 +295,7 @@ export default function Navbar({
                 <button
                   id="quick-add-beneficiary-btn"
                   onClick={onOpenNewBeneficiaryModal}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium shadow-md shadow-emerald-950 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white text-xs font-medium shadow-md shadow-orange-500/20 transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>{isId ? 'Input Penerima Manfaat' : 'Add Beneficiary'}</span>
@@ -306,7 +306,7 @@ export default function Navbar({
             {/* Mobile menu toggle */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
+              className="lg:hidden p-2 rounded-lg bg-orange-50 text-orange-700 hover:bg-orange-100"
             >
               <ChevronDown className={`w-5 h-5 transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -316,15 +316,15 @@ export default function Navbar({
 
       {/* Mobile navigation collapse */}
       {menuOpen && (
-        <div className="lg:hidden border-t border-slate-800 bg-slate-900 px-4 py-3 space-y-1">
-          <div className="mb-2 pb-2 border-b border-slate-800">
-            <span className="text-[11px] text-slate-400 font-semibold block mb-1">
+        <div className="lg:hidden border-t border-orange-100 bg-white px-4 py-3 space-y-1">
+          <div className="mb-2 pb-2 border-b border-orange-100">
+            <span className="text-[11px] text-slate-500 font-semibold block mb-1">
               {isId ? 'PROYEK TERPILIH:' : 'SELECTED PROJECT:'}
             </span>
             <select
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="w-full bg-slate-800 text-slate-200 text-xs rounded-lg p-2 border border-slate-700"
+              className="w-full bg-orange-50/40 text-slate-800 text-xs rounded-lg p-2 border border-orange-200"
             >
               <option value="all">🌐 {isId ? 'Seluruh Portofolio Proyek' : 'All Project Portfolio'}</option>
               {projects.map(p => (
@@ -345,10 +345,10 @@ export default function Navbar({
                     setMenuOpen(false);
                   }}
                   className={`flex items-center gap-2 p-2.5 rounded-lg text-xs font-medium text-left ${
-                    isActive ? 'bg-emerald-500/20 text-emerald-400 font-semibold' : 'text-slate-300 hover:bg-slate-800'
+                    isActive ? 'bg-orange-50 text-orange-700 font-semibold border border-orange-200' : 'text-slate-600 hover:bg-orange-50/50'
                   }`}
                 >
-                  <Icon className="w-4 h-4 text-emerald-400" />
+                  <Icon className="w-4 h-4 text-orange-600" />
                   {item.label}
                 </button>
               );
@@ -356,13 +356,13 @@ export default function Navbar({
           </div>
 
           {isAdmin && (
-            <div className="pt-2 mt-2 border-t border-slate-800 flex gap-2">
+            <div className="pt-2 mt-2 border-t border-orange-100 flex gap-2">
               <button
                 onClick={() => {
                   setMenuOpen(false);
                   onOpenNewBeneficiaryModal();
                 }}
-                className="flex-1 py-2 bg-emerald-600 text-white rounded-lg text-xs font-medium text-center"
+                className="flex-1 py-2 bg-gradient-to-r from-orange-600 to-amber-500 text-white rounded-lg text-xs font-medium text-center"
               >
                 + {isId ? 'Penerima Manfaat' : 'Beneficiary'}
               </button>
@@ -371,7 +371,7 @@ export default function Navbar({
                   setMenuOpen(false);
                   onOpenNewProjectModal();
                 }}
-                className="flex-1 py-2 bg-slate-800 text-slate-200 rounded-lg text-xs font-medium text-center border border-slate-700"
+                className="flex-1 py-2 bg-orange-50 text-orange-800 rounded-lg text-xs font-medium text-center border border-orange-200"
               >
                 + {isId ? 'Proyek Baru' : 'New Project'}
               </button>

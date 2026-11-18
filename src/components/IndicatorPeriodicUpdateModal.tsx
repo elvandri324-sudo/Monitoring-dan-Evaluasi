@@ -176,12 +176,12 @@ export default function IndicatorPeriodicUpdateModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150 border border-slate-200">
+      <div className="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl space-y-4 my-8 animate-in fade-in zoom-in-95 duration-150 border border-orange-100">
         {/* Header */}
-        <div className="flex items-start justify-between pb-3 border-b border-slate-100">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+        <div className="flex items-start justify-between pb-3 border-b border-orange-100">
+          <div className="min-w-0 pr-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800 border border-orange-200">
                 {indicator.code}
               </span>
               <span className="text-xs font-semibold text-slate-500">
@@ -199,49 +199,49 @@ export default function IndicatorPeriodicUpdateModal({
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition text-sm font-bold"
+            className="text-slate-400 hover:text-orange-700 p-1.5 rounded-lg hover:bg-orange-50 transition text-sm font-bold shrink-0"
           >
             ✕
           </button>
         </div>
 
         {/* Current Progress Summary Banner */}
-        <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-2">
+        <div className="bg-orange-50/40 rounded-xl p-3.5 border border-orange-100 space-y-2">
           <div className="flex flex-wrap items-center justify-between text-xs gap-2">
             <div>
               <span className="text-[10px] text-slate-400 block font-medium">Baseline:</span>
-              <span className="font-bold text-slate-700">{indicator.baseline} {indicator.unit}</span>
+              <span className="font-bold text-slate-700 tabular-nums">{indicator.baseline} {indicator.unit}</span>
             </div>
             <div>
               <span className="text-[10px] text-slate-400 block font-medium">{isId ? 'Capaian Saat Ini:' : 'Current Actual:'}</span>
-              <span className="font-extrabold text-blue-700 text-sm">{indicator.actual} {indicator.unit}</span>
+              <span className="font-extrabold text-orange-700 text-sm tabular-nums">{indicator.actual} {indicator.unit}</span>
             </div>
             <div>
               <span className="text-[10px] text-slate-400 block font-medium">{isId ? 'Target Total:' : 'Total Target:'}</span>
-              <span className="font-bold text-slate-900">{indicator.target} {indicator.unit}</span>
+              <span className="font-bold text-slate-900 tabular-nums">{indicator.target} {indicator.unit}</span>
             </div>
             <div>
               <span className="text-[10px] text-slate-400 block font-medium">{isId ? 'Proyeksi Baru:' : 'New Projection:'}</span>
-              <span className="font-extrabold text-emerald-700 text-sm">{computedActual} {indicator.unit} ({progressPercent}%)</span>
+              <span className="font-extrabold text-emerald-700 text-sm tabular-nums">{computedActual} {indicator.unit} ({progressPercent}%)</span>
             </div>
           </div>
 
-          <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-orange-100/80 h-2 rounded-full overflow-hidden">
             <div 
-              className="bg-emerald-600 h-full rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-orange-600 to-amber-500 h-full rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 text-xs font-semibold">
+        <div className="flex overflow-x-auto border-b border-orange-100 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('update')}
-            className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition ${
+            className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 ${
               activeTab === 'update'
-                ? 'border-emerald-600 text-emerald-700 font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-orange-600 text-orange-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-orange-700'
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -250,10 +250,10 @@ export default function IndicatorPeriodicUpdateModal({
 
           <button
             onClick={() => setActiveTab('mov')}
-            className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition ${
+            className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 ${
               activeTab === 'mov'
-                ? 'border-emerald-600 text-emerald-700 font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-orange-600 text-orange-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-orange-700'
             }`}
           >
             <Paperclip className="w-4 h-4" />
@@ -262,10 +262,10 @@ export default function IndicatorPeriodicUpdateModal({
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition ${
+            className={`pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition whitespace-nowrap shrink-0 ${
               activeTab === 'history'
-                ? 'border-emerald-600 text-emerald-700 font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-orange-600 text-orange-700 font-bold'
+                : 'border-transparent text-slate-500 hover:text-orange-700'
             }`}
           >
             <Clock className="w-4 h-4" />
@@ -293,7 +293,7 @@ export default function IndicatorPeriodicUpdateModal({
                         setPeriodPreset(e.target.value);
                       }
                     }}
-                    className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-medium"
+                    className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-medium"
                   >
                     <option value="Bulan Januari 2025">{isId ? 'Bulan Januari 2025' : 'January 2025'}</option>
                     <option value="Bulan Februari 2025">{isId ? 'Bulan Februari 2025' : 'February 2025'}</option>
@@ -317,7 +317,7 @@ export default function IndicatorPeriodicUpdateModal({
                       placeholder={isId ? 'Masukkan nama periode kustom (misal: Monev Lapangan Mei 2025)' : 'Enter custom period name (e.g. Field M&E May 2025)'}
                       value={customPeriod}
                       onChange={(e) => setCustomPeriod(e.target.value)}
-                      className="w-full text-xs p-2 rounded-lg border border-emerald-300 focus:ring-2 focus:ring-emerald-500"
+                      className="w-full text-xs p-2 rounded-lg border border-orange-300 focus:ring-2 focus:ring-orange-500"
                     />
                   )}
                 </div>
@@ -332,23 +332,23 @@ export default function IndicatorPeriodicUpdateModal({
                   type="date"
                   value={dateRecorded}
                   onChange={(e) => setDateRecorded(e.target.value)}
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-medium"
+                  className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-medium"
                 />
               </div>
             </div>
 
             {/* Input Nilai Capaian */}
-            <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="bg-orange-50/40 p-3.5 rounded-xl border border-orange-100 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-bold text-slate-800">
                   {isId ? `Metode Pengisian Nilai (${indicator.unit}):` : `Input Method (${indicator.unit}):`}
                 </span>
-                <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5 text-[11px]">
+                <div className="inline-flex flex-wrap rounded-lg border border-orange-200 bg-white p-0.5 text-[11px]">
                   <button
                     type="button"
                     onClick={() => setInputMode('delta')}
                     className={`px-2.5 py-1 rounded-md font-semibold transition ${
-                      inputMode === 'delta' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                      inputMode === 'delta' ? 'bg-orange-600 text-white' : 'text-slate-600 hover:text-orange-700'
                     }`}
                   >
                     {isId ? '+ Tambah Capaian Periode Ini' : '+ Add Period Progress'}
@@ -357,7 +357,7 @@ export default function IndicatorPeriodicUpdateModal({
                     type="button"
                     onClick={() => setInputMode('total')}
                     className={`px-2.5 py-1 rounded-md font-semibold transition ${
-                      inputMode === 'total' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                      inputMode === 'total' ? 'bg-orange-600 text-white' : 'text-slate-600 hover:text-orange-700'
                     }`}
                   >
                     {isId ? 'Set Total Akumulatif Baru' : 'Set New Cumulative Total'}
@@ -367,14 +367,14 @@ export default function IndicatorPeriodicUpdateModal({
 
               {inputMode === 'delta' ? (
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="number"
                       step="any"
                       value={deltaValue}
                       onChange={(e) => setDeltaValue(Number(e.target.value))}
                       placeholder="0"
-                      className="w-40 text-base font-bold p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 bg-white"
+                      className="w-36 sm:w-40 text-base font-bold p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 bg-white tabular-nums"
                     />
                     <span className="text-slate-600 font-medium">
                       {isId ? `${indicator.unit} ditambahkan pada periode ini` : `${indicator.unit} added in this period`}
@@ -386,13 +386,13 @@ export default function IndicatorPeriodicUpdateModal({
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="number"
                       step="any"
                       value={totalValue}
                       onChange={(e) => setTotalValue(Number(e.target.value))}
-                      className="w-40 text-base font-bold p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 bg-white"
+                      className="w-36 sm:w-40 text-base font-bold p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 bg-white tabular-nums"
                     />
                     <span className="text-slate-600 font-medium">{indicator.unit} ({isId ? 'Total Akumulatif' : 'Cumulative Total'})</span>
                   </div>
@@ -408,7 +408,7 @@ export default function IndicatorPeriodicUpdateModal({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as StatusProgress)}
-                className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-800"
+                className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 font-semibold text-slate-800"
               >
                 <option value="Sesuai Target (On-Track)">{isId ? '🟢 Sesuai Target (On-Track)' : '🟢 On-Track'}</option>
                 <option value="Tercapai">{isId ? '🌟 Tercapai (Target Selesai / Melampaui)' : '🌟 Achieved / Completed'}</option>
@@ -427,7 +427,7 @@ export default function IndicatorPeriodicUpdateModal({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder={isId ? 'Tuliskan ringkasan kemajuan, kendala yang dihadapi, atau justifikasi pencapaian...' : 'Summarize progress, challenges faced, or justification for achievements...'}
-                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500"
+                className="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
@@ -437,10 +437,10 @@ export default function IndicatorPeriodicUpdateModal({
         {activeTab === 'mov' && (
           <div className="space-y-4 text-xs">
             {/* Form Tambah Dokumen MoV Baru */}
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="bg-orange-50/40 p-4 rounded-xl border border-orange-100 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                  <Paperclip className="w-4 h-4 text-emerald-600" />
+                  <Paperclip className="w-4 h-4 text-orange-600" />
                   {isId ? 'Tambah Dokumen Bukti Verifikasi (MoV) Baru' : 'Add New Means of Verification (MoV) Document'}
                 </span>
                 <span className="text-[10px] text-slate-400">{isId ? 'Bukti Audit & Akuntabilitas' : 'Audit & Verification Trail'}</span>
@@ -454,7 +454,7 @@ export default function IndicatorPeriodicUpdateModal({
                   <select
                     value={movCategory}
                     onChange={(e) => setMovCategory(e.target.value as MoVCategory)}
-                    className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white"
+                    className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-orange-500"
                   >
                     {MOV_CATEGORIES.map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
@@ -471,21 +471,21 @@ export default function IndicatorPeriodicUpdateModal({
                     placeholder={isId ? 'Contoh: Daftar Hadir Pelatihan HHBK Desa Menjalin' : 'e.g. Training Attendance Sheet Menjalin Village'}
                     value={movTitle}
                     onChange={(e) => setMovTitle(e.target.value)}
-                    className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white"
+                    className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
 
               {/* Tipe Sumber: File vs Tautan Cloud Link */}
               <div className="space-y-2">
-                <div className="flex items-center gap-4 text-xs font-semibold">
+                <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
                   <label className="flex items-center gap-1.5 cursor-pointer">
                     <input
                       type="radio"
                       name="movSourceType"
                       checked={movSourceType === 'file'}
                       onChange={() => setMovSourceType('file')}
-                      className="text-emerald-600 focus:ring-emerald-500"
+                      className="text-orange-600 focus:ring-orange-500 accent-orange-600"
                     />
                     <span>{isId ? 'Unggah Berkas / Dokumen Digital' : 'Upload Digital Document'}</span>
                   </label>
@@ -495,14 +495,14 @@ export default function IndicatorPeriodicUpdateModal({
                       name="movSourceType"
                       checked={movSourceType === 'link'}
                       onChange={() => setMovSourceType('link')}
-                      className="text-emerald-600 focus:ring-emerald-500"
+                      className="text-orange-600 focus:ring-orange-500 accent-orange-600"
                     />
                     <span>{isId ? 'Tautan Link Cloud (Google Drive / OneDrive / Dropbox)' : 'Cloud Storage Link (Drive / Dropbox)'}</span>
                   </label>
                 </div>
 
                 {movSourceType === 'file' ? (
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-3 bg-white hover:bg-slate-50 transition text-center space-y-1">
+                  <div className="border-2 border-dashed border-orange-200 rounded-xl p-3 bg-white hover:bg-orange-50/40 transition text-center space-y-1">
                     <input
                       type="file"
                       id="mov-file-input"
@@ -511,7 +511,7 @@ export default function IndicatorPeriodicUpdateModal({
                     />
                     <label 
                       htmlFor="mov-file-input"
-                      className="cursor-pointer inline-flex items-center gap-2 text-emerald-700 font-semibold text-xs py-1 px-3 bg-emerald-50 rounded-lg border border-emerald-200"
+                      className="cursor-pointer inline-flex items-center gap-2 text-orange-700 font-semibold text-xs py-1 px-3 bg-orange-50 rounded-lg border border-orange-200"
                     >
                       <Upload className="w-3.5 h-3.5" />
                       {isId ? 'Pilih Berkas dari Komputer' : 'Browse File from Device'}
@@ -533,7 +533,7 @@ export default function IndicatorPeriodicUpdateModal({
                       placeholder="https://drive.google.com/drive/folders/..."
                       value={movLinkUrl}
                       onChange={(e) => setMovLinkUrl(e.target.value)}
-                      className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white"
+                      className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                 )}
@@ -545,7 +545,7 @@ export default function IndicatorPeriodicUpdateModal({
                   placeholder={isId ? 'Keterangan tambahan dokumen (opsional)...' : 'Additional document notes (optional)...'}
                   value={movNotes}
                   onChange={(e) => setMovNotes(e.target.value)}
-                  className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white"
+                  className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -553,7 +553,7 @@ export default function IndicatorPeriodicUpdateModal({
                 <button
                   type="button"
                   onClick={handleAddMoVToStaging}
-                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg flex items-center gap-1.5 shadow-2xs transition"
+                  className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold text-xs rounded-lg flex items-center gap-1.5 shadow-2xs transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   {isId ? '+ Lampirkan Dokumen ke Sesi Ini' : '+ Attach Document to Session'}
@@ -568,7 +568,7 @@ export default function IndicatorPeriodicUpdateModal({
               </span>
 
               {existingMovDocs.length === 0 && newMovDocs.length === 0 ? (
-                <div className="p-6 text-center bg-slate-50 rounded-xl border border-slate-200 text-slate-400 text-xs">
+                <div className="p-6 text-center bg-orange-50/30 rounded-xl border border-orange-100 text-slate-400 text-xs">
                   {isId ? 'Belum ada dokumen MoV yang dilampirkan untuk indikator ini. Silakan tambahkan formulir di atas.' : 'No MoV documents attached yet for this indicator.'}
                 </div>
               ) : (
@@ -576,13 +576,13 @@ export default function IndicatorPeriodicUpdateModal({
                   {/* Dokumen yang baru ditambahkan di sesi ini */}
                   {newMovDocs.map(doc => (
                     <div key={doc.id} className="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
                           <FileCheck className="w-4 h-4" />
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900">{doc.title}</span>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-bold text-slate-900 truncate">{doc.title}</span>
                             <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
                               {isId ? 'Baru (Sesi Ini)' : 'New (This Session)'}
                             </span>
@@ -595,7 +595,7 @@ export default function IndicatorPeriodicUpdateModal({
 
                       <button
                         onClick={() => handleRemoveStagingMoV(doc.id)}
-                        className="text-rose-600 hover:text-rose-800 p-1 rounded hover:bg-rose-50"
+                        className="text-rose-600 hover:text-rose-800 p-1 rounded hover:bg-rose-50 shrink-0"
                         title={isId ? 'Hapus lampiran' : 'Remove attachment'}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -605,26 +605,26 @@ export default function IndicatorPeriodicUpdateModal({
 
                   {/* Dokumen yang sudah tersimpan sebelumnya */}
                   {existingMovDocs.map(doc => (
-                    <div key={doc.id} className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
+                    <div key={doc.id} className="p-3 bg-white border border-orange-100 rounded-xl flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-100">
                           <FileText className="w-4 h-4" />
                         </div>
-                        <div>
-                          <span className="font-bold text-slate-900 block">{doc.title}</span>
-                          <p className="text-[10px] text-slate-500">
+                        <div className="min-w-0">
+                          <span className="font-bold text-slate-900 block truncate">{doc.title}</span>
+                          <p className="text-[10px] text-slate-500 truncate">
                             {doc.category} &bull; {doc.fileName || (isId ? 'Tautan Eksternal' : 'External Link')} &bull; {isId ? 'Diunggah:' : 'Uploaded:'} {doc.uploadedAt}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         {doc.fileUrl ? (
                           <a
                             href={doc.fileUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded text-[11px] flex items-center gap-1"
+                            className="px-2.5 py-1 bg-orange-50 hover:bg-orange-100 text-orange-800 font-semibold rounded text-[11px] flex items-center gap-1"
                           >
                             <ExternalLink className="w-3 h-3" />
                             {isId ? 'Buka' : 'Open'}
@@ -632,7 +632,7 @@ export default function IndicatorPeriodicUpdateModal({
                         ) : (
                           <button
                             onClick={() => downloadMoVDocument(doc, { indicatorCode: indicator.code, indicatorName: indicator.name })}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded text-[11px] flex items-center gap-1"
+                            className="px-2.5 py-1 bg-orange-50 hover:bg-orange-100 text-orange-800 font-semibold rounded text-[11px] flex items-center gap-1"
                           >
                             <Download className="w-3 h-3" />
                             {isId ? 'Unduh' : 'Download'}
@@ -655,33 +655,33 @@ export default function IndicatorPeriodicUpdateModal({
             </span>
 
             {existingHistory.length === 0 ? (
-              <div className="p-6 text-center bg-slate-50 rounded-xl border border-slate-200 text-slate-400">
+              <div className="p-6 text-center bg-orange-50/30 rounded-xl border border-orange-100 text-slate-400">
                 {isId ? 'Belum ada catatan riwayat capaian berkala sebelumnya.' : 'No periodic progress history recorded yet.'}
               </div>
             ) : (
               <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
                 {existingHistory.map((item, idx) => (
-                  <div key={item.id || idx} className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
-                    <div className="flex items-center justify-between">
+                  <div key={item.id || idx} className="p-3 bg-white rounded-xl border border-orange-100 space-y-1.5 shadow-2xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-slate-900">{item.periodLabel}</span>
                         <span className="text-[10px] text-slate-400 font-medium">({item.dateRecorded})</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 text-[11px]">
+                      <span className="px-2 py-0.5 rounded font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 text-[11px] tabular-nums">
                         +{item.periodValue} &rarr; {isId ? 'Akumulasi:' : 'Cumulative:'} {item.cumulativeActual} {indicator.unit}
                       </span>
                     </div>
 
                     {item.notes && (
-                      <p className="text-slate-600 text-[11px] bg-slate-50 p-2 rounded-lg">
+                      <p className="text-slate-600 text-[11px] bg-orange-50/40 p-2 rounded-lg">
                         {item.notes}
                       </p>
                     )}
 
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-100">
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-orange-100">
                       <span>{isId ? 'Dicatat oleh:' : 'Recorded by:'} {item.recordedBy}</span>
                       {item.movDocuments && item.movDocuments.length > 0 && (
-                        <span className="text-blue-600 font-semibold flex items-center gap-1">
+                        <span className="text-orange-600 font-semibold flex items-center gap-1">
                           <Paperclip className="w-3 h-3" />
                           {item.movDocuments.length} {isId ? 'Dokumen MoV Terlampir' : 'MoV Documents Attached'}
                         </span>
@@ -695,17 +695,17 @@ export default function IndicatorPeriodicUpdateModal({
         )}
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
+        <div className="flex items-center justify-between pt-3 border-t border-orange-100 text-xs">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 transition"
+            className="px-4 py-2 rounded-xl font-semibold text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition"
           >
             {isId ? 'Batal' : 'Cancel'}
           </button>
 
           <button
             onClick={handleSave}
-            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md shadow-emerald-600/20 flex items-center gap-2 transition"
+            className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-bold rounded-xl shadow-md shadow-orange-500/20 flex items-center gap-2 transition"
           >
             <CheckCircle2 className="w-4 h-4" />
             <span>{isId ? 'Simpan Capaian & Dokumen MoV' : 'Save Progress & MoV'}</span>

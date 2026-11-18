@@ -338,11 +338,11 @@ export default function LoginPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4 sm:p-6 py-10">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-b from-white via-[#FFFBF7] to-orange-50/70 flex flex-col justify-center items-center p-4 sm:p-6 py-8 sm:py-10 overflow-x-hidden">
+      <div className="w-full max-w-md min-w-0">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/30 mb-3">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 text-white shadow-lg shadow-orange-500/30 mb-3">
             <BarChart3 className="w-8 h-8" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
@@ -353,11 +353,11 @@ export default function LoginPage({
           </p>
 
           {/* Language Toggle */}
-          <div className="inline-flex items-center bg-white p-1 rounded-xl border border-slate-200 shadow-2xs mt-3 text-xs">
+          <div className="inline-flex items-center bg-white p-1 rounded-xl border border-orange-200/80 shadow-2xs mt-3 text-xs">
             <button
               onClick={() => setLanguage('id')}
               className={`px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 ${
-                isId ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                isId ? 'bg-orange-600 text-white shadow-2xs' : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <span>🇮🇩</span>
@@ -366,7 +366,7 @@ export default function LoginPage({
             <button
               onClick={() => setLanguage('en')}
               className={`px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 ${
-                !isId ? 'bg-blue-600 text-white' : 'text-slate-600 hover:text-slate-900'
+                !isId ? 'bg-orange-600 text-white shadow-2xs' : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <span>🇬🇧</span>
@@ -376,12 +376,12 @@ export default function LoginPage({
         </div>
 
         {/* Card Container */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xl p-6 sm:p-8 space-y-5">
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-xl shadow-orange-950/5 p-6 sm:p-8 space-y-5">
           
           {/* VIEW 1: LOGIN FORM */}
           {viewState === 'login' && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900">
                     {isId ? 'Masuk ke Sistem' : 'Sign in to System'}
@@ -394,7 +394,7 @@ export default function LoginPage({
                   <button
                     type="button"
                     onClick={onBackToPublic}
-                    className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg border border-emerald-200 transition"
+                    className="text-xs font-semibold text-orange-700 hover:text-orange-800 bg-orange-50 hover:bg-orange-100 px-2.5 py-1.5 rounded-lg border border-orange-200 transition whitespace-nowrap shrink-0"
                   >
                     {isId ? '← Beranda' : '← Home'}
                   </button>
@@ -440,7 +440,7 @@ export default function LoginPage({
                         if (errorMessage) setErrorMessage('');
                       }}
                       placeholder={isId ? 'Masukkan username (contoh: elvandri.me)' : 'Enter username (e.g. elvandri.me)'}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                      className="w-full pl-9 pr-3 py-2.5 bg-orange-50/30 border border-slate-200 rounded-xl text-slate-900 text-xs font-mono focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition outline-hidden"
                     />
                   </div>
                 </div>
@@ -453,7 +453,7 @@ export default function LoginPage({
                     <button
                       type="button"
                       onClick={handleOpenForgotPassword}
-                      className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline transition"
+                      className="text-[11px] font-semibold text-orange-600 hover:text-orange-700 hover:underline transition"
                     >
                       {isId ? 'Lupa kata sandi?' : 'Forgot password?'}
                     </button>
@@ -471,7 +471,7 @@ export default function LoginPage({
                         if (errorMessage) setErrorMessage('');
                       }}
                       placeholder="••••••••"
-                      className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                      className="w-full pl-9 pr-10 py-2.5 bg-orange-50/30 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition outline-hidden"
                     />
                     <button
                       type="button"
@@ -486,7 +486,7 @@ export default function LoginPage({
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-blue-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
+                  className="w-full py-2.5 px-4 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-semibold text-xs rounded-xl shadow-md shadow-orange-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
                 >
                   <span>{isId ? 'Masuk ke Dashboard' : 'Sign in to Dashboard'}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -494,27 +494,27 @@ export default function LoginPage({
               </form>
 
               {/* Registered Users Reference Accordion for testing */}
-              <div className="pt-2 border-t border-slate-100">
+              <div className="pt-2 border-t border-orange-100">
                 <button
                   type="button"
                   onClick={() => setShowAccountsGuide(!showAccountsGuide)}
-                  className="w-full flex items-center justify-between text-[11px] font-semibold text-slate-500 hover:text-blue-600 py-1 transition"
+                  className="w-full flex items-center justify-between text-[11px] font-semibold text-slate-500 hover:text-orange-600 py-1 transition"
                 >
                   <span className="flex items-center gap-1.5">
-                    <Info className="w-3.5 h-3.5 text-blue-500" />
+                    <Info className="w-3.5 h-3.5 text-orange-500" />
                     {isId ? 'Daftar Akun Pengguna Terdaftar (Referensi)' : 'Registered User Accounts (Reference)'}
                   </span>
                   {showAccountsGuide ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
 
                 {showAccountsGuide && (
-                  <div className="mt-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2 max-h-56 overflow-y-auto">
+                  <div className="mt-2 p-3 bg-orange-50/40 rounded-xl border border-orange-100 text-xs space-y-2 max-h-56 overflow-y-auto">
                     <p className="text-[11px] text-slate-500 italic">
                       {isId 
                         ? 'Login wajib menggunakan Username dan Password akun terdaftar:' 
                         : 'Sign in requires a registered Username and Password:'}
                     </p>
-                    <div className="space-y-1.5 divide-y divide-slate-200/60">
+                    <div className="space-y-1.5 divide-y divide-orange-100">
                       {users.map(u => {
                         const isAll = u.assignedProjectIds?.includes('all');
                         const projectNames = isAll 
@@ -526,7 +526,7 @@ export default function LoginPage({
                             <div>
                               <div className="font-bold text-slate-800 flex items-center gap-1">
                                 <span>{u.fullName}</span>
-                                <span className="text-[10px] px-1.5 py-0.2 bg-blue-100 text-blue-800 rounded font-medium">
+                                <span className="text-[10px] px-1.5 py-0.2 bg-orange-100 text-orange-800 rounded font-medium">
                                   {u.role}
                                 </span>
                               </div>
@@ -535,8 +535,8 @@ export default function LoginPage({
                               </div>
                             </div>
                             <div className="text-right shrink-0">
-                              <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-1">
-                                <FolderKanban className="w-2.5 h-2.5 text-slate-500" />
+                              <span className="text-[10px] bg-white border border-orange-200/80 text-slate-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-1">
+                                <FolderKanban className="w-2.5 h-2.5 text-orange-500" />
                                 {projectNames}
                               </span>
                             </div>
@@ -557,12 +557,12 @@ export default function LoginPage({
                 <button
                   type="button"
                   onClick={handleBackToLogin}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 transition"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-orange-700 transition"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>{isId ? 'Kembali ke Login' : 'Back to Login'}</span>
                 </button>
-                <div className="flex items-center gap-1 text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                <div className="flex items-center gap-1 text-[11px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
                   <KeyRound className="w-3 h-3" />
                   <span>{isId ? `Langkah ${resetStep} dari 3` : `Step ${resetStep} of 3`}</span>
                 </div>
@@ -624,11 +624,11 @@ export default function LoginPage({
                           if (resetError) setResetError('');
                         }}
                         placeholder={isId ? 'Contoh: elvandri.me@monitoring.org' : 'e.g. elvandri.me@monitoring.org'}
-                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                        className="w-full pl-9 pr-3 py-2.5 bg-orange-50/30 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition outline-hidden"
                       />
                     </div>
-                    <div className="mt-2 p-2.5 bg-blue-50/60 rounded-xl border border-blue-100 text-[11px] text-blue-800 flex items-start gap-2">
-                      <Send className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                    <div className="mt-2 p-2.5 bg-orange-50/70 rounded-xl border border-orange-200/80 text-[11px] text-orange-900 flex items-start gap-2">
+                      <Send className="w-3.5 h-3.5 text-orange-600 shrink-0 mt-0.5" />
                       <span>
                         {isId 
                           ? 'Sistem akan mengirimkan instruksi dan kode verifikasi reset 6-digit langsung ke alamat email terdaftar akun tersebut.' 
@@ -640,7 +640,7 @@ export default function LoginPage({
                   <button
                     type="submit"
                     disabled={isSendingEmail}
-                    className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold text-xs rounded-xl shadow-md shadow-blue-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
+                    className="w-full py-2.5 px-4 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 disabled:opacity-60 text-white font-semibold text-xs rounded-xl shadow-md shadow-orange-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
                   >
                     {isSendingEmail ? (
                       <>
@@ -676,18 +676,18 @@ export default function LoginPage({
                   </div>
 
                   {/* Simulated Email Inbox Preview Widget */}
-                  <div className="border border-blue-200 bg-gradient-to-br from-blue-50/80 to-slate-50 rounded-xl p-3.5 shadow-2xs space-y-2.5">
-                    <div className="flex items-center justify-between border-b border-blue-200/70 pb-2">
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
-                        <Inbox className="w-4 h-4 text-blue-600" />
+                  <div className="border border-orange-200 bg-gradient-to-br from-orange-50/80 to-white rounded-xl p-3.5 shadow-2xs space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-orange-200/70 pb-2">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-orange-950">
+                        <Inbox className="w-4 h-4 text-orange-600" />
                         <span>{isId ? 'Kotak Masuk Email (Simulasi Pengiriman)' : 'Email Inbox (Simulated Dispatch)'}</span>
                       </div>
-                      <span className="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono">
+                      <span className="text-[10px] bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-mono">
                         {emailSentTimestamp}
                       </span>
                     </div>
 
-                    <div className="text-xs space-y-1.5 bg-white p-3 rounded-lg border border-slate-200/80 shadow-2xs">
+                    <div className="text-xs space-y-1.5 bg-white p-3 rounded-lg border border-orange-100 shadow-2xs">
                       <div className="text-[11px] text-slate-500 font-medium">
                         <span className="font-semibold text-slate-700">Kepada:</span> {verifiedUser.fullName} &lt;{verifiedUser.email}&gt;
                       </div>
@@ -703,12 +703,12 @@ export default function LoginPage({
                         </p>
                         
                         {/* OTP Display in Email */}
-                        <div className="flex items-center justify-between bg-slate-100 border border-slate-300/80 px-3 py-2 rounded-lg font-mono my-2">
-                          <span className="text-base font-black tracking-widest text-blue-700">{generatedOtp}</span>
+                        <div className="flex items-center justify-between bg-orange-50/60 border border-orange-200 px-3 py-2 rounded-lg font-mono my-2">
+                          <span className="text-base font-black tracking-widest text-orange-700">{generatedOtp}</span>
                           <button
                             type="button"
                             onClick={() => copyToClipboard(generatedOtp)}
-                            className="text-[10px] text-slate-600 hover:text-blue-700 flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-slate-200 transition"
+                            className="text-[10px] text-slate-600 hover:text-orange-700 flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-orange-100 transition"
                           >
                             {copiedCode ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                             <span>{copiedCode ? (isId ? 'Tersalin' : 'Copied') : (isId ? 'Salin Kode' : 'Copy')}</span>
@@ -719,7 +719,7 @@ export default function LoginPage({
                         <button
                           type="button"
                           onClick={handleDirectLinkVerification}
-                          className="w-full mt-1.5 py-1.5 px-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-[11px] font-bold flex items-center justify-center gap-1 transition"
+                          className="w-full mt-1.5 py-1.5 px-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-md text-[11px] font-bold flex items-center justify-center gap-1 transition"
                         >
                           <ExternalLink className="w-3 h-3" />
                           <span>{isId ? '⚡ Buka Tautan Reset Langsung (1-Klik)' : '⚡ Open Direct Reset Link (1-Click)'}</span>
@@ -744,7 +744,7 @@ export default function LoginPage({
                           if (resetError) setResetError('');
                         }}
                         placeholder="Contoh: 849201"
-                        className="w-full text-center tracking-widest text-lg font-mono py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                        className="w-full text-center tracking-widest text-lg font-mono py-2.5 bg-orange-50/30 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-orange-500 focus:bg-white transition outline-hidden"
                       />
                     </div>
 
@@ -759,7 +759,7 @@ export default function LoginPage({
                         className={`font-semibold flex items-center gap-1 ${
                           resendCountdown > 0 
                             ? 'text-slate-400 cursor-not-allowed' 
-                            : 'text-blue-600 hover:text-blue-800 hover:underline cursor-pointer'
+                            : 'text-orange-600 hover:text-orange-800 hover:underline cursor-pointer'
                         }`}
                       >
                         <RefreshCw className={`w-3 h-3 ${isSendingEmail ? 'animate-spin' : ''}`} />
@@ -781,7 +781,7 @@ export default function LoginPage({
                       </button>
                       <button
                         type="submit"
-                        className="flex-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-blue-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
+                        className="flex-2 py-2.5 px-4 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-semibold text-xs rounded-xl shadow-md shadow-orange-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
                       >
                         <span>{isId ? 'Verifikasi Kode' : 'Verify Code'}</span>
                         <ArrowRight className="w-4 h-4" />
@@ -795,16 +795,16 @@ export default function LoginPage({
               {!resetSuccess && resetStep === 3 && verifiedUser && (
                 <form onSubmit={handleSaveNewPassword} className="space-y-4 text-sm animate-in fade-in duration-200">
                   {/* Verified User Summary Card */}
-                  <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-xl flex items-center gap-3">
+                  <div className="p-3 bg-orange-50/70 border border-orange-200/80 rounded-xl flex items-center gap-3">
                     {verifiedUser.avatarUrl ? (
                       <img 
                         src={verifiedUser.avatarUrl} 
                         alt={verifiedUser.fullName} 
-                        className="w-10 h-10 rounded-lg object-cover border border-blue-200 shadow-2xs"
+                        className="w-10 h-10 rounded-lg object-cover border border-orange-200 shadow-2xs"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center font-bold text-sm">
                         {verifiedUser.fullName.charAt(0)}
                       </div>
                     )}
@@ -813,7 +813,7 @@ export default function LoginPage({
                         <span className="font-bold text-slate-900 text-xs truncate">
                           {verifiedUser.fullName}
                         </span>
-                        <span className="text-[10px] bg-blue-200 text-blue-900 px-1.5 py-0.2 rounded font-semibold">
+                        <span className="text-[10px] bg-orange-200 text-orange-900 px-1.5 py-0.2 rounded font-semibold">
                           {verifiedUser.role}
                         </span>
                       </div>
@@ -840,7 +840,7 @@ export default function LoginPage({
                           if (resetError) setResetError('');
                         }}
                         placeholder="••••••••"
-                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                        className="w-full pl-9 pr-10 py-2.5 bg-orange-50/30 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-orange-500 focus:bg-white transition outline-hidden"
                       />
                       <button
                         type="button"
@@ -869,7 +869,7 @@ export default function LoginPage({
                           if (resetError) setResetError('');
                         }}
                         placeholder="••••••••"
-                        className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                        className="w-full pl-9 pr-10 py-2.5 bg-orange-50/30 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-orange-500 focus:bg-white transition outline-hidden"
                       />
                       <button
                         type="button"
@@ -891,7 +891,7 @@ export default function LoginPage({
                     </button>
                     <button
                       type="submit"
-                      className="flex-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-emerald-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
+                      className="flex-2 py-2.5 px-4 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-semibold text-xs rounded-xl shadow-md shadow-orange-500/30 flex items-center justify-center gap-2 transition hover:translate-y-[-1px] cursor-pointer"
                     >
                       <Sparkles className="w-4 h-4" />
                       <span>{isId ? 'Simpan Kata Sandi Baru' : 'Save New Password'}</span>
@@ -903,13 +903,13 @@ export default function LoginPage({
           )}
 
           {/* Feature Highlights */}
-          <div className="pt-2 border-t border-slate-100 flex items-center justify-around text-[11px] text-slate-500">
+          <div className="pt-2 border-t border-orange-100 flex items-center justify-around text-[11px] text-slate-500">
             <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-orange-500" />
               {isId ? 'Anti Double-Counting' : 'Zero Double-Counting'}
             </span>
             <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-orange-500" />
               {isId ? 'Disagregasi GESI & IPLC' : 'GESI & IPLC Disaggregation'}
             </span>
           </div>

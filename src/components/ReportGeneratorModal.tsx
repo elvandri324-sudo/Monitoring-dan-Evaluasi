@@ -103,12 +103,12 @@ export default function ReportGeneratorModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl space-y-6 my-8 print:p-0 print:shadow-none print:max-w-none">
+      <div className="bg-white rounded-2xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-orange-100 space-y-6 my-8 print:p-0 print:shadow-none print:max-w-none print:border-none">
         
         {/* Header with Close and Print Buttons */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-3 print:hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-orange-100 gap-3 print:hidden">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-xs">
               <FileText className="w-5 h-5" />
             </div>
             <div>
@@ -126,14 +126,14 @@ export default function ReportGeneratorModal({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
+              className="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
             >
               <Printer className="w-4 h-4" />
               {isId ? 'Cetak / Simpan PDF' : 'Print / Save as PDF'}
             </button>
             <button
               onClick={onClose}
-              className="px-3 py-2 text-slate-500 hover:text-slate-700 text-xs font-medium"
+              className="px-3 py-2 text-slate-500 hover:text-orange-700 hover:bg-orange-50 rounded-lg text-xs font-medium transition"
             >
               {isId ? 'Tutup ✕' : 'Close ✕'}
             </button>
@@ -141,12 +141,12 @@ export default function ReportGeneratorModal({
         </div>
 
         {/* Tab selector for report views */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200 text-xs font-semibold print:hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-orange-50/50 p-2 rounded-xl border border-orange-200/70 text-xs font-semibold print:hidden">
           <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setReportType('executive')}
               className={`px-3 py-1.5 rounded-lg transition ${
-                reportType === 'executive' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'
+                reportType === 'executive' ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-600 hover:bg-orange-100/70'
               }`}
             >
               {isId ? 'Ringkasan Eksekutif M&E' : 'Executive M&E Summary'}
@@ -154,7 +154,7 @@ export default function ReportGeneratorModal({
             <button
               onClick={() => setReportType('disaggregation')}
               className={`px-3 py-1.5 rounded-lg transition ${
-                reportType === 'disaggregation' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'
+                reportType === 'disaggregation' ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-600 hover:bg-orange-100/70'
               }`}
             >
               {isId ? 'Tabel Disagregasi GESI & IPLC' : 'GESI & IPLC Disaggregations'}
@@ -162,7 +162,7 @@ export default function ReportGeneratorModal({
             <button
               onClick={() => setReportType('logframe')}
               className={`px-3 py-1.5 rounded-lg transition ${
-                reportType === 'logframe' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'
+                reportType === 'logframe' ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-600 hover:bg-orange-100/70'
               }`}
             >
               {isId ? 'Matriks Capaian Logframe' : 'Logframe Progress Matrix'}
@@ -170,7 +170,7 @@ export default function ReportGeneratorModal({
             <button
               onClick={() => setReportType('backup')}
               className={`px-3 py-1.5 rounded-lg transition ${
-                reportType === 'backup' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'
+                reportType === 'backup' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-600 hover:bg-orange-100/70'
               }`}
             >
               {isId ? 'Backup & Restore Data' : 'Backup & Restore Data'}
@@ -182,7 +182,7 @@ export default function ReportGeneratorModal({
             <select
               value={targetScope}
               onChange={(e) => setTargetScope(e.target.value)}
-              className="p-1 bg-white border border-slate-300 rounded text-xs"
+              className="p-1 bg-white border border-orange-200 rounded text-xs focus:outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">🌐 {isId ? 'Seluruh Portofolio' : 'Entire Portfolio'}</option>
               {projects.map(p => (
@@ -196,9 +196,9 @@ export default function ReportGeneratorModal({
         <div className="space-y-6 text-slate-800 text-xs leading-relaxed max-h-[65vh] overflow-y-auto pr-1 print:max-h-none print:overflow-visible">
           
           {/* Official Letterhead Header */}
-          <div className="border-b-2 border-slate-900 pb-3 flex items-center justify-between">
+          <div className="border-b-2 border-orange-600 pb-3 flex items-center justify-between">
             <div>
-              <span className="font-mono text-[10px] text-slate-500 uppercase tracking-widest block">
+              <span className="font-mono text-[10px] text-orange-600 font-semibold uppercase tracking-widest block">
                 {isId ? 'SISTEM MONITORING & EVALUASI PROYEK (SIMEV)' : 'PROJECT MONITORING & EVALUATION SYSTEM'}
               </span>
               <h1 className="text-base sm:text-xl font-bold text-slate-900 uppercase">
@@ -217,9 +217,9 @@ export default function ReportGeneratorModal({
           {/* Tab 1: Executive Summary */}
           {reportType === 'executive' && (
             <div className="space-y-4">
-              <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
-                <h3 className="font-bold text-emerald-950 text-sm mb-1 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-emerald-700" />
+              <div className="bg-orange-50/70 p-4 rounded-xl border border-orange-200">
+                <h3 className="font-bold text-orange-950 text-sm mb-1 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-orange-600" />
                   {isId ? 'Narasi Evaluasi Capaian Kinerja (M&E Analysis)' : 'Performance Evaluation Narrative (M&E Analysis)'}
                 </h3>
                 <p className="text-slate-700 text-xs">
@@ -279,10 +279,10 @@ export default function ReportGeneratorModal({
               </h3>
 
               {/* Table 1: Gender x Age Group */}
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <div className="border border-orange-100 rounded-lg overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                    <tr className="bg-orange-50/70 text-orange-950 font-bold border-b border-orange-100">
                       <th className="p-2.5">{isId ? 'Kelompok Usia' : 'Age Group'}</th>
                       <th className="p-2.5">{isId ? 'Laki-laki (Men)' : 'Male'}</th>
                       <th className="p-2.5">{isId ? 'Perempuan (Women)' : 'Female'}</th>
@@ -408,18 +408,19 @@ export default function ReportGeneratorModal({
               </div>
 
               {/* Table 3: Pembagian per Desa / Kelurahan Dampingan */}
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
-                <div className="bg-slate-100 px-3 py-2 border-b border-slate-200 flex justify-between items-center">
-                  <span className="font-bold text-slate-800 text-xs">
+              <div className="border border-orange-100 rounded-lg overflow-hidden">
+                <div className="bg-orange-50/70 px-3 py-2 border-b border-orange-100 flex flex-wrap justify-between items-center gap-2">
+                  <span className="font-bold text-orange-950 text-xs">
                     🏡 {isId ? 'Pembagian Penerima Manfaat per Desa / Kelurahan Dampingan' : 'Beneficiary Distribution by Village / Sub-District'}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-semibold">
+                  <span className="text-[10px] text-orange-700 font-semibold">
                     {disaggSummary.villageBreakdown.length} {isId ? 'Desa Terdaftar' : 'Registered Villages'}
                   </span>
                 </div>
+                <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                    <tr className="bg-orange-50/40 text-slate-700 font-semibold border-b border-orange-100">
                       <th className="p-2">{isId ? 'Desa / Kelurahan' : 'Village / Sub-District'}</th>
                       <th className="p-2 text-center">{isId ? 'Total Unik' : 'Unique Total'}</th>
                       <th className="p-2 text-center">{isId ? 'Laki-laki' : 'Male'}</th>
@@ -443,6 +444,7 @@ export default function ReportGeneratorModal({
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           )}
@@ -457,13 +459,14 @@ export default function ReportGeneratorModal({
               {activeProject ? (
                 <div className="space-y-3">
                   {/* Goal Indicators */}
-                  <div className="border border-slate-200 rounded-lg overflow-hidden">
-                    <div className="bg-slate-900 text-white font-bold px-3 py-2 text-xs">
+                  <div className="border border-orange-200 rounded-lg overflow-hidden">
+                    <div className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold px-3 py-2 text-xs">
                       GOAL / IMPACT: {activeProject.goalStatement}
                     </div>
+                    <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
-                        <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                        <tr className="bg-orange-50 text-orange-900 font-semibold border-b border-orange-100">
                           <th className="p-2">{isId ? 'Kode & Indikator' : 'Code & Indicator'}</th>
                           <th className="p-2">Baseline</th>
                           <th className="p-2">Target</th>
@@ -483,17 +486,19 @@ export default function ReportGeneratorModal({
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
 
                   {/* Outcomes */}
                   {activeProject.outcomes.map(oc => (
-                    <div key={oc.id} className="border border-slate-200 rounded-lg overflow-hidden">
-                      <div className="bg-indigo-900 text-white font-bold px-3 py-2 text-xs">
+                    <div key={oc.id} className="border border-orange-200 rounded-lg overflow-hidden">
+                      <div className="bg-orange-500 text-white font-bold px-3 py-2 text-xs">
                         {oc.code}: {oc.title}
                       </div>
+                      <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                          <tr className="bg-orange-50 text-orange-900 font-semibold border-b border-orange-100">
                             <th className="p-2">{isId ? 'Kode & Indikator' : 'Code & Indicator'}</th>
                             <th className="p-2">Baseline</th>
                             <th className="p-2">Target</th>
@@ -507,12 +512,13 @@ export default function ReportGeneratorModal({
                               <td className="p-2 font-medium">{ind.code}: {ind.name}</td>
                               <td className="p-2">{ind.baseline} {ind.unit}</td>
                               <td className="p-2">{ind.target} {ind.unit}</td>
-                              <td className="p-2 font-bold text-indigo-700">{ind.actual} {ind.unit}</td>
+                              <td className="p-2 font-bold text-orange-700">{ind.actual} {ind.unit}</td>
                               <td className="p-2">{ind.status}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -526,7 +532,7 @@ export default function ReportGeneratorModal({
 
           {/* Tab 4: Backup & Restore */}
           {reportType === 'backup' && (
-            <div className="space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200">
+            <div className="space-y-4 bg-orange-50/50 p-5 rounded-xl border border-orange-200">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm mb-1">
                   {isId ? 'Backup & Restore Database SIMEV M&E' : 'Backup & Restore SIMEV M&E Database'}
@@ -539,7 +545,7 @@ export default function ReportGeneratorModal({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                <div className="bg-white p-4 rounded-xl border border-orange-100 space-y-2">
                   <span className="font-bold text-slate-800 text-xs block">
                     {isId ? '1. Ekspor Cadangan Data (JSON)' : '1. Export Data Backup (JSON)'}
                   </span>
@@ -550,14 +556,14 @@ export default function ReportGeneratorModal({
                   </p>
                   <button
                     onClick={handleDownloadBackup}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5"
+                    className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition"
                   >
-                    <Download className="w-4 h-4 text-emerald-400" />
+                    <Download className="w-4 h-4 text-amber-200" />
                     {isId ? 'Download File Backup JSON' : 'Download Backup JSON File'}
                   </button>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                <div className="bg-white p-4 rounded-xl border border-orange-100 space-y-2">
                   <span className="font-bold text-slate-800 text-xs block">
                     {isId ? '2. Pulihkan / Restore Data' : '2. Restore Data from Backup'}
                   </span>
@@ -566,7 +572,7 @@ export default function ReportGeneratorModal({
                       ? 'Unggah file backup JSON yang pernah diunduh sebelumnya.'
                       : 'Upload a previously downloaded JSON backup file.'}
                   </p>
-                  <label className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold cursor-pointer">
+                  <label className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition">
                     <Upload className="w-4 h-4" />
                     {isId ? 'Pilih File JSON' : 'Choose JSON File'}
                     <input

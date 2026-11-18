@@ -627,10 +627,10 @@ export default function LogframeManager({
   return (
     <div className="space-y-6 pb-12">
       {/* Header with Project Selector, View Mode Switcher, and Main Action */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-orange-100 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200">
+            <span className="px-2.5 py-0.5 rounded-md bg-orange-100 text-orange-800 font-bold text-xs border border-orange-200">
               {activeProject.code}
             </span>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight">
@@ -651,7 +651,7 @@ export default function LogframeManager({
             <select
               value={activeProject.id}
               onChange={(e) => setSelectedProjectId(e.target.value)}
-              className="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500"
+              className="bg-orange-50/40 border border-orange-200 text-slate-800 text-xs rounded-xl px-3 py-2 font-medium outline-hidden focus:ring-2 focus:ring-orange-500"
             >
               {projects.map(p => (
                 <option key={p.id} value={p.id}>{p.code} - {p.title}</option>
@@ -660,13 +660,13 @@ export default function LogframeManager({
           </div>
 
           {/* View Mode Toggle Button */}
-          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <div className="flex bg-orange-50 p-1 rounded-xl border border-orange-200">
             <button
               onClick={() => setViewMode('table')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
                 viewMode === 'table'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-orange-600 shadow-sm'
+                  : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <TableIcon className="w-3.5 h-3.5" />
@@ -676,8 +676,8 @@ export default function LogframeManager({
               onClick={() => setViewMode('tree')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
                 viewMode === 'tree'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-orange-600 shadow-sm'
+                  : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <FolderTree className="w-3.5 h-3.5" />
@@ -700,23 +700,23 @@ export default function LogframeManager({
                 {onEditProject && (
                   <button
                     onClick={() => onEditProject(activeProject)}
-                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition"
+                    className="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition"
                     title={isId ? 'Edit Nama, Kode, dan Profil Proyek' : 'Edit Project Name, Code, and Profile'}
                   >
-                    <Edit3 className="w-4 h-4 text-slate-600" />
+                    <Edit3 className="w-4 h-4 text-orange-600" />
                     <span>{isId ? 'Edit Proyek' : 'Edit Project'}</span>
                   </button>
                 )}
                 <button
                   onClick={handleOpenAddOutcome}
-                  className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
+                  className="px-3.5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
                 >
                   <Plus className="w-4 h-4" />
                   + Outcome
                 </button>
                 <button
                   onClick={() => handleOpenAddOutput()}
-                  className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
+                  className="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition"
                 >
                   <Plus className="w-4 h-4" />
                   + Output
@@ -738,33 +738,33 @@ export default function LogframeManager({
 
       {/* Metric Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs">
           <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
             {isId ? 'Total Indikator' : 'Total Indicators'}
           </span>
           <div className="flex items-baseline justify-between">
             <span className="text-2xl font-bold text-slate-900">{stats.total}</span>
-            <Target className="w-4 h-4 text-slate-400" />
+            <Target className="w-4 h-4 text-orange-400" />
           </div>
           <span className="text-[11px] text-slate-400 mt-1 block">
             {isId ? 'Semua level kerangka logis' : 'All logical framework levels'}
           </span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <span className="text-[11px] font-semibold text-blue-600 uppercase tracking-wider block mb-1">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs">
+          <span className="text-[11px] font-semibold text-orange-600 uppercase tracking-wider block mb-1">
             {isId ? 'Rata-Rata Capaian' : 'Average Progress'}
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-blue-600">{stats.avgProgress}%</span>
-            <TrendingUp className="w-4 h-4 text-blue-500" />
+            <span className="text-2xl font-bold text-orange-600">{stats.avgProgress}%</span>
+            <TrendingUp className="w-4 h-4 text-orange-500" />
           </div>
           <span className="text-[11px] text-slate-400 mt-1 block">
             {isId ? 'Akumulasi seluruh target' : 'Accumulated across all targets'}
           </span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs">
           <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider block mb-1">
             {isId ? 'Tercapai (100%+)' : 'Achieved (100%+)'}
           </span>
@@ -777,7 +777,7 @@ export default function LogframeManager({
           </span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs">
           <span className="text-[11px] font-semibold text-blue-500 uppercase tracking-wider block mb-1">
             On-Track (75-99%)
           </span>
@@ -790,7 +790,7 @@ export default function LogframeManager({
           </span>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs col-span-2 sm:col-span-1">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs col-span-2 sm:col-span-1">
           <span className="text-[11px] font-semibold text-amber-600 uppercase tracking-wider block mb-1">
             {isId ? 'Perlu Perhatian' : 'Needs Attention'}
           </span>
@@ -808,25 +808,25 @@ export default function LogframeManager({
       {/* VIEW 1: TABEL MATRIKS INDIKATOR YANG RAPI & BERSIH                        */}
       {/* ========================================================================= */}
       {viewMode === 'table' && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-5 sm:p-6">
+        <div className="bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden space-y-4 p-5 sm:p-6">
           {/* Table Filters & Toolbar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-            <div className="flex flex-wrap items-center gap-2 flex-1">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-orange-100">
+            <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
               {/* Search Bar */}
-              <div className="relative flex-1 min-w-[200px] max-w-md">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <div className="relative w-full sm:w-auto sm:flex-1 sm:min-w-[200px] sm:max-w-md min-w-0">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-orange-400" />
                 <input
                   type="text"
                   placeholder={isId ? "Cari kode, nama indikator, definisi, atau unit..." : "Search code, indicator name, definition, or unit..."}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-9 pr-4 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white"
                 />
               </div>
 
               {/* Level Filter */}
-              <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600">
-                <Filter className="w-3.5 h-3.5 text-slate-400" />
+              <div className="flex items-center gap-1 bg-orange-50/40 border border-orange-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600">
+                <Filter className="w-3.5 h-3.5 text-orange-500" />
                 <select
                   value={levelFilter}
                   onChange={(e) => setLevelFilter(e.target.value as any)}
@@ -844,7 +844,7 @@ export default function LogframeManager({
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 outline-hidden cursor-pointer"
+                className="bg-orange-50/40 border border-orange-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 outline-hidden cursor-pointer focus:ring-2 focus:ring-orange-500"
               >
                 <option value="ALL">{isId ? 'Semua Status' : 'All Statuses'}</option>
                 <option value="Tercapai">{formatStatusProgress('Tercapai', language)}</option>
@@ -857,7 +857,7 @@ export default function LogframeManager({
             <div className="flex items-center gap-2">
               <button
                 onClick={handleExportFilteredIndicators}
-                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition"
+                className="px-3 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition"
                 title={isId ? 'Ekspor tabel capaian indikator tersaring ke Excel' : 'Export filtered indicator table to Excel'}
               >
                 <Download className="w-3.5 h-3.5 text-emerald-600" />
@@ -867,7 +867,7 @@ export default function LogframeManager({
               {isAdmin && (
                 <button
                   onClick={() => handleOpenAddIndicator('Outcome', activeProject.outcomes[0]?.id || activeProject.id, activeProject.outcomes[0]?.title || activeProject.title)}
-                  className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition"
+                  className="px-3 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1 shadow-xs transition"
                 >
                   <Plus className="w-3.5 h-3.5" /> + {isId ? 'Indikator' : 'Indicator'}
                 </button>
@@ -876,20 +876,20 @@ export default function LogframeManager({
           </div>
 
           {/* Table Container */}
-          <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <div className="overflow-x-auto rounded-xl border border-orange-100">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-200">
+                <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold border-b border-orange-500">
                   <th 
                     onClick={() => {
                       if (sortField === 'code') setSortAsc(!sortAsc);
                       else { setSortField('code'); setSortAsc(true); }
                     }}
-                    className="py-3 px-3.5 cursor-pointer hover:bg-slate-100 transition whitespace-nowrap"
+                    className="py-3 px-3.5 cursor-pointer hover:bg-white/10 transition whitespace-nowrap"
                   >
                     <div className="flex items-center gap-1">
                       <span>{isId ? 'Kode & Level' : 'Code & Level'}</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-orange-100" />
                     </div>
                   </th>
                   <th 
@@ -897,11 +897,11 @@ export default function LogframeManager({
                       if (sortField === 'name') setSortAsc(!sortAsc);
                       else { setSortField('name'); setSortAsc(true); }
                     }}
-                    className="py-3 px-3.5 cursor-pointer hover:bg-slate-100 transition min-w-[220px]"
+                    className="py-3 px-3.5 cursor-pointer hover:bg-white/10 transition min-w-[220px]"
                   >
                     <div className="flex items-center gap-1">
                       <span>{isId ? 'Indikator Kinerja' : 'Performance Indicator'}</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-orange-100" />
                     </div>
                   </th>
                   <th className="py-3 px-3.5 whitespace-nowrap">Baseline</th>
@@ -911,11 +911,11 @@ export default function LogframeManager({
                       if (sortField === 'actual') setSortAsc(!sortAsc);
                       else { setSortField('actual'); setSortAsc(false); }
                     }}
-                    className="py-3 px-3.5 cursor-pointer hover:bg-slate-100 transition whitespace-nowrap"
+                    className="py-3 px-3.5 cursor-pointer hover:bg-white/10 transition whitespace-nowrap"
                   >
                     <div className="flex items-center gap-1">
                       <span>{isId ? 'Realisasi Aktual' : 'Actual Value'}</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-orange-100" />
                     </div>
                   </th>
                   <th 
@@ -923,11 +923,11 @@ export default function LogframeManager({
                       if (sortField === 'progress') setSortAsc(!sortAsc);
                       else { setSortField('progress'); setSortAsc(false); }
                     }}
-                    className="py-3 px-3.5 cursor-pointer hover:bg-slate-100 transition min-w-[160px]"
+                    className="py-3 px-3.5 cursor-pointer hover:bg-white/10 transition min-w-[160px]"
                   >
                     <div className="flex items-center gap-1">
                       <span>{isId ? 'Capaian (%)' : 'Progress (%)'}</span>
-                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                      <ArrowUpDown className="w-3 h-3 text-orange-100" />
                     </div>
                   </th>
                   <th className="py-3 px-3.5 whitespace-nowrap">Status</th>
@@ -935,12 +935,12 @@ export default function LogframeManager({
                   <th className="py-3 px-3.5 text-right whitespace-nowrap">{isId ? 'Aksi' : 'Action'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+              <tbody className="divide-y divide-orange-100/70 bg-white">
                 {filteredTableIndicators.length > 0 ? (
                   filteredTableIndicators.map((item) => {
                     const ind = item.indicator;
                     return (
-                      <tr key={ind.id} className="hover:bg-slate-50/70 transition">
+                      <tr key={ind.id} className="hover:bg-orange-50/40 transition">
                         {/* Kode & Level */}
                         <td className="py-3.5 px-3.5 align-top whitespace-nowrap">
                           <div className="space-y-1">
@@ -986,7 +986,7 @@ export default function LogframeManager({
 
                         {/* Realisasi Aktual */}
                         <td className="py-3.5 px-3.5 align-top whitespace-nowrap">
-                          <div className="font-bold text-blue-600">
+                          <div className="font-bold text-orange-600">
                             {ind.actual.toLocaleString(isId ? 'id-ID' : 'en-US')}
                             <span className="text-[10px] text-slate-400 block font-normal">{formatUnit(ind.unit, language)}</span>
                           </div>
@@ -1023,7 +1023,7 @@ export default function LogframeManager({
                                 <span className="text-[10px] text-slate-400">{isId ? 'Belum ada file' : 'No files attached'}</span>
                               )}
                               {ind.progressHistory && ind.progressHistory.length > 0 && (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
                                   <Clock className="w-2.5 h-2.5" />
                                   {ind.progressHistory.length} Log
                                 </span>
@@ -1039,7 +1039,7 @@ export default function LogframeManager({
                               <>
                                 <button
                                   onClick={() => setEditingIndicatorProgress({ projectId: item.projectId, indicator: ind })}
-                                  className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-semibold text-xs flex items-center gap-1 transition"
+                                  className="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg font-semibold text-xs flex items-center gap-1 transition"
                                   title={isId ? "Catat Realisasi Berkala & Lampirkan Dokumen MoV" : "Record Periodic Progress & Attach MoV"}
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
@@ -1047,7 +1047,7 @@ export default function LogframeManager({
                                 </button>
                                 <button
                                   onClick={() => handleOpenEditIndicatorDetails(item.projectId, ind)}
-                                  className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition"
+                                  className="p-1.5 text-slate-500 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition"
                                   title={isId ? "Edit Definisi & Target Indikator" : "Edit Indicator Definition & Target"}
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
@@ -1085,15 +1085,15 @@ export default function LogframeManager({
       {viewMode === 'tree' && (
         <div className="space-y-6">
           {/* Goal / Impact Level Card */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white rounded-2xl p-5 sm:p-6 border border-slate-700 shadow-md">
+          <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white rounded-2xl p-5 sm:p-6 border border-orange-400 shadow-md">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-xs uppercase tracking-wider border border-emerald-400/30 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="px-3 py-1 rounded-lg bg-white/20 text-white font-bold text-xs uppercase tracking-wider border border-white/25 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-100" />
                     {isId ? `Goal / Impact Proyek (${activeProject.code})` : `Project Goal / Impact (${activeProject.code})`}
                   </span>
-                  <h3 className="font-bold text-sm text-emerald-200">{activeProject.title}</h3>
+                  <h3 className="font-bold text-sm text-orange-50">{activeProject.title}</h3>
                 </div>
               </div>
               {isAdmin && (
@@ -1101,16 +1101,16 @@ export default function LogframeManager({
                   {onEditProject && (
                     <button
                       onClick={() => onEditProject(activeProject)}
-                      className="text-xs font-semibold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-600 flex items-center gap-1.5 transition shadow-xs"
+                      className="text-xs font-semibold text-orange-800 hover:text-orange-900 bg-white hover:bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-200 flex items-center gap-1.5 transition shadow-xs"
                       title={isId ? "Edit Nama, Kode, dan Informasi Profil Proyek" : "Edit Project Name, Code, and Profile Details"}
                     >
-                      <Edit3 className="w-3.5 h-3.5 text-emerald-400" />
+                      <Edit3 className="w-3.5 h-3.5 text-orange-600" />
                       {isId ? 'Edit Nama & Info Proyek' : 'Edit Project Details'}
                     </button>
                   )}
                   <button
                     onClick={() => handleOpenAddIndicator('Goal', activeProject.id, 'Goal / Impact')}
-                    className="text-xs font-semibold text-emerald-300 hover:text-white bg-emerald-900/40 hover:bg-emerald-800/60 px-3 py-1.5 rounded-lg border border-emerald-600/40 flex items-center gap-1.5 transition"
+                    className="text-xs font-semibold text-white bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg border border-white/25 flex items-center gap-1.5 transition"
                   >
                     <Plus className="w-3.5 h-3.5" /> + {isId ? 'Indikator Goal' : 'Goal Indicator'}
                   </button>
@@ -1118,41 +1118,41 @@ export default function LogframeManager({
               )}
             </div>
 
-            <p className="text-sm font-medium text-slate-100 leading-relaxed mb-4 max-w-4xl">
+            <p className="text-sm font-medium text-white leading-relaxed mb-4 max-w-4xl">
               {activeProject.goalStatement}
             </p>
 
             {/* Goal Indicators Cards */}
             {activeProject.goalIndicators && activeProject.goalIndicators.length > 0 && (
-              <div className="space-y-3 pt-3 border-t border-slate-700/60">
-                <span className="text-xs font-semibold text-slate-300 block uppercase tracking-wider">
+              <div className="space-y-3 pt-3 border-t border-white/25">
+                <span className="text-xs font-semibold text-orange-50 block uppercase tracking-wider">
                   {isId ? 'Indikator Capaian Dampak Jangka Panjang (Goal Indicators):' : 'Long-Term Impact Achievement Indicators (Goal Indicators):'}
                 </span>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                   {activeProject.goalIndicators.map(ind => {
                     const pct = ind.target > 0 ? (ind.actual / ind.target) * 100 : 0;
                     return (
-                      <div key={ind.id} className="bg-slate-800/90 rounded-xl p-4 border border-slate-700 text-xs space-y-3">
+                      <div key={ind.id} className="bg-white/95 rounded-xl p-4 border border-orange-200 text-xs text-slate-800 space-y-3 shadow-xs">
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <span className="font-bold text-emerald-400 font-mono text-xs">{ind.code}</span>
-                            <h4 className="text-white font-bold text-xs mt-0.5">{ind.name}</h4>
+                            <span className="font-bold text-orange-600 font-mono text-xs">{ind.code}</span>
+                            <h4 className="text-slate-900 font-bold text-xs mt-0.5">{ind.name}</h4>
                           </div>
                           {getStatusBadge(ind.status)}
                         </div>
 
-                        <div className="grid grid-cols-3 gap-2 bg-slate-900/80 p-2.5 rounded-lg text-[11px] text-slate-300 border border-slate-700/50">
-                          <div>Baseline: <strong className="text-white block">{ind.baseline} {formatUnit(ind.unit, language)}</strong></div>
-                          <div>Target: <strong className="text-white block">{ind.target} {formatUnit(ind.unit, language)}</strong></div>
-                          <div>{isId ? 'Realisasi:' : 'Actual:'} <strong className="text-emerald-400 block">{ind.actual} {formatUnit(ind.unit, language)}</strong></div>
+                        <div className="grid grid-cols-3 gap-2 bg-orange-50/60 p-2.5 rounded-lg text-[11px] text-slate-600 border border-orange-100">
+                          <div>Baseline: <strong className="text-slate-900 block">{ind.baseline} {formatUnit(ind.unit, language)}</strong></div>
+                          <div>Target: <strong className="text-slate-900 block">{ind.target} {formatUnit(ind.unit, language)}</strong></div>
+                          <div>{isId ? 'Realisasi:' : 'Actual:'} <strong className="text-orange-600 block">{ind.actual} {formatUnit(ind.unit, language)}</strong></div>
                         </div>
 
                         {renderProgressBar(ind.actual, ind.target, pct)}
 
-                        <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-2 pt-2 border-t border-slate-700/50">
+                        <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-500 gap-2 pt-2 border-t border-orange-100">
                           <div className="flex items-center gap-2">
                             {ind.movDocuments && ind.movDocuments.length > 0 && (
-                              <span className="text-emerald-300 font-semibold flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-700/40">
+                              <span className="text-emerald-700 font-semibold flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                                 <Paperclip className="w-3 h-3" />
                                 {ind.movDocuments.length} MoV
                               </span>
@@ -1162,20 +1162,20 @@ export default function LogframeManager({
                             <div className="flex items-center gap-1">
                               <button
                                 onClick={() => setEditingIndicatorProgress({ projectId: activeProject.id, indicator: ind })}
-                                className="text-emerald-400 hover:text-white font-semibold flex items-center gap-1 px-2 py-1 bg-emerald-900/40 hover:bg-emerald-800/60 rounded-lg border border-emerald-600/40 transition"
+                                className="text-orange-700 hover:text-orange-800 font-semibold flex items-center gap-1 px-2 py-1 bg-orange-50 hover:bg-orange-100 rounded-lg border border-orange-200 transition"
                               >
                                 <Edit3 className="w-3 h-3" /> {isId ? 'Catat Capaian' : 'Record Progress'}
                               </button>
                               <button
                                 onClick={() => handleOpenEditIndicatorDetails(activeProject.id, ind)}
-                                className="p-1 text-slate-400 hover:text-white"
+                                className="p-1 text-slate-400 hover:text-orange-600"
                                 title={isId ? "Edit Detail" : "Edit Details"}
                               >
                                 <Edit3 className="w-3 h-3" />
                               </button>
                               <button
                                 onClick={() => setIndicatorToDelete({ projectId: activeProject.id, indicator: ind })}
-                                className="p-1 text-rose-400 hover:text-rose-300"
+                                className="p-1 text-rose-500 hover:text-rose-700"
                                 title={isId ? "Hapus" : "Delete"}
                               >
                                 <Trash2 className="w-3 h-3" />
@@ -1195,13 +1195,13 @@ export default function LogframeManager({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                <FolderTree className="w-5 h-5 text-indigo-600" />
+                <FolderTree className="w-5 h-5 text-orange-600" />
                 {isId ? 'Struktur Outcomes, Outputs & Activities' : 'Outcomes, Outputs & Activities Structure'}
               </h2>
               {isAdmin && (
                 <button
                   onClick={handleOpenAddOutcome}
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1 transition"
+                  className="px-3 py-1.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1 transition shadow-xs"
                 >
                   <Plus className="w-3.5 h-3.5" /> + {isId ? 'Tambah Outcome' : 'Add Outcome'}
                 </button>
@@ -1214,20 +1214,20 @@ export default function LogframeManager({
               return (
                 <div 
                   key={outcome.id}
-                  className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+                  className="bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden"
                 >
                   {/* Outcome Header Bar */}
-                  <div className="bg-slate-50/90 p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div className="bg-orange-50/50 p-4 sm:p-5 border-b border-orange-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div 
                       onClick={() => toggleOutcome(outcome.id)}
                       className="flex items-start gap-3 cursor-pointer flex-1"
                     >
-                      <button className="mt-1 text-slate-400 hover:text-slate-700">
+                      <button className="mt-1 text-orange-500 hover:text-orange-700">
                         {isOcExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       </button>
                       <div className="space-y-0.5">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                          <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
                             {outcome.code}
                           </span>
                           <h3 className="font-bold text-slate-900 text-sm sm:text-base">
@@ -1246,28 +1246,28 @@ export default function LogframeManager({
                         <>
                           <button
                             onClick={() => handleOpenAddIndicator('Outcome', outcome.id, outcome.title)}
-                            className="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-medium flex items-center gap-1 shadow-xs transition"
+                            className="px-2.5 py-1.5 bg-white hover:bg-orange-50 text-slate-700 border border-orange-200 rounded-lg text-xs font-medium flex items-center gap-1 shadow-xs transition"
                             title={isId ? "Tambah Indikator untuk Outcome ini" : "Add Indicator for this Outcome"}
                           >
-                            <Plus className="w-3 h-3 text-indigo-600" /> + {isId ? 'Indikator' : 'Indicator'}
+                            <Plus className="w-3 h-3 text-orange-600" /> + {isId ? 'Indikator' : 'Indicator'}
                           </button>
                           <button
                             onClick={() => handleOpenAddOutput(outcome.id)}
-                            className="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-xs transition"
+                            className="px-2.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-xs transition"
                             title={isId ? "Tambah Output di bawah Outcome ini" : "Add Output under this Outcome"}
                           >
                             <Plus className="w-3 h-3" /> + Output
                           </button>
                           <button
                             onClick={() => handleOpenEditOutcome(outcome)}
-                            className="p-1.5 text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 border border-slate-200 rounded-lg transition"
+                            className="p-1.5 text-slate-500 hover:text-orange-700 hover:bg-orange-50 border border-orange-200 rounded-lg transition"
                             title={isId ? "Edit Data Outcome" : "Edit Outcome"}
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => setOutcomeToDelete({ projectId: activeProject.id, outcome })}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 rounded-lg transition"
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-orange-200 rounded-lg transition"
                             title={isId ? "Hapus Outcome ini" : "Delete Outcome"}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1282,18 +1282,18 @@ export default function LogframeManager({
                     <div className="p-4 sm:p-5 space-y-4">
                       {/* Outcome Level Indicators */}
                       {outcome.indicators && outcome.indicators.length > 0 && (
-                        <div className="bg-indigo-50/40 rounded-xl p-4 border border-indigo-100 space-y-3">
-                          <span className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider block">
+                        <div className="bg-orange-50/40 rounded-xl p-4 border border-orange-100 space-y-3">
+                          <span className="text-[11px] font-bold text-orange-900 uppercase tracking-wider block">
                             {isId ? `Indikator Capaian Tingkat Outcome (${outcome.code}):` : `Outcome-Level Achievement Indicators (${outcome.code}):`}
                           </span>
                           <div className="space-y-2.5">
                             {outcome.indicators.map(ind => {
                               const pct = ind.target > 0 ? (ind.actual / ind.target) * 100 : 0;
                               return (
-                                <div key={ind.id} className="bg-white p-3.5 rounded-xl border border-indigo-200/80 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
+                                <div key={ind.id} className="bg-white p-3.5 rounded-xl border border-orange-200/80 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
                                   <div className="flex-1 space-y-1">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                      <span className="font-bold text-indigo-700 font-mono text-xs">{ind.code}</span>
+                                      <span className="font-bold text-orange-700 font-mono text-xs">{ind.code}</span>
                                       {getStatusBadge(ind.status)}
                                       <span className="text-[10px] text-slate-400">{isId ? 'Frekuensi' : 'Freq'}: {formatReportingFrequency(ind.frequency, language)}</span>
                                       {ind.movDocuments && ind.movDocuments.length > 0 && (
@@ -1311,7 +1311,7 @@ export default function LogframeManager({
                                     <div className="flex-1">
                                       {renderProgressBar(ind.actual, ind.target, pct)}
                                       <div className="text-[10px] text-slate-500 mt-1">
-                                        {isId ? 'Aktual' : 'Actual'}: <strong className="text-indigo-700">{ind.actual}</strong> / Target: <strong>{ind.target} {formatUnit(ind.unit, language)}</strong>
+                                        {isId ? 'Aktual' : 'Actual'}: <strong className="text-orange-700">{ind.actual}</strong> / Target: <strong>{ind.target} {formatUnit(ind.unit, language)}</strong>
                                       </div>
                                     </div>
 
@@ -1319,13 +1319,13 @@ export default function LogframeManager({
                                       <div className="flex items-center gap-1">
                                         <button
                                           onClick={() => setEditingIndicatorProgress({ projectId: activeProject.id, indicator: ind })}
-                                          className="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-semibold flex items-center gap-1 transition"
+                                          className="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 rounded-lg text-xs font-semibold flex items-center gap-1 transition"
                                         >
                                           <Edit3 className="w-3 h-3" /> Update
                                         </button>
                                         <button
                                           onClick={() => handleOpenEditIndicatorDetails(activeProject.id, ind)}
-                                          className="p-1 text-slate-400 hover:text-indigo-600 rounded"
+                                          className="p-1 text-slate-400 hover:text-orange-600 rounded"
                                           title={isId ? "Edit" : "Edit"}
                                         >
                                           <Edit3 className="w-3 h-3" />
@@ -1348,7 +1348,7 @@ export default function LogframeManager({
                       )}
 
                       {/* Nested Outputs Section */}
-                      <div className="space-y-3 pl-2 sm:pl-4 border-l-2 border-slate-200">
+                      <div className="space-y-3 pl-2 sm:pl-4 border-l-2 border-orange-200">
                         {outcome.outputs && outcome.outputs.length > 0 ? (
                           outcome.outputs.map(output => {
                             const isOpExpanded = expandedOutputs[output.id] !== false;
@@ -1552,10 +1552,10 @@ export default function LogframeManager({
       {/* MODAL 1: ADD / EDIT OUTCOME */}
       {(showAddOutcomeModal || editingOutcome) && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-white rounded-2xl border border-orange-100 max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-orange-100 pb-3">
               <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <Layers className="w-5 h-5 text-indigo-600" />
+                <Layers className="w-5 h-5 text-orange-600" />
                 {editingOutcome 
                   ? (isId ? 'Edit Data Outcome' : 'Edit Outcome Data') 
                   : (isId ? 'Tambah Outcome Logframe Baru' : 'Add New Logframe Outcome')}
@@ -1570,7 +1570,7 @@ export default function LogframeManager({
                   value={outcomeFormCode}
                   onChange={(e) => setOutcomeFormCode(e.target.value)}
                   placeholder={isId ? "Contoh: OC-1, OC-2" : "Example: OC-1, OC-2"}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 font-mono font-bold"
+                  className="w-full text-xs p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500 font-mono font-bold"
                 />
               </div>
 
@@ -1581,7 +1581,7 @@ export default function LogframeManager({
                   value={outcomeFormTitle}
                   onChange={(e) => setOutcomeFormTitle(e.target.value)}
                   placeholder={isId ? "Contoh: Peningkatan Kapasitas & Pendapatan Kelompok..." : "Example: Capacity Building & Community Income Enhancement..."}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -1592,24 +1592,24 @@ export default function LogframeManager({
                   value={outcomeFormDesc}
                   onChange={(e) => setOutcomeFormDesc(e.target.value)}
                   placeholder={isId ? "Penjelasan perubahan jangka menengah yang ditargetkan..." : "Explanation of targeted medium-term changes..."}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
+            <div className="flex justify-end gap-2.5 pt-3 border-t border-orange-100">
               <button
                 onClick={() => {
                   setShowAddOutcomeModal(false);
                   setEditingOutcome(null);
                 }}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-orange-50 rounded-xl transition"
               >
                 {isId ? 'Batal' : 'Cancel'}
               </button>
               <button
                 onClick={handleSaveOutcome}
-                className="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-xs transition"
+                className="px-5 py-2 text-xs bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-semibold rounded-xl shadow-xs transition"
               >
                 {editingOutcome ? (isId ? 'Simpan Perubahan' : 'Save Changes') : (isId ? 'Simpan Outcome' : 'Save Outcome')}
               </button>
@@ -1673,7 +1673,7 @@ export default function LogframeManager({
                   value={outputFormOutcomeId}
                   onChange={(e) => setOutputFormOutcomeId(e.target.value)}
                   disabled={!!editingOutput}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500"
                 >
                   {activeProject.outcomes?.map(oc => (
                     <option key={oc.id} value={oc.id}>{oc.code} - {oc.title}</option>
@@ -1681,7 +1681,7 @@ export default function LogframeManager({
                 </select>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">{isId ? 'Kode Output:' : 'Output Code:'}</label>
                   <input
@@ -1689,16 +1689,16 @@ export default function LogframeManager({
                     value={outputFormCode}
                     onChange={(e) => setOutputFormCode(e.target.value)}
                     placeholder="OP-1.1"
-                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
-                <div className="col-span-2">
+                <div className="sm:col-span-2">
                   <label className="block text-xs font-semibold text-slate-700 mb-1">{isId ? 'Target Tanggal Selesai:' : 'Target Completion Date:'}</label>
                   <input
                     type="date"
                     value={outputFormTargetDate}
                     onChange={(e) => setOutputFormTargetDate(e.target.value)}
-                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
@@ -1710,7 +1710,7 @@ export default function LogframeManager({
                   value={outputFormTitle}
                   onChange={(e) => setOutputFormTitle(e.target.value)}
                   placeholder={isId ? "Contoh: Penyelenggaraan 10 Sesi Pelatihan Pertanian Berkelanjutan..." : "Example: Delivery of 10 Sustainable Farming Training Sessions..."}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -1721,7 +1721,7 @@ export default function LogframeManager({
                   value={outputFormDesc}
                   onChange={(e) => setOutputFormDesc(e.target.value)}
                   placeholder={isId ? "Keterangan spesifik mengenai produk, layanan, atau kapasitas yang dihasilkan..." : "Specific description of products, services, or capacity generated..."}
-                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500"
                 />
               </div>
             </div>
@@ -1784,10 +1784,10 @@ export default function LogframeManager({
       {/* MODAL 5: ADD / EDIT INDICATOR DETAILS */}
       {(showAddIndicatorModal || editingIndicatorDetails) && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-white rounded-2xl border border-orange-100 max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-orange-100 pb-3">
               <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                <Target className="w-5 h-5 text-blue-600" />
+                <Target className="w-5 h-5 text-orange-600" />
                 {editingIndicatorDetails 
                   ? (isId ? 'Edit Data & Parameter Indikator' : 'Edit Indicator Parameters & Data') 
                   : (isId ? `Tambah Indikator Baru (${formatIndicatorLevel(showAddIndicatorModal?.parentLevel || 'Outcome', language)})` : `Add New Indicator (${showAddIndicatorModal?.parentLevel})`)}
@@ -1795,7 +1795,7 @@ export default function LogframeManager({
             </div>
 
             {showAddIndicatorModal && (
-              <p className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200">
+              <p className="text-xs text-slate-600 bg-orange-50/50 p-2 rounded-lg border border-orange-100">
                 {isId ? 'Terhubung pada:' : 'Linked to:'} <strong>{showAddIndicatorModal.parentTitle}</strong>
               </p>
             )}
@@ -1809,7 +1809,7 @@ export default function LogframeManager({
                     value={indFormCode}
                     onChange={(e) => setIndFormCode(e.target.value)}
                     placeholder="IND-01"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl font-mono font-bold outline-hidden focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div className="col-span-2">
@@ -1819,7 +1819,7 @@ export default function LogframeManager({
                     value={indFormName}
                     onChange={(e) => setIndFormName(e.target.value)}
                     placeholder={isId ? "Contoh: Jumlah petani yang menerapkan praktik..." : "Example: Number of farmers adopting practices..."}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
@@ -1831,7 +1831,7 @@ export default function LogframeManager({
                   value={indFormDef}
                   onChange={(e) => setIndFormDef(e.target.value)}
                   placeholder={isId ? "Kriteria standar untuk menentukan bahwa target tercapai..." : "Standard criteria used to determine that the target is achieved..."}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                  className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -1842,7 +1842,7 @@ export default function LogframeManager({
                     type="number"
                     value={indFormBaseline}
                     onChange={(e) => setIndFormBaseline(Number(e.target.value))}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div>
@@ -1851,7 +1851,7 @@ export default function LogframeManager({
                     type="number"
                     value={indFormTarget}
                     onChange={(e) => setIndFormTarget(Number(e.target.value))}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div>
@@ -1859,7 +1859,7 @@ export default function LogframeManager({
                   <select
                     value={indFormUnit}
                     onChange={(e) => setIndFormUnit(e.target.value as IndicatorUnit)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="Orang / Individu">{formatUnit('Orang / Individu', language)}</option>
                     <option value="Kepala Keluarga (KK)">{formatUnit('Kepala Keluarga (KK)', language)}</option>
@@ -1881,7 +1881,7 @@ export default function LogframeManager({
                   <select
                     value={indFormFreq}
                     onChange={(e) => setIndFormFreq(e.target.value as any)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="Bulanan">{formatReportingFrequency('Bulanan', language)}</option>
                     <option value="Triwulanan">{formatReportingFrequency('Triwulanan', language)}</option>
@@ -1896,7 +1896,7 @@ export default function LogframeManager({
                   <select
                     value={indFormStatus}
                     onChange={(e) => setIndFormStatus(e.target.value as StatusProgress)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                    className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="Belum Dimulai">{formatStatusProgress('Belum Dimulai', language)}</option>
                     <option value="Sesuai Target (On-Track)">{formatStatusProgress('Sesuai Target (On-Track)', language)}</option>
@@ -1913,24 +1913,24 @@ export default function LogframeManager({
                   value={indFormMov}
                   onChange={(e) => setIndFormMov(e.target.value)}
                   placeholder={isId ? "Contoh: Daftar Hadir Peserta, SK Kepala Desa, Foto Kegiatan..." : "Example: Attendance List, Village Decree, Activity Photos..."}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl"
+                  className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+            <div className="flex justify-end gap-2 pt-3 border-t border-orange-100">
               <button
                 onClick={() => {
                   setShowAddIndicatorModal(null);
                   setEditingIndicatorDetails(null);
                 }}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-orange-50 rounded-xl"
               >
                 {isId ? 'Batal' : 'Cancel'}
               </button>
               <button
                 onClick={handleSaveIndicatorForm}
-                className="px-5 py-2 text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-xs"
+                className="px-5 py-2 text-xs bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-semibold rounded-xl shadow-xs"
               >
                 {editingIndicatorDetails ? (isId ? 'Simpan Perubahan' : 'Save Changes') : (isId ? 'Simpan Indikator' : 'Save Indicator')}
               </button>

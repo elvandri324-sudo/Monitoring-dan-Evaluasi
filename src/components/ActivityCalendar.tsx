@@ -234,18 +234,18 @@ export default function ActivityCalendar({
   const dayNames = isId ? DAY_NAMES_ID : DAY_NAMES_EN;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden space-y-4 p-5 sm:p-6">
+    <div className="bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden space-y-4 p-5 sm:p-6">
       {/* Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-orange-100">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center">
               <CalendarIcon className="w-4 h-4" />
             </div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900">
               {isId ? 'Kalender Rencana Kegiatan' : 'Activity Plan Calendar'}
             </h2>
-            <span className="px-2 py-0.5 bg-blue-100/70 text-blue-800 font-bold text-[10px] rounded-full">
+            <span className="px-2 py-0.5 bg-orange-100 text-orange-800 font-bold text-[10px] rounded-full">
               {filteredActivities.length} {isId ? 'Kegiatan Terjadwal' : 'Scheduled Activities'}
             </span>
           </div>
@@ -259,8 +259,8 @@ export default function ActivityCalendar({
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Status Filter */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-2 py-1 text-xs">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <div className="flex items-center gap-1 bg-orange-50/40 border border-orange-200 rounded-xl px-2 py-1 text-xs">
+            <Filter className="w-3.5 h-3.5 text-orange-500" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -275,13 +275,13 @@ export default function ActivityCalendar({
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+          <div className="flex items-center bg-orange-50 p-0.5 rounded-xl border border-orange-100">
             <button
               onClick={() => setViewMode('calendar')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap shrink-0 ${
                 viewMode === 'calendar'
-                  ? 'bg-white text-blue-700 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-orange-700 shadow-xs'
+                  : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <CalendarDays className="w-3.5 h-3.5" />
@@ -289,10 +289,10 @@ export default function ActivityCalendar({
             </button>
             <button
               onClick={() => setViewMode('agenda')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap shrink-0 ${
                 viewMode === 'agenda'
-                  ? 'bg-white text-blue-700 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-orange-700 shadow-xs'
+                  : 'text-slate-600 hover:text-orange-700'
               }`}
             >
               <ListOrdered className="w-3.5 h-3.5" />
@@ -304,10 +304,10 @@ export default function ActivityCalendar({
           {onOpenNewActivityModal && (
             <button
               onClick={onOpenNewActivityModal}
-              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition whitespace-nowrap shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">+ {isId ? 'Rencana Kegiatan' : 'New Activity'}</span>
+              <span className="hidden sm:inline">{isId ? 'Rencana Kegiatan' : 'New Activity'}</span>
             </button>
           )}
         </div>
@@ -315,14 +315,14 @@ export default function ActivityCalendar({
 
       {/* Month Navigator Header (Only in Calendar View) */}
       {viewMode === 'calendar' && (
-        <div className="flex items-center justify-between bg-slate-50/80 px-4 py-2.5 rounded-xl border border-slate-200/80">
+        <div className="flex items-center justify-between bg-orange-50/40 px-4 py-2.5 rounded-xl border border-orange-100">
           <div className="flex items-center gap-2">
             <h3 className="text-sm sm:text-base font-bold text-slate-900">
               {monthNames[month]} {year}
             </h3>
             <button
               onClick={handleToday}
-              className="px-2 py-0.5 text-[11px] font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-md transition"
+              className="px-2 py-0.5 text-[11px] font-semibold bg-white border border-orange-200 text-orange-700 hover:bg-orange-50 rounded-md transition"
             >
               {isId ? 'Bulan Ini' : 'This Month'}
             </button>
@@ -331,14 +331,14 @@ export default function ActivityCalendar({
           <div className="flex items-center gap-1">
             <button
               onClick={handlePrevMonth}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
+              className="p-1.5 rounded-lg bg-white border border-orange-200 text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition"
               title={isId ? 'Bulan Sebelumnya' : 'Previous Month'}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={handleNextMonth}
-              className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
+              className="p-1.5 rounded-lg bg-white border border-orange-200 text-slate-600 hover:bg-orange-50 hover:text-orange-700 transition"
               title={isId ? 'Bulan Berikutnya' : 'Next Month'}
             >
               <ChevronRight className="w-4 h-4" />
@@ -374,16 +374,16 @@ export default function ActivityCalendar({
                   key={`${cell.dateStr}-${idx}`}
                   className={`min-h-[90px] sm:min-h-[105px] p-1.5 sm:p-2 rounded-xl border flex flex-col justify-between transition ${
                     cell.isCurrentMonth
-                      ? 'bg-white border-slate-200/90 hover:border-blue-300 hover:shadow-xs'
-                      : 'bg-slate-50/40 border-slate-100 text-slate-400'
-                  } ${cell.isToday ? 'ring-2 ring-blue-500 bg-blue-50/20' : ''}`}
+                      ? 'bg-white border-orange-100 hover:border-orange-300 hover:shadow-xs'
+                      : 'bg-orange-50/20 border-orange-50 text-slate-400'
+                  } ${cell.isToday ? 'ring-2 ring-orange-500 bg-orange-50/40' : ''}`}
                 >
                   {/* Date Number Header */}
                   <div className="flex items-center justify-between mb-1">
                     <span
-                      className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
+                      className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md tabular-nums ${
                         cell.isToday
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-orange-600 text-white'
                           : cell.isCurrentMonth
                           ? 'text-slate-800'
                           : 'text-slate-400'
@@ -392,7 +392,7 @@ export default function ActivityCalendar({
                       {cell.dayNumber}
                     </span>
                     {hasActivities && (
-                      <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                      <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                     )}
                   </div>
 
@@ -417,7 +417,7 @@ export default function ActivityCalendar({
                     {cell.items.length > 2 && (
                       <div
                         onClick={() => setSelectedActivityItem(cell.items[0])}
-                        className="text-[9px] font-bold text-blue-600 hover:underline cursor-pointer text-center pt-0.5"
+                        className="text-[9px] font-bold text-orange-600 hover:underline cursor-pointer text-center pt-0.5"
                       >
                         +{cell.items.length - 2} {isId ? 'lainnya' : 'more'}
                       </div>
@@ -432,12 +432,12 @@ export default function ActivityCalendar({
         /* AGENDA TIMELINE VIEW */
         <div className="space-y-3">
           {sortedAgenda.length === 0 ? (
-            <div className="text-center py-12 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-              <CalendarIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <div className="text-center py-12 text-slate-400 bg-orange-50/30 rounded-xl border border-dashed border-orange-200">
+              <CalendarIcon className="w-8 h-8 mx-auto mb-2 opacity-50 text-orange-400" />
               <p className="text-xs font-semibold">{isId ? 'Tidak ada rencana kegiatan pada status ini.' : 'No planned activities for this status.'}</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-orange-100/70">
               {sortedAgenda.map((item) => {
                 const style = getStatusStyle(item.activity.status);
                 const participantCount = attendances.filter(a => a.activityId === item.activity.id).length;
@@ -446,21 +446,21 @@ export default function ActivityCalendar({
                   <div
                     key={item.activity.id}
                     onClick={() => setSelectedActivityItem(item)}
-                    className="py-3.5 px-3 rounded-xl hover:bg-slate-50/80 cursor-pointer transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-transparent hover:border-slate-200"
+                    className="py-3.5 px-3 rounded-xl hover:bg-orange-50/50 cursor-pointer transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-transparent hover:border-orange-200"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="p-2.5 rounded-xl bg-slate-100 border border-slate-200 text-center min-w-[70px] shrink-0">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase block">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-center min-w-[70px] shrink-0">
+                        <span className="text-[10px] font-bold text-orange-600 uppercase block">
                           {item.activity.startDate ? new Date(item.activity.startDate).toLocaleString(isId ? 'id-ID' : 'en-US', { month: 'short' }) : (isId ? 'JADWAL' : 'DATE')}
                         </span>
-                        <span className="text-base font-bold text-slate-900 block leading-none mt-0.5">
+                        <span className="text-base font-bold text-slate-900 tabular-nums block leading-none mt-0.5">
                           {item.activity.startDate ? new Date(item.activity.startDate).getDate() : '-'}
                         </span>
                       </div>
 
-                      <div className="space-y-1">
+                      <div className="space-y-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded text-[10px] border border-blue-200">
+                          <span className="font-bold text-orange-800 bg-orange-50 px-2 py-0.5 rounded text-[10px] border border-orange-200">
                             {item.activity.code}
                           </span>
                           <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${style.badge}`}>
@@ -492,11 +492,11 @@ export default function ActivityCalendar({
                       </div>
                     </div>
 
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                      <span className="text-xs font-bold text-slate-800">
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-orange-100">
+                      <span className="text-xs font-bold text-slate-800 tabular-nums">
                         Rp {(item.activity.budgetAllocated / 1000000).toFixed(0)} {isId ? 'Jt' : 'M'}
                       </span>
-                      <span className="text-[10px] text-blue-600 font-semibold flex items-center gap-0.5 hover:underline">
+                      <span className="text-[10px] text-orange-600 font-semibold flex items-center gap-0.5 hover:underline whitespace-nowrap">
                         {isId ? 'Lihat Detail' : 'View Details'} <ArrowUpRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
@@ -511,11 +511,11 @@ export default function ActivityCalendar({
       {/* MODAL: DETAIL KEGIATAN TERPILIH */}
       {selectedActivityItem && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-orange-100 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             {/* Header */}
-            <div className="flex items-start justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs">
+            <div className="flex items-start justify-between pb-3 border-b border-orange-100">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg bg-orange-100 text-orange-800 font-bold text-xs border border-orange-200">
                   {selectedActivityItem.activity.code}
                 </span>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${getStatusStyle(selectedActivityItem.activity.status).badge}`}>
@@ -524,7 +524,7 @@ export default function ActivityCalendar({
               </div>
               <button
                 onClick={() => setSelectedActivityItem(null)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition"
+                className="text-slate-400 hover:text-orange-700 p-1 rounded-lg hover:bg-orange-50 transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -532,7 +532,7 @@ export default function ActivityCalendar({
 
             {/* Title & Description */}
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+              <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider block">
                 {selectedActivityItem.projectName} • {selectedActivityItem.outputCode}
               </span>
               <h3 className="text-base font-bold text-slate-900">
@@ -544,11 +544,11 @@ export default function ActivityCalendar({
             </div>
 
             {/* Details Grid */}
-            <div className="grid grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-orange-50/40 border border-orange-100 p-3.5 rounded-xl text-xs">
               <div>
                 <span className="text-[10px] font-semibold text-slate-400 block">{isId ? 'Jadwal Pelaksanaan' : 'Execution Schedule'}</span>
                 <span className="font-bold text-slate-800 flex items-center gap-1 mt-0.5">
-                  <CalendarIcon className="w-3.5 h-3.5 text-blue-600" />
+                  <CalendarIcon className="w-3.5 h-3.5 text-orange-600 shrink-0" />
                   {selectedActivityItem.activity.startDate} {isId ? 's/d' : 'to'} {selectedActivityItem.activity.endDate}
                 </span>
               </div>
@@ -556,7 +556,7 @@ export default function ActivityCalendar({
               <div>
                 <span className="text-[10px] font-semibold text-slate-400 block">{isId ? 'Lokasi / Tempat' : 'Location / Venue'}</span>
                 <span className="font-bold text-slate-800 flex items-center gap-1 mt-0.5">
-                  <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                  <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
                   {selectedActivityItem.activity.location}
                 </span>
               </div>
@@ -564,36 +564,36 @@ export default function ActivityCalendar({
               <div>
                 <span className="text-[10px] font-semibold text-slate-400 block">{isId ? 'Penanggung Jawab (PIC)' : 'Person in Charge (PIC)'}</span>
                 <span className="font-bold text-slate-800 flex items-center gap-1 mt-0.5">
-                  <User className="w-3.5 h-3.5 text-slate-600" />
+                  <User className="w-3.5 h-3.5 text-slate-600 shrink-0" />
                   {selectedActivityItem.activity.leadPerson}
                 </span>
               </div>
 
               <div>
                 <span className="text-[10px] font-semibold text-slate-400 block">{isId ? 'Alokasi Anggaran' : 'Budget Allocation'}</span>
-                <span className="font-bold text-emerald-700 flex items-center gap-1 mt-0.5">
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="font-bold text-emerald-700 flex items-center gap-1 mt-0.5 tabular-nums">
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   Rp {selectedActivityItem.activity.budgetAllocated.toLocaleString(isId ? 'id-ID' : 'en-US')}
                 </span>
               </div>
             </div>
 
             {/* Participant Attendance Count */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-xs">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-emerald-700" />
+                <Users className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span className="font-semibold text-emerald-900">{isId ? 'Peserta Terdaftar di Kegiatan Ini' : 'Registered Participants in this Activity'}</span>
               </div>
-              <span className="font-bold text-emerald-800 bg-white px-2.5 py-0.5 rounded-lg border border-emerald-300">
+              <span className="font-bold text-emerald-800 bg-white px-2.5 py-0.5 rounded-lg border border-emerald-300 whitespace-nowrap">
                 {attendances.filter(a => a.activityId === selectedActivityItem.activity.id).length} {isId ? 'Partisipan' : 'Participants'}
               </span>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-orange-100">
               <button
                 onClick={() => setSelectedActivityItem(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-orange-50 hover:text-orange-700 rounded-xl transition"
               >
                 {isId ? 'Tutup' : 'Close'}
               </button>
@@ -602,7 +602,7 @@ export default function ActivityCalendar({
                   setSelectedActivityItem(null);
                   onNavigate('activities');
                 }}
-                className="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-xs transition flex items-center gap-1.5"
+                className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl shadow-xs transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
               >
                 <span>{isId ? 'Kelola Presensi Kegiatan' : 'Manage Attendance'}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />

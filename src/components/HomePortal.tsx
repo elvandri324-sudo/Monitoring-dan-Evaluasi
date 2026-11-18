@@ -52,24 +52,24 @@ export default function HomePortal({
   return (
     <div className="space-y-8 pb-12">
       {/* Hero Banner with Executive Overview */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white p-6 sm:p-10 border border-slate-700/60 shadow-xl">
-        <div className="absolute -right-16 -bottom-16 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute right-1/3 -top-20 w-80 h-80 bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white p-6 sm:p-10 border border-orange-400/50 shadow-xl shadow-orange-500/15">
+        <div className="absolute -right-16 -bottom-16 w-96 h-96 bg-white/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute right-1/3 -top-20 w-80 h-80 bg-amber-300/20 rounded-full blur-2xl pointer-events-none"></div>
 
         <div className="relative z-10 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-400/30 mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-orange-50 text-xs font-semibold border border-white/25 mb-4 backdrop-blur-xs">
             <Sparkles className="w-3.5 h-3.5" />
             {isId 
               ? 'Sistem Informasi Monitoring & Evaluasi Proyek Terintegrasi'
               : 'Integrated Project Monitoring & Evaluation Information System'}
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3 leading-tight">
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3 leading-tight text-balance">
             {isId
               ? 'M&E Dashboard & Logframe Management Berbasis Inklusi & Anti Double-Counting'
               : 'M&E Dashboard & Logframe Management with Inclusion & Anti Double-Counting'}
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 max-w-3xl">
+          <p className="text-orange-50 text-sm sm:text-base leading-relaxed mb-6 max-w-3xl">
             {isId
               ? 'Sistem pelaporan kinerja proyek pembangunan berkelanjutan dengan pelacakan hierarki kerangka logis (Goal, Outcome, Output, Activity), penghitungan akurat penerima manfaat terdeduplikasi (Zero Double Counting), serta disagregasi komprehensif GESI (Gender, Usia 0-14, 15-24, 25-64, 65+, Ragam Hambatan Disabilitas) dan Status Masyarakat Adat & Komunitas Lokal (IPLC).'
               : 'Performance reporting system for sustainable development projects featuring logical framework hierarchy tracking (Goal, Outcome, Output, Activity), accurate deduplicated beneficiary calculation (Zero Double-Counting), and comprehensive GESI disaggregations (Gender, Age 0-14, 15-24, 25-64, 65+, Disability Types) & IPLC Status.'}
@@ -79,7 +79,7 @@ export default function HomePortal({
             <button
               id="hero-go-dashboard-btn"
               onClick={() => onNavigate('dashboard')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm shadow-lg shadow-emerald-900/40 transition hover:translate-y-[-1px]"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-orange-50 text-orange-700 font-bold text-sm shadow-lg shadow-orange-900/15 transition hover:translate-y-[-1px] whitespace-nowrap shrink-0"
             >
               <BarChart3 className="w-4 h-4" />
               {isId ? 'Buka Dashboard Analitik' : 'Open Analytics Dashboard'}
@@ -88,18 +88,18 @@ export default function HomePortal({
             <button
               id="hero-go-logframe-btn"
               onClick={() => onNavigate('logframe')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-white font-medium text-sm border border-slate-600 transition"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-medium text-sm border border-white/30 backdrop-blur-xs transition whitespace-nowrap shrink-0"
             >
-              <Layers className="w-4 h-4 text-emerald-400" />
+              <Layers className="w-4 h-4 text-orange-100" />
               {isId ? 'Kelola Logframe & Indikator' : 'Manage Logframe & Indicators'}
             </button>
 
             <button
               id="hero-go-beneficiaries-btn"
               onClick={() => onNavigate('beneficiaries')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-white font-medium text-sm border border-slate-600 transition"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-medium text-sm border border-white/30 backdrop-blur-xs transition whitespace-nowrap shrink-0"
             >
-              <Users className="w-4 h-4 text-teal-400" />
+              <Users className="w-4 h-4 text-orange-100" />
               {isId ? 'Database Penerima Manfaat' : 'Beneficiary Database'}
             </button>
           </div>
@@ -109,17 +109,17 @@ export default function HomePortal({
       {/* Core KPI Cards with Anti Double-Counting Highlights */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Direct Unique Beneficiaries */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 hover:border-orange-200 transition shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {isId ? 'Penerima Manfaat Unik' : 'Unique Beneficiaries'}
             </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-slate-900">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <span className="text-3xl font-bold text-slate-900 tabular-nums">
               {globalDisagg.totalUniqueBeneficiaries.toLocaleString(isId ? 'id-ID' : 'en-US')}
             </span>
             <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
@@ -129,29 +129,29 @@ export default function HomePortal({
           <p className="text-xs text-slate-500 mt-2">
             {isId ? (
               <>
-                Deduplikasi dari total <strong>{globalDisagg.totalGrossParticipation}</strong> partisipasi kegiatan (
-                <span className="text-indigo-600 font-medium">{globalDisagg.repeatedParticipantsCount}</span> partisipan multi-kegiatan)
+                Deduplikasi dari total <strong className="tabular-nums">{globalDisagg.totalGrossParticipation}</strong> partisipasi kegiatan (
+                <span className="text-orange-600 font-medium tabular-nums">{globalDisagg.repeatedParticipantsCount}</span> partisipan multi-kegiatan)
               </>
             ) : (
               <>
-                Deduplicated from <strong>{globalDisagg.totalGrossParticipation}</strong> gross participations (
-                <span className="text-indigo-600 font-medium">{globalDisagg.repeatedParticipantsCount}</span> multi-activity attendees)
+                Deduplicated from <strong className="tabular-nums">{globalDisagg.totalGrossParticipation}</strong> gross participations (
+                <span className="text-orange-600 font-medium tabular-nums">{globalDisagg.repeatedParticipantsCount}</span> multi-activity attendees)
               </>
             )}
           </p>
         </div>
 
         {/* Metric 2: GESI Gender Disaggregation */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 hover:border-orange-200 transition shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {isId ? 'Disagregasi Gender' : 'Gender Disaggregation'}
             </span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-center justify-between text-slate-900 font-bold text-xl mb-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-slate-900 font-bold text-xl mb-1.5 tabular-nums">
             <div className="flex items-center gap-1.5 text-pink-600">
               <span>♀ {globalDisagg.genderBreakdown.percentPerempuan}%</span>
               <span className="text-xs font-normal text-slate-500">
@@ -180,20 +180,20 @@ export default function HomePortal({
         </div>
 
         {/* Metric 3: Disability Inclusivity & Barriers */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 hover:border-orange-200 transition shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {isId ? 'Inklusi Disabilitas' : 'Disability Inclusion'}
             </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-slate-900">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <span className="text-3xl font-bold text-slate-900 tabular-nums">
               {globalDisagg.disabilityBreakdown.disabilityCount}
             </span>
-            <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full tabular-nums">
               {globalDisagg.disabilityBreakdown.percentDisability}% {isId ? 'Partisipan' : 'Participants'}
             </span>
           </div>
@@ -203,7 +203,7 @@ export default function HomePortal({
         </div>
 
         {/* Metric 4: IPLC Reach */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-orange-100 hover:border-orange-200 transition shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               {isId ? 'Cakupan IPLC (Masyarakat Adat)' : 'IPLC Outreach (Indigenous)'}
@@ -227,9 +227,9 @@ export default function HomePortal({
       </section>
 
       {/* Methodology & Standards Highlight Box */}
-      <section className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-6 text-slate-800">
+      <section className="bg-orange-50/70 border border-orange-200/80 rounded-2xl p-6 text-slate-800">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-md">
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div className="space-y-2">
@@ -239,28 +239,28 @@ export default function HomePortal({
                 : 'M&E Standard Framework: Anti Double-Counting & Comprehensive Disaggregation'}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700 pt-1">
-              <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                <span className="font-semibold text-emerald-800 block mb-1">
+              <div className="bg-white p-3 rounded-lg border border-orange-100">
+                <span className="font-semibold text-orange-800 block mb-1">
                   1. {isId ? 'Anti Double-Counting Otomatis' : 'Automated Zero Double-Counting'}
                 </span>
                 {isId
                   ? 'Penerima manfaat dihitung secara unik (Net Unique Beneficiaries) berdasarkan NIK / ID Unik. Jika seseorang mengikuti 5 pelatihan berbeda, ia tercatat sebagai 5x partisipasi kotor, namun tetap dihitung tepat 1 penerima manfaat langsung.'
                   : 'Beneficiaries are uniquely calculated (Net Unique Beneficiaries) via Unique ID / NIK. Even if a participant attends 5 distinct workshops, they represent 5 gross participations but exactly 1 direct unique beneficiary.'}
               </div>
-              <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                <span className="font-semibold text-emerald-800 block mb-1">
+              <div className="bg-white p-3 rounded-lg border border-orange-100">
+                <span className="font-semibold text-orange-800 block mb-1">
                   2. {isId ? '4 Kelompok Usia Standar' : '4 Standard Age Brackets'}
                 </span>
                 {isId ? 'Disagregasi usia secara ketat dikelompokkan ke dalam:' : 'Age disaggregation is strictly organized into:'}
                 <div className="mt-1 flex flex-wrap gap-1 font-medium text-[11px]">
-                  <span className="bg-slate-100 px-1.5 py-0.5 rounded">{isId ? '0-14 (Anak)' : '0-14 (Children)'}</span>
-                  <span className="bg-slate-100 px-1.5 py-0.5 rounded">{isId ? '15-24 (Pemuda)' : '15-24 (Youth)'}</span>
-                  <span className="bg-slate-100 px-1.5 py-0.5 rounded">{isId ? '25-64 (Dewasa)' : '25-64 (Adults)'}</span>
-                  <span className="bg-slate-100 px-1.5 py-0.5 rounded">{isId ? '65+ (Lansia)' : '65+ (Elderly)'}</span>
+                  <span className="bg-orange-50 text-orange-900 px-1.5 py-0.5 rounded">{isId ? '0-14 (Anak)' : '0-14 (Children)'}</span>
+                  <span className="bg-orange-50 text-orange-900 px-1.5 py-0.5 rounded">{isId ? '15-24 (Pemuda)' : '15-24 (Youth)'}</span>
+                  <span className="bg-orange-50 text-orange-900 px-1.5 py-0.5 rounded">{isId ? '25-64 (Dewasa)' : '25-64 (Adults)'}</span>
+                  <span className="bg-orange-50 text-orange-900 px-1.5 py-0.5 rounded">{isId ? '65+ (Lansia)' : '65+ (Elderly)'}</span>
                 </div>
               </div>
-              <div className="bg-white p-3 rounded-lg border border-emerald-100">
-                <span className="font-semibold text-emerald-800 block mb-1">
+              <div className="bg-white p-3 rounded-lg border border-orange-100">
+                <span className="font-semibold text-orange-800 block mb-1">
                   3. {isId ? 'Ragam Hambatan Disabilitas & IPLC' : 'Disability Barriers & IPLC Status'}
                 </span>
                 {isId
@@ -274,7 +274,7 @@ export default function HomePortal({
 
       {/* Projects Grid Section */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 className="text-xl font-bold text-slate-900">
               {isId ? 'Daftar Proyek Aktif' : 'Active Projects List'}
@@ -288,7 +288,7 @@ export default function HomePortal({
           <button
             id="view-all-projects-btn"
             onClick={() => onNavigate('team')}
-            className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
+            className="text-xs font-semibold text-orange-700 hover:text-orange-800 flex items-center gap-1 whitespace-nowrap shrink-0"
           >
             {isId ? 'Lihat Manajemen Proyek & Tim' : 'View Projects & Team Management'} <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -302,19 +302,19 @@ export default function HomePortal({
             return (
               <div 
                 key={project.id}
-                className="bg-white rounded-xl border border-slate-200 hover:border-emerald-400 p-5 shadow-sm hover:shadow-md transition group flex flex-col justify-between"
+                className="bg-white rounded-xl border border-orange-100 hover:border-orange-300 p-5 shadow-sm hover:shadow-md transition group flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-2">
-                    <span className="px-2.5 py-1 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="px-2.5 py-1 rounded text-[11px] font-semibold bg-orange-50 text-orange-700 border border-orange-200">
                       {project.code}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700">
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-50 text-orange-700">
                       {project.status}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition line-clamp-2 mb-2">
+                  <h3 className="text-base font-bold text-slate-900 group-hover:text-orange-700 transition line-clamp-2 mb-2">
                     {project.title}
                   </h3>
 
@@ -323,7 +323,7 @@ export default function HomePortal({
                   </p>
 
                   {/* Project metadata pills */}
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-4 bg-slate-50 p-2.5 rounded-lg">
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-4 bg-orange-50/40 p-2.5 rounded-lg border border-orange-100/60">
                     <div>
                       <span className="text-[10px] text-slate-400 block">{isId ? 'Donor / Pendana:' : 'Donor / Funder:'}</span>
                       <span className="font-medium text-slate-800 truncate block">{project.donor}</span>
@@ -350,11 +350,11 @@ export default function HomePortal({
                   <div className="space-y-1 mb-4">
                     <div className="flex justify-between text-xs font-semibold">
                       <span className="text-slate-600">{isId ? 'Capaian Logframe & Indikator' : 'Logframe & Indicator Achievement'}</span>
-                      <span className="text-emerald-700">{logProgress.averageAchievement}%</span>
+                      <span className="text-orange-700">{logProgress.averageAchievement}%</span>
                     </div>
-                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-orange-100/70 h-2 rounded-full overflow-hidden">
                       <div 
-                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-500"
                         style={{ width: `${Math.min(100, logProgress.averageAchievement)}%` }}
                       ></div>
                     </div>
@@ -367,11 +367,11 @@ export default function HomePortal({
                 </div>
 
                 {/* Bottom stats & action */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                <div className="pt-3 border-t border-orange-100 flex flex-wrap items-center justify-between gap-2">
                   <div className="text-xs text-slate-600">
-                    <strong>{projDisagg.totalUniqueBeneficiaries}</strong> {isId ? 'Penerima Manfaat' : 'Beneficiaries'} ({projDisagg.genderBreakdown.percentPerempuan}% {isId ? 'Perempuan' : 'Female'}, {projDisagg.disabilityBreakdown.percentDisability}% {isId ? 'Disabilitas' : 'Disability'})
+                    <strong className="tabular-nums">{projDisagg.totalUniqueBeneficiaries}</strong> {isId ? 'Penerima Manfaat' : 'Beneficiaries'} ({projDisagg.genderBreakdown.percentPerempuan}% {isId ? 'Perempuan' : 'Female'}, {projDisagg.disabilityBreakdown.percentDisability}% {isId ? 'Disabilitas' : 'Disability'})
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {isAdmin && (
                       <button
                         onClick={(e) => {
@@ -389,7 +389,7 @@ export default function HomePortal({
                         onSelectProject(project.id);
                         onNavigate('dashboard');
                       }}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1 transition shadow-sm"
+                      className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white text-xs font-semibold flex items-center gap-1 transition shadow-sm whitespace-nowrap shrink-0"
                     >
                       {isId ? 'Buka Detail' : 'View Details'} <ArrowRight className="w-3.5 h-3.5" />
                     </button>
@@ -402,16 +402,16 @@ export default function HomePortal({
       </section>
 
       {/* Quick Action Navigation Grid */}
-      <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <section className="bg-white rounded-xl border border-orange-100 p-6 shadow-sm">
         <h3 className="text-base font-bold text-slate-900 mb-4">
           {isId ? 'Modul Sistem M&E Utama' : 'Core M&E System Modules'}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div 
             onClick={() => onNavigate('dashboard')}
-            className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-emerald-50/50 hover:border-emerald-200 cursor-pointer transition"
+            className="p-4 rounded-xl border border-orange-100 bg-orange-50/30 hover:bg-orange-50/80 hover:border-orange-300 cursor-pointer transition"
           >
-            <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3">
+            <div className="w-9 h-9 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center mb-3">
               <BarChart3 className="w-5 h-5" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm mb-1">
@@ -426,9 +426,9 @@ export default function HomePortal({
 
           <div 
             onClick={() => onNavigate('logframe')}
-            className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50/50 hover:border-indigo-200 cursor-pointer transition"
+            className="p-4 rounded-xl border border-orange-100 bg-orange-50/30 hover:bg-orange-50/80 hover:border-orange-300 cursor-pointer transition"
           >
-            <div className="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center mb-3">
+            <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
               <Layers className="w-5 h-5" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm mb-1">
@@ -443,9 +443,9 @@ export default function HomePortal({
 
           <div 
             onClick={() => onNavigate('activities')}
-            className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-amber-50/50 hover:border-amber-200 cursor-pointer transition"
+            className="p-4 rounded-xl border border-orange-100 bg-orange-50/30 hover:bg-orange-50/80 hover:border-orange-300 cursor-pointer transition"
           >
-            <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
+            <div className="w-9 h-9 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center mb-3">
               <Calendar className="w-5 h-5" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm mb-1">
@@ -460,9 +460,9 @@ export default function HomePortal({
 
           <div 
             onClick={() => onNavigate('beneficiaries')}
-            className="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-purple-50/50 hover:border-purple-200 cursor-pointer transition"
+            className="p-4 rounded-xl border border-orange-100 bg-orange-50/30 hover:bg-orange-50/80 hover:border-orange-300 cursor-pointer transition"
           >
-            <div className="w-9 h-9 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center mb-3">
+            <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
               <Users className="w-5 h-5" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm mb-1">

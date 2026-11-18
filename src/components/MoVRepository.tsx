@@ -728,13 +728,13 @@ export default function MoVRepository({
       {toast && (
         <div className="fixed top-6 right-6 z-50 animate-in slide-in-from-top-4 fade-in duration-200">
           <div className={`px-4 py-3 rounded-2xl shadow-xl border flex items-center gap-3 max-w-md ${
-            toast.type === 'success' ? 'bg-emerald-900 text-white border-emerald-700 shadow-emerald-900/30' :
-            toast.type === 'error' ? 'bg-rose-900 text-white border-rose-700 shadow-rose-900/30' :
-            'bg-slate-900 text-white border-slate-700 shadow-slate-900/30'
+            toast.type === 'success' ? 'bg-emerald-800 text-white border-emerald-600 shadow-emerald-900/30' :
+            toast.type === 'error' ? 'bg-rose-800 text-white border-rose-600 shadow-rose-900/30' :
+            'bg-orange-700 text-white border-orange-500 shadow-orange-900/30'
           }`}>
-            {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />}
-            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />}
-            {toast.type === 'info' && <Info className="w-5 h-5 text-sky-400 shrink-0" />}
+            {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-300 shrink-0" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-300 shrink-0" />}
+            {toast.type === 'info' && <Info className="w-5 h-5 text-amber-200 shrink-0" />}
             <span className="text-xs font-semibold leading-relaxed">{toast.message}</span>
             <button 
               onClick={() => setToast(null)}
@@ -747,10 +747,10 @@ export default function MoVRepository({
       )}
 
       {/* Top Header Card */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs">
+      <div className="bg-white rounded-2xl border border-orange-100 p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20 shrink-0">
               <FolderCheck className="w-6 h-6" />
             </div>
             <div>
@@ -758,7 +758,7 @@ export default function MoVRepository({
                 <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                   {isId ? 'Repositori MoV & Bukti Verifikasi' : 'MoV & Means of Verification Repository'}
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-200">
                   {allFlattenedMoVs.length} {isId ? 'Dokumen Terverifikasi' : 'Verified Documents'}
                 </span>
               </div>
@@ -774,17 +774,17 @@ export default function MoVRepository({
           <div className="flex items-center gap-2.5 self-end lg:self-auto flex-wrap">
             <button
               onClick={handleExportCSV}
-              className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-2 transition shadow-2xs"
+              className="px-3.5 py-2.5 rounded-xl border border-orange-200 bg-white hover:bg-orange-50 text-slate-700 text-xs font-semibold flex items-center gap-2 transition shadow-2xs"
               title={isId ? 'Unduh rekap bukti verifikasi ke format CSV/Excel' : 'Download verification summary to CSV/Excel'}
             >
-              <Download className="w-4 h-4 text-slate-600" />
+              <Download className="w-4 h-4 text-orange-600" />
               <span>{isId ? 'Ekspor Rekap (CSV)' : 'Export CSV'}</span>
             </button>
 
             {isAdmin && (
               <button
                 onClick={() => handleOpenUploadModal()}
-                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-2 transition shadow-md shadow-emerald-600/20"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white text-xs font-semibold flex items-center gap-2 transition shadow-md shadow-orange-600/20"
               >
                 <Plus className="w-4 h-4" />
                 <span>{isId ? '+ Unggah Dokumen MoV' : '+ Upload MoV Document'}</span>
@@ -794,9 +794,9 @@ export default function MoVRepository({
         </div>
 
         {/* Quick KPI Stat Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6 pt-5 border-t border-slate-100">
-          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/60">
-            <div className="text-[11px] font-medium text-slate-500">{isId ? 'Total MoV' : 'Total MoVs'}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6 pt-5 border-t border-orange-100">
+          <div className="p-3 bg-orange-50/50 rounded-xl border border-orange-100">
+            <div className="text-[11px] font-medium text-orange-700">{isId ? 'Total MoV' : 'Total MoVs'}</div>
             <div className="text-lg font-bold text-slate-900 mt-0.5">{stats.totalDocs} {isId ? 'Dokumen' : 'Docs'}</div>
           </div>
           <div className="p-3 bg-emerald-50/70 rounded-xl border border-emerald-100">
@@ -823,17 +823,17 @@ export default function MoVRepository({
       </div>
 
       {/* Filter and View Mode Toolbar */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5 flex-1">
+      <div className="bg-white rounded-2xl border border-orange-100 p-3.5 sm:p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-0">
           {/* Search Box */}
-          <div className="relative min-w-[220px] flex-1 max-w-sm">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full sm:w-auto sm:min-w-[200px] sm:flex-1 sm:max-w-sm min-w-0">
+            <Search className="w-4 h-4 text-orange-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={isId ? "Cari nama MoV, kegiatan, indikator, uploader..." : "Search MoV title, activity, indicator, uploader..."}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
+              className="w-full pl-9 pr-8 py-2 bg-orange-50/40 hover:bg-orange-50/70 focus:bg-white border border-orange-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
             />
             {searchQuery && (
               <button 
@@ -846,12 +846,12 @@ export default function MoVRepository({
           </div>
 
           {/* Project Filter */}
-          <div className="flex items-center gap-1.5">
-            <FolderKanban className="w-4 h-4 text-slate-400 hidden sm:inline" />
+          <div className="flex items-center gap-1.5 w-full sm:w-auto min-w-0">
+            <FolderKanban className="w-4 h-4 text-orange-500 hidden sm:inline shrink-0" />
             <select
               value={selectedProjectId}
               onChange={e => setSelectedProjectId(e.target.value)}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+              className="w-full sm:w-auto max-w-full px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
             >
               <option value="all">🌐 {isId ? `Semua Proyek (${projects.length})` : `All Projects (${projects.length})`}</option>
               {sortedProjects.map(p => {
@@ -869,7 +869,7 @@ export default function MoVRepository({
           <select
             value={selectedCategory}
             onChange={e => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
             <option value="all">{isId ? 'Semua Kategori Bukti' : 'All MoV Categories'}</option>
             {MOV_CATEGORIES.map(cat => (
@@ -881,7 +881,7 @@ export default function MoVRepository({
           <select
             value={selectedLevel}
             onChange={e => setSelectedLevel(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
           >
             <option value="all">{isId ? 'Semua Tingkat (Level)' : 'All Hierarchy Levels'}</option>
             <option value="Activity">{isId ? 'Level Aktivitas' : 'Activity Level'}</option>
@@ -892,11 +892,11 @@ export default function MoVRepository({
         </div>
 
         {/* View Mode Toggle Buttons */}
-        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 self-end md:self-auto shrink-0">
+        <div className="flex items-center gap-1 bg-orange-50/70 p-1 rounded-xl border border-orange-200 self-end md:self-auto shrink-0">
           <button
             onClick={() => setViewMode('tree')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
-              viewMode === 'tree' ? 'bg-white text-emerald-800 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              viewMode === 'tree' ? 'bg-white text-orange-700 shadow-xs' : 'text-slate-600 hover:text-orange-700'
             }`}
             title={isId ? "Tampilan Pohon Berjenjang Proyek -> Outcome -> Output -> Aktivitas" : "Hierarchical Tree View"}
           >
@@ -906,7 +906,7 @@ export default function MoVRepository({
           <button
             onClick={() => setViewMode('table')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
-              viewMode === 'table' ? 'bg-white text-emerald-800 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              viewMode === 'table' ? 'bg-white text-orange-700 shadow-xs' : 'text-slate-600 hover:text-orange-700'
             }`}
             title={isId ? "Tampilan Tabel Lengkap Audit MoV" : "Full Table View"}
           >
@@ -916,7 +916,7 @@ export default function MoVRepository({
           <button
             onClick={() => setViewMode('cards')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
-              viewMode === 'cards' ? 'bg-white text-emerald-800 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              viewMode === 'cards' ? 'bg-white text-orange-700 shadow-xs' : 'text-slate-600 hover:text-orange-700'
             }`}
             title={isId ? "Tampilan Galeri Kartu" : "Card Gallery"}
           >
@@ -928,8 +928,8 @@ export default function MoVRepository({
 
       {/* Main Content View Container */}
       {filteredMoVs.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
-          <div className="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+        <div className="bg-white rounded-2xl border border-orange-100 p-12 text-center space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
             <Paperclip className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-slate-800">Tidak ada dokumen MoV ditemukan</h3>
@@ -941,7 +941,7 @@ export default function MoVRepository({
           {isAdmin && (
             <button
               onClick={() => handleOpenUploadModal()}
-              className="mt-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+              className="mt-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 shadow-md shadow-orange-600/20"
             >
               <Plus className="w-4 h-4" /> Unggah MoV Sekarang
             </button>
@@ -962,22 +962,22 @@ export default function MoVRepository({
                   const isProjExpanded = expandedProjects[proj.id] !== false; // default expanded
 
                   return (
-                    <div key={proj.id} className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+                    <div key={proj.id} className="bg-white rounded-2xl border border-orange-100 shadow-xs overflow-hidden">
                       {/* LEVEL 1: PROJECT HEADER */}
-                      <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div 
                           className="flex items-center gap-3 cursor-pointer flex-1"
                           onClick={() => toggleProject(proj.id)}
                         >
-                          <button className="p-1 rounded-lg hover:bg-slate-700 text-slate-300">
+                          <button className="p-1 rounded-lg hover:bg-white/20 text-white">
                             {isProjExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                           </button>
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-white/20 text-white border border-white/30">
                                 PROYEK: {proj.code}
                               </span>
-                              <span className="text-xs text-slate-400 flex items-center gap-1">
+                              <span className="text-xs text-orange-50 flex items-center gap-1">
                                 <Calendar className="w-3.5 h-3.5" />
                                 Mulai: {proj.startDate} • Sampai: {proj.endDate}
                               </span>
@@ -989,7 +989,7 @@ export default function MoVRepository({
                         </div>
 
                         <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
                             {projMoVs.length} MoV Terlampir
                           </span>
                           {isAdmin && (
@@ -1000,7 +1000,7 @@ export default function MoVRepository({
                                 targetId: proj.id,
                                 targetTitle: proj.title
                               })}
-                              className="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition"
+                              className="px-2.5 py-1.5 bg-white hover:bg-orange-50 text-orange-700 rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-xs"
                               title="Unggah MoV untuk Proyek / Goal ini"
                             >
                               <Plus className="w-3.5 h-3.5" /> + MoV Proyek
@@ -1329,7 +1329,7 @@ export default function MoVRepository({
                                                                 {isActExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                                                               </button>
                                                               <div>
-                                                                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-700 text-white mr-1.5">
+                                                                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-600 text-white mr-1.5">
                                                                   {act.code}
                                                                 </span>
                                                                 <span className="font-semibold text-xs text-slate-800">
@@ -1342,7 +1342,7 @@ export default function MoVRepository({
                                                             </div>
 
                                                             <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
-                                                              <span className="text-[10px] font-semibold text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
+                                                              <span className="text-[10px] font-semibold text-orange-800 bg-white px-2 py-0.5 rounded border border-orange-200">
                                                                 {actMoVs.length} Bukti
                                                               </span>
                                                               {isAdmin && (
@@ -1354,7 +1354,7 @@ export default function MoVRepository({
                                                                     targetTitle: `${act.code}: ${act.title}`,
                                                                     indicatorId: act.indicators?.[0]?.id
                                                                   })}
-                                                                  className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-semibold flex items-center gap-1"
+                                                                  className="px-2 py-0.5 bg-orange-600 hover:bg-orange-700 text-white rounded text-[10px] font-semibold flex items-center gap-1 transition"
                                                                 >
                                                                   <Plus className="w-3 h-3" /> + MoV Kegiatan
                                                                 </button>
@@ -1372,7 +1372,7 @@ export default function MoVRepository({
                                                                   {actMoVs.map(item => (
                                                                     <div 
                                                                       key={item.mov.id} 
-                                                                      className="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-xs transition bg-slate-50/40 flex flex-col justify-between"
+                                                                      className="p-2.5 rounded-xl border border-orange-100 hover:border-orange-300 hover:shadow-xs transition bg-orange-50/20 flex flex-col justify-between"
                                                                     >
                                                                       <div className="space-y-1">
                                                                         <div className="flex items-start justify-between gap-1.5">
@@ -1467,13 +1467,13 @@ export default function MoVRepository({
 
           {/* VIEW 2: AUDIT TABLE SPREADSHEET MATRIX */}
           {viewMode === 'table' && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-              <div className="p-3.5 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div className="bg-white rounded-2xl border border-orange-100 shadow-xs overflow-hidden">
+              <div className="p-3.5 bg-gradient-to-r from-orange-600 to-amber-500 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2 font-bold">
-                  <TableIcon className="w-4 h-4 text-emerald-400" />
+                  <TableIcon className="w-4 h-4 text-amber-100" />
                   <span>Matriks Lengkap Bukti Verifikasi MoV Proyek ({filteredMoVs.length} Dokumen)</span>
                 </div>
-                <div className="text-[11px] text-slate-400">
+                <div className="text-[11px] text-orange-50">
                   Tersusun berurutan berdasarkan Tanggal Mulai Proyek, Outcome, Output, dan Aktivitas
                 </div>
               </div>
@@ -1481,7 +1481,7 @@ export default function MoVRepository({
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse min-w-[1100px]">
                   <thead>
-                    <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold divide-x divide-slate-200">
+                    <tr className="bg-orange-50 border-b border-orange-100 text-orange-950 font-bold divide-x divide-orange-100">
                       <th className="p-3 w-40">Proyek & Periode</th>
                       <th className="p-3 w-48">Struktur Logframe</th>
                       <th className="p-3 w-40">Kategori Bukti</th>
@@ -1613,20 +1613,20 @@ export default function MoVRepository({
               {filteredMoVs.map(item => (
                 <div 
                   key={item.mov.id}
-                  className="bg-white rounded-2xl border border-slate-200/90 p-4 hover:shadow-md hover:border-emerald-300 transition flex flex-col justify-between space-y-3"
+                  className="bg-white rounded-2xl border border-orange-100 p-4 hover:shadow-md hover:border-orange-300 transition flex flex-col justify-between space-y-3"
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${getCategoryBadge(item.mov.category)}`}>
                         {item.mov.category}
                       </span>
-                      <div className="p-1.5 bg-slate-100 rounded-lg text-slate-600">
+                      <div className="p-1.5 bg-orange-50 rounded-lg text-orange-600">
                         {getFileIcon(item.mov)}
                       </div>
                     </div>
 
                     <div>
-                      <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-mono font-bold text-orange-800 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-100">
                         {item.projectCode}
                       </span>
                       <h3 className="font-bold text-slate-900 text-sm mt-1.5 line-clamp-2">
@@ -1703,24 +1703,24 @@ export default function MoVRepository({
       {/* MODAL 1: PREVIEW / DETAIL MoV */}
       {previewDoc && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between">
+          <div className="bg-white rounded-2xl max-w-2xl w-full border border-orange-100 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white p-4 sm:p-5 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-emerald-500 text-white">
+                <div className="p-2 rounded-xl bg-white/20 text-white">
                   <FileCheck className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-sm sm:text-base text-white">
                     Detail Dokumen Bukti Verifikasi (MoV)
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-orange-50">
                     Arsip Terverifikasi Sistem Monitoring & Evaluasi
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setPreviewDoc(null)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+                className="p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/20 transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1850,7 +1850,7 @@ export default function MoVRepository({
                 </button>
                 <button
                   onClick={() => handleDownloadMoV(previewDoc)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+                  className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-orange-600/20"
                 >
                   <Download className="w-4 h-4" /> Unduh Dokumen
                 </button>
@@ -1863,24 +1863,24 @@ export default function MoVRepository({
       {/* MODAL 2: UPLOAD NEW MoV */}
       {showUploadModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="bg-emerald-800 text-white p-4 sm:p-5 flex items-center justify-between">
+          <div className="bg-white rounded-2xl max-w-xl w-full border border-orange-100 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="bg-gradient-to-r from-orange-600 to-amber-500 text-white p-4 sm:p-5 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-emerald-700 text-white">
+                <div className="p-2 rounded-xl bg-white/20 text-white">
                   <Upload className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-sm sm:text-base text-white">
                     Unggah Bukti Verifikasi (MoV) Baru
                   </h3>
-                  <p className="text-xs text-emerald-200">
+                  <p className="text-xs text-orange-50">
                     Lampirkan dokumen bukti fisik/digital pada logframe proyek
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setShowUploadModal(false)}
-                className="p-1.5 text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-700"
+                className="p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/20 transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1901,7 +1901,7 @@ export default function MoVRepository({
                     setFormActivityId('');
                   }}
                   required
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                  className="w-full px-3 py-2 bg-orange-50/30 border border-orange-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 >
                   <option value="">-- Pilih Proyek --</option>
                   {sortedProjects.map(p => {
@@ -1923,7 +1923,7 @@ export default function MoVRepository({
                 <select
                   value={formLevel}
                   onChange={e => setFormLevel(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                  className="w-full px-3 py-2 bg-orange-50/30 border border-orange-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 >
                   <option value="activity">Level Kegiatan (Activity MoV) - Sangat Disarankan</option>
                   <option value="output">Level Keluaran (Output MoV)</option>
@@ -2020,7 +2020,7 @@ export default function MoVRepository({
                   value={formTitle}
                   onChange={e => setFormTitle(e.target.value)}
                   required
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                  className="w-full px-3 py-2 bg-orange-50/30 border border-orange-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
               </div>
 
@@ -2036,10 +2036,10 @@ export default function MoVRepository({
                   onClick={() => fileInputRef.current?.click()}
                   className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition ${
                     isDragging 
-                      ? 'border-emerald-500 bg-emerald-50/70' 
+                      ? 'border-orange-500 bg-orange-50/70' 
                       : formFileName 
-                      ? 'border-emerald-300 bg-emerald-50/30' 
-                      : 'border-slate-300 hover:border-emerald-400 bg-slate-50 hover:bg-emerald-50/20'
+                      ? 'border-orange-300 bg-orange-50/30' 
+                      : 'border-orange-200 hover:border-orange-400 bg-orange-50/20 hover:bg-orange-50/40'
                   }`}
                 >
                   <input
@@ -2050,13 +2050,13 @@ export default function MoVRepository({
                     accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.jpg,.jpeg,.png,.webp,.zip"
                   />
                   <div className="flex flex-col items-center justify-center gap-1.5">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
                       <FileUp className="w-5 h-5" />
                     </div>
                     {formFileName ? (
                       <div>
-                        <p className="text-xs font-bold text-emerald-900 flex items-center justify-center gap-1">
-                          <Check className="w-4 h-4 text-emerald-600" /> {formFileName}
+                        <p className="text-xs font-bold text-orange-900 flex items-center justify-center gap-1">
+                          <Check className="w-4 h-4 text-orange-600" /> {formFileName}
                         </p>
                         <p className="text-[11px] text-slate-500 mt-0.5">
                           Ukuran: {formFileSize || '1.5 MB'} &bull; Klik untuk ganti berkas
@@ -2065,7 +2065,7 @@ export default function MoVRepository({
                     ) : (
                       <div>
                         <p className="text-xs font-semibold text-slate-700">
-                          Tarik berkas ke sini atau <span className="text-emerald-600 underline">telusuri file dari perangkat</span>
+                          Tarik berkas ke sini atau <span className="text-orange-600 underline">telusuri file dari perangkat</span>
                         </p>
                         <p className="text-[10px] text-slate-400 mt-0.5">
                           Mendukung PDF, Excel, Word, Foto, ZIP hingga 25 MB
@@ -2086,7 +2086,7 @@ export default function MoVRepository({
                   placeholder="https://drive.google.com/..."
                   value={formFileUrl}
                   onChange={e => setFormFileUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-orange-50/30 border border-orange-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
               </div>
 
@@ -2098,7 +2098,7 @@ export default function MoVRepository({
                   placeholder="Keterangan kelengkapan berkas, nomor registrasi, dsb."
                   value={formNotes}
                   onChange={e => setFormNotes(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-orange-50/30 border border-orange-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
               </div>
 
@@ -2109,12 +2109,12 @@ export default function MoVRepository({
                   type="text"
                   value={formUploadedBy}
                   onChange={e => setFormUploadedBy(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
+                  className="w-full px-3 py-2 bg-orange-50/30 border border-orange-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
               </div>
 
               {/* Submit Buttons */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="pt-4 border-t border-orange-100 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}
@@ -2124,7 +2124,7 @@ export default function MoVRepository({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+                  className="px-5 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-orange-600/20"
                 >
                   <Upload className="w-4 h-4" /> Simpan Dokumen MoV
                 </button>

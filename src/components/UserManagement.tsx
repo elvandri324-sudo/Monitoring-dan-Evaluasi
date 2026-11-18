@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
   Users, 
   UserPlus, 
@@ -18,11 +18,42 @@ import {
   Eye,
   EyeOff,
   Lock,
-  Save
+  Save,
+  Camera,
+  Upload,
+  Link2,
+  Loader2
 } from 'lucide-react';
 import { UserAccount, UserRole, UserStatus, Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { exportUsersToXLSX } from '../utils/exportXlsx';
+import { compressProfileImage } from '../utils/imageResize';
+
+const UserAvatar: React.FC<{ user: Pick<UserAccount, 'avatarUrl' | 'fullName' | 'username'> }> = ({ user }) => {
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [user.avatarUrl]);
+
+  if (user.avatarUrl && !imgError) {
+    return (
+      <img
+        src={user.avatarUrl}
+        alt={user.fullName}
+        onError={() => setImgError(true)}
+        className="w-10 h-10 rounded-full bg-orange-50 object-cover border border-orange-200 shadow-2xs shrink-0"
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
+
+  return (
+    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-sm shadow-2xs shrink-0 border border-orange-400">
+      {(user.fullName || user.username || 'U').charAt(0).toUpperCase()}
+    </div>
+  );
+};
 
 interface UserManagementProps {
   users: UserAccount[];
@@ -76,6 +107,10 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
   const [userToDelete, setUserToDelete] = useState<UserAccount | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarLoadError, setAvatarLoadError] = useState(false);
+  const [showAvatarUrlInput, setShowAvatarUrlInput] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Add/Edit Form State
   const [formData, setFormData] = useState({
@@ -86,7 +121,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
     role: 'Staff M&E' as UserRole,
     assignedProjectIds: ['all'] as string[],
     status: 'Aktif' as UserStatus,
-    phone: ''
+    phone: '',
+    avatarUrl: ''
   });
 
   const showToast = (msg: string) => {
@@ -98,6 +134,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
     setEditingUser(null);
     setAccountFormError('');
     setShowAccountPassword(false);
+    setAvatarLoadError(false);
+    setShowAvatarUrlInput(false);
     setFormData({
       username: '',
       fullName: '',
@@ -106,7 +144,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
       role: 'Staff M&E',
       assignedProjectIds: ['all'],
       status: 'Aktif',
-      phone: ''
+      phone: '',
+      avatarUrl: ''
     });
     setIsAccountModalOpen(true);
   };
@@ -115,6 +154,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
     setEditingUser(user);
     setAccountFormError('');
     setShowAccountPassword(false);
+    setAvatarLoadError(false);
+    setShowAvatarUrlInput(false);
     setFormData({
       username: user.username,
       fullName: user.fullName,
@@ -123,9 +164,33 @@ export const UserManagement: React.FC<UserManagementProps> = ({
       role: user.role,
       assignedProjectIds: user.assignedProjectIds && user.assignedProjectIds.length > 0 ? user.assignedProjectIds : ['all'],
       status: user.status,
-      phone: user.phone || ''
+      phone: user.phone || '',
+      avatarUrl: user.avatarUrl || ''
     });
     setIsAccountModalOpen(true);
+  };
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setAccountFormError('');
+    setIsUploadingAvatar(true);
+
+    try {
+      const compressedDataUrl = await compressProfileImage(file, 256, 0.85);
+      setFormData(prev => ({ ...prev, avatarUrl: compressedDataUrl }));
+      setAvatarLoadError(false);
+    } catch (err) {
+      setAccountFormError(
+        err instanceof Error
+          ? err.message
+          : (isId ? 'Gagal memproses foto profil.' : 'Failed to process profile photo.')
+      );
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
   const openCredentialsModal = (user: UserAccount) => {
@@ -249,7 +314,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
         assignedProjectIds: formData.assignedProjectIds.length > 0 ? formData.assignedProjectIds : ['all'],
         status: formData.status,
         phone: formData.phone.trim() || undefined,
-        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanUsername)}`,
+        avatarUrl: formData.avatarUrl.trim() || undefined,
         createdAt: new Date().toISOString().split('T')[0],
         lastLogin: '-'
       };
@@ -277,7 +342,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
         role: formData.role,
         assignedProjectIds: formData.assignedProjectIds.length > 0 ? formData.assignedProjectIds : ['all'],
         status: formData.status,
-        phone: formData.phone.trim() || undefined
+        phone: formData.phone.trim() || undefined,
+        avatarUrl: formData.avatarUrl.trim() || undefined
       };
 
       onUpdateUser(updatedUser);
@@ -428,57 +494,57 @@ export const UserManagement: React.FC<UserManagementProps> = ({
     <div className="space-y-6 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 bg-white text-slate-900 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-orange-200 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <span className="text-sm font-medium">{toastMessage}</span>
-          <button onClick={() => setToastMessage(null)} className="ml-2 text-slate-400 hover:text-white">
+          <button onClick={() => setToastMessage(null)} className="ml-2 text-slate-400 hover:text-orange-700">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+      <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 rounded-2xl p-6 sm:p-8 text-white shadow-lg shadow-orange-500/15 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-white/15 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-semibold tracking-wide text-indigo-200 border border-white/15">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-semibold tracking-wide text-orange-50 border border-white/25">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-200" />
               <span>{isId ? 'Kontrol Akses & Keamanan Sistem' : 'Access Control & Security'}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               {isId ? 'Manajemen Akun Pengguna' : 'User Account Management'}
             </h1>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-orange-50/95 leading-relaxed">
               {isId 
                 ? 'Kelola akun administrator, koordinator lapangan, staf M&E, dan mitra donor. Tambah akun baru, edit profil, ganti username & password, atau atur hak akses proyek.'
                 : 'Manage administrator, field coordinator, M&E staff, and donor partner accounts. Add new users, edit profiles, change username & password, or assign project permissions.'}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto">
             <button
               onClick={handleExportXLSX}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-md whitespace-nowrap shrink-0"
+              className="flex-1 sm:flex-none justify-center px-3.5 sm:px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 shadow-md whitespace-nowrap shrink-0"
               title={isId ? 'Ekspor Daftar Akun ke Excel (.xlsx)' : 'Export Users to Excel (.xlsx)'}
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
-              <span>{isId ? 'Ekspor Excel (XLSX)' : 'Export Excel (XLSX)'}</span>
+              <FileSpreadsheet className="w-4 h-4 text-emerald-100" />
+              <span>{isId ? 'Ekspor Excel' : 'Export Excel'}</span>
             </button>
 
             <button
               onClick={handleExportCSV}
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-semibold transition flex items-center gap-2 backdrop-blur-sm whitespace-nowrap shrink-0"
+              className="px-3.5 sm:px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white border border-white/25 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 backdrop-blur-sm whitespace-nowrap shrink-0"
               title={isId ? 'Ekspor CSV' : 'Export CSV'}
             >
-              <Download className="w-4 h-4 text-slate-300" />
+              <Download className="w-4 h-4 text-orange-100" />
               <span>CSV</span>
             </button>
 
             {isAdmin && (
               <button
                 onClick={openAddModal}
-                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95 whitespace-nowrap shrink-0"
+                className="w-full sm:w-auto justify-center px-4 sm:px-5 py-2.5 bg-white hover:bg-orange-50 text-orange-700 rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95 whitespace-nowrap shrink-0"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>{isId ? '+ Tambah Akun Baru' : '+ Add New User'}</span>
@@ -488,88 +554,201 @@ export const UserManagement: React.FC<UserManagementProps> = ({
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/10">
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-slate-300 font-medium">{isId ? 'Total Pengguna' : 'Total Users'}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/20">
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-50 font-medium">{isId ? 'Total Pengguna' : 'Total Users'}</div>
             <div className="text-2xl font-bold mt-0.5 text-white tabular-nums">{users.length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-emerald-300 font-medium">{isId ? 'Akun Aktif' : 'Active Users'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-emerald-400 tabular-nums">{users.filter(u => u.status === 'Aktif').length}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-50 font-medium">{isId ? 'Akun Aktif' : 'Active Users'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white tabular-nums">{users.filter(u => u.status === 'Aktif').length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-purple-300 font-medium">{isId ? 'Administrator' : 'Administrators'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-purple-300 tabular-nums">{users.filter(u => u.role === 'Super Admin' || u.role === 'Admin').length}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-50 font-medium">{isId ? 'Administrator' : 'Administrators'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white tabular-nums">{users.filter(u => u.role === 'Super Admin' || u.role === 'Admin').length}</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-amber-300 font-medium">{isId ? 'Staf & Lapangan' : 'Staff & Field'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-amber-300 tabular-nums">{users.filter(u => u.role === 'Staff M&E' || u.role === 'Field Coordinator').length}</div>
+          <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
+            <div className="text-[11px] text-orange-50 font-medium">{isId ? 'Staf & Lapangan' : 'Staff & Field'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white tabular-nums">{users.filter(u => u.role === 'Staff M&E' || u.role === 'Field Coordinator').length}</div>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex-1 w-full flex flex-wrap items-center gap-3">
+      <div className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-orange-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="flex-1 w-full grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3 min-w-0">
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[240px]">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full sm:w-auto sm:min-w-[220px] sm:flex-1 min-w-0">
+            <Search className="w-4 h-4 text-orange-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={isId ? 'Cari nama, username, email, no HP...' : 'Search name, username, email, phone...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+              className="w-full pl-9 pr-8 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')} 
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-700"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Role Filter */}
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="all">{isId ? 'Semua Peran / Role' : 'All Roles'}</option>
-            <option value="Super Admin">Super Admin</option>
-            <option value="Admin">Admin</option>
-            <option value="Staff M&E">Staff M&E</option>
-            <option value="Field Coordinator">Field Coordinator</option>
-            <option value="Donor / Partner">Donor / Partner</option>
-            <option value="Viewer / Guest">Viewer / Guest</option>
-          </select>
+          <div className="grid grid-cols-2 sm:flex items-center gap-2.5">
+            {/* Role Filter */}
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="all">{isId ? 'Semua Peran / Role' : 'All Roles'}</option>
+              <option value="Super Admin">Super Admin</option>
+              <option value="Admin">Admin</option>
+              <option value="Staff M&E">Staff M&E</option>
+              <option value="Field Coordinator">Field Coordinator</option>
+              <option value="Donor / Partner">Donor / Partner</option>
+              <option value="Viewer / Guest">Viewer / Guest</option>
+            </select>
 
-          {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="all">{isId ? 'Semua Status' : 'All Status'}</option>
-            <option value="Aktif">{isId ? 'Aktif' : 'Active'}</option>
-            <option value="Nonaktif">{isId ? 'Nonaktif' : 'Inactive'}</option>
-            <option value="Terkunci">{isId ? 'Terkunci' : 'Locked'}</option>
-          </select>
+            {/* Status Filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full sm:w-auto px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="all">{isId ? 'Semua Status' : 'All Status'}</option>
+              <option value="Aktif">{isId ? 'Aktif' : 'Active'}</option>
+              <option value="Nonaktif">{isId ? 'Nonaktif' : 'Inactive'}</option>
+              <option value="Terkunci">{isId ? 'Terkunci' : 'Locked'}</option>
+            </select>
+          </div>
         </div>
 
-        <div className="text-xs text-slate-500 font-medium tabular-nums">
+        <div className="text-xs text-slate-500 font-medium tabular-nums shrink-0">
           {isId ? `Menampilkan ${filteredUsers.length} dari ${users.length} akun` : `Showing ${filteredUsers.length} of ${users.length} users`}
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+      {/* Mobile User Cards (< 768px) */}
+      <div className="md:hidden space-y-3">
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map(user => {
+            const roleStyle = ROLE_BADGES[user.role] || ROLE_BADGES['Viewer / Guest'];
+            const isCurrentSessionUser = user.id === currentUserId;
+            const isLastSuperAdmin = user.role === 'Super Admin' && superAdminCount <= 1;
+            const cannotDelete = isCurrentSessionUser || isLastSuperAdmin;
+
+            return (
+              <div key={user.id} className="bg-white rounded-2xl border border-orange-100 shadow-xs p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <UserAvatar user={user} />
+                    <div className="min-w-0">
+                      <div className="font-bold text-slate-900 text-sm truncate">{user.fullName}</div>
+                      <div className="text-xs text-slate-500 font-mono truncate">@{user.username}</div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleToggleStatus(user)}
+                    disabled={isCurrentSessionUser || !isAdmin}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 ${
+                      user.status === 'Aktif'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : user.status === 'Terkunci'
+                        ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                        : 'bg-slate-100 text-slate-600 border border-slate-200'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'Aktif' ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
+                    <span>{user.status}</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}>
+                    {user.role}
+                  </span>
+                  {isCurrentSessionUser && (
+                    <span className="px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-orange-50 text-orange-700 border border-orange-200">
+                      {isId ? 'Sesi Aktif' : 'Current'}
+                    </span>
+                  )}
+                  <span className="px-2 py-0.5 rounded-lg text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    {user.assignedProjectIds.includes('all')
+                      ? (isId ? 'Semua Proyek' : 'All Projects')
+                      : `${user.assignedProjectIds.length} ${isId ? 'Proyek' : 'Projects'}`}
+                  </span>
+                </div>
+
+                <div className="text-xs text-slate-600 space-y-1 pt-1 border-t border-orange-100/70">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="font-mono text-[11px] truncate">{user.email}</span>
+                  </div>
+                  {user.phone && (
+                    <div className="flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="text-[11px]">{user.phone}</span>
+                    </div>
+                  )}
+                  <div className="text-[11px] text-slate-400 font-mono tabular-nums">
+                    {isId ? 'Login terakhir:' : 'Last login:'} {user.lastLogin || '-'}
+                  </div>
+                </div>
+
+                {isAdmin && (
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-orange-100/70">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(user)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl text-xs font-semibold transition"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>{isId ? 'Edit Akun' : 'Edit'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openCredentialsModal(user)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl text-xs font-semibold transition whitespace-nowrap"
+                    >
+                      <KeyRound className="w-3.5 h-3.5" />
+                      <span>{isId ? 'Username & Password' : 'Credentials'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => !cannotDelete && setUserToDelete(user)}
+                      disabled={cannotDelete}
+                      className={`p-2 rounded-xl border transition ${
+                        cannotDelete
+                          ? 'text-slate-300 border-slate-100 bg-slate-50 cursor-not-allowed'
+                          : 'text-rose-600 border-rose-200 bg-rose-50 hover:bg-rose-100'
+                      }`}
+                      aria-label={isId ? 'Hapus akun' : 'Delete user'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div className="bg-white rounded-2xl border border-orange-100 p-8 text-center text-slate-400">
+            <Users className="w-10 h-10 mx-auto text-orange-200 mb-2" />
+            <p className="font-semibold text-slate-600 text-sm">{isId ? 'Tidak ada akun pengguna yang cocok' : 'No user accounts found'}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Users Table (Tablet & Desktop >= 768px) */}
+      <div className="hidden md:block bg-white rounded-2xl border border-orange-100 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-900 text-slate-200 font-semibold border-b border-slate-800">
+              <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-semibold border-b border-orange-500">
                 <th className="py-3.5 px-4">{isId ? 'Pengguna & Akun' : 'User & Profile'}</th>
                 <th className="py-3.5 px-3">{isId ? 'Peran / Role' : 'Role'}</th>
                 <th className="py-3.5 px-3">{isId ? 'Kontak' : 'Contact'}</th>
@@ -579,7 +758,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                 <th className="py-3.5 px-4 text-right">{isId ? 'Aksi' : 'Action'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-orange-100/70 bg-white">
               {filteredUsers.length > 0 ? (
                 filteredUsers.map(user => {
                   const roleStyle = ROLE_BADGES[user.role] || ROLE_BADGES['Viewer / Guest'];
@@ -588,21 +767,16 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                   const cannotDelete = isCurrentSessionUser || isLastSuperAdmin;
 
                   return (
-                    <tr key={user.id} className="hover:bg-slate-50/80 transition">
+                    <tr key={user.id} className="hover:bg-orange-50/40 transition">
                       {/* User & Avatar */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
-                          <img 
-                            src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} 
-                            alt={user.fullName} 
-                            className="w-10 h-10 rounded-full bg-slate-100 object-cover border border-slate-200 shadow-2xs shrink-0" 
-                            referrerPolicy="no-referrer"
-                          />
+                          <UserAvatar user={user} />
                           <div>
                             <div className="font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
                               <span>{user.fullName}</span>
                               {isCurrentSessionUser && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-orange-50 text-orange-700 border border-orange-200">
                                   {isId ? 'Sesi Aktif' : 'Current'}
                                 </span>
                               )}
@@ -684,7 +858,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                             <button
                               type="button"
                               onClick={() => openEditModal(user)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-[11px] font-semibold transition whitespace-nowrap shrink-0"
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-lg text-[11px] font-semibold transition whitespace-nowrap shrink-0"
                               title={isId ? `Edit akun ${user.username}` : `Edit account ${user.username}`}
                             >
                               <Edit3 className="w-3.5 h-3.5" />
@@ -743,20 +917,20 @@ export const UserManagement: React.FC<UserManagementProps> = ({
       {/* Modal: Add or Edit User Account */}
       {isAccountModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-7 border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200 my-8">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-7 border border-orange-100 relative animate-in fade-in zoom-in-95 duration-200 my-8">
             <button
               type="button"
               onClick={() => {
                 setIsAccountModalOpen(false);
                 setEditingUser(null);
               }}
-              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-orange-50 hover:text-orange-700 transition"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-5">
-              <div className="p-3 bg-indigo-50 text-indigo-700 rounded-2xl border border-indigo-100">
+              <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl border border-orange-100">
                 {editingUser ? <Edit3 className="w-6 h-6" /> : <UserPlus className="w-6 h-6" />}
               </div>
               <div>
@@ -781,6 +955,107 @@ export const UserManagement: React.FC<UserManagementProps> = ({
             )}
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                onChange={handleAvatarFileChange}
+                className="hidden"
+              />
+
+              {/* Profile Photo Picker */}
+              <div className="p-3.5 bg-orange-50/40 border border-orange-100 rounded-2xl space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3.5">
+                  <div className="relative shrink-0 self-start sm:self-center">
+                    {formData.avatarUrl.trim() && !avatarLoadError ? (
+                      <img
+                        src={formData.avatarUrl}
+                        alt={formData.fullName || formData.username || 'Avatar'}
+                        onError={() => setAvatarLoadError(true)}
+                        className="w-16 h-16 rounded-2xl object-cover border border-orange-200 bg-white shadow-xs"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-600 to-amber-500 text-white flex items-center justify-center font-bold text-xl shadow-xs">
+                        {(formData.fullName || formData.username || 'U').trim().charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    {isUploadingAvatar && (
+                      <div className="absolute inset-0 rounded-2xl bg-slate-900/50 flex items-center justify-center text-white">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div>
+                      <p className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <Camera className="w-3.5 h-3.5 text-orange-600" />
+                        <span>{isId ? 'Foto Profil Akun' : 'Account Profile Photo'}</span>
+                      </p>
+                      <p className="text-[11px] text-slate-500 leading-snug">
+                        {isId
+                          ? 'Unggah foto JPG/PNG/WebP (maks. 5 MB), otomatis dipotong 1:1.'
+                          : 'Upload JPG/PNG/WebP (max 5 MB), auto-cropped 1:1.'}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        disabled={isUploadingAvatar}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[11px] font-bold shadow-2xs transition whitespace-nowrap shrink-0 disabled:opacity-60"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>{isId ? 'Unggah Foto' : 'Upload Photo'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowAvatarUrlInput(prev => !prev)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white hover:bg-orange-50 text-slate-700 border border-orange-200 rounded-lg text-[11px] font-semibold transition whitespace-nowrap shrink-0"
+                      >
+                        <Link2 className="w-3.5 h-3.5 text-orange-500" />
+                        <span>{isId ? 'URL Foto' : 'Photo URL'}</span>
+                      </button>
+
+                      {formData.avatarUrl.trim() && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, avatarUrl: '' }));
+                            setAvatarLoadError(false);
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[11px] font-semibold transition whitespace-nowrap shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{isId ? 'Hapus Foto' : 'Remove'}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {showAvatarUrlInput && (
+                  <div className="pt-2 border-t border-orange-100">
+                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      {isId ? 'Tempel Tautan URL Foto Profil' : 'Paste Profile Photo URL'}
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.avatarUrl.startsWith('data:') ? '' : formData.avatarUrl}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, avatarUrl: e.target.value }));
+                        setAvatarLoadError(false);
+                      }}
+                      placeholder="https://contoh.com/foto-profil.jpg"
+                      className="w-full text-xs px-3 py-2 bg-white border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 text-slate-800"
+                    />
+                  </div>
+                )}
+              </div>
+
               {/* Full Name */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -792,7 +1067,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                   placeholder={isId ? 'Contoh: Siti Rahmawati, S.Stat' : 'e.g., Siti Rahmawati, S.Stat'}
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-medium text-slate-900"
+                  className="w-full text-xs px-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium text-slate-900"
                 />
               </div>
 
@@ -808,7 +1083,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="siti.rahma"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value.replace(/\s+/g, '').toLowerCase() })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-mono text-slate-900"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-mono text-slate-900"
                   />
                 </div>
                 <div>
@@ -821,7 +1096,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="siti@monitoring.org"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-medium text-slate-900"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium text-slate-900"
                   />
                 </div>
               </div>
@@ -841,12 +1116,12 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                       placeholder={editingUser ? (isId ? 'Kosongkan jika tetap' : 'Leave blank to keep') : 'Minimal 6 karakter'}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full text-xs pl-3.5 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-mono text-slate-900"
+                      className="w-full text-xs pl-3.5 pr-9 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-mono text-slate-900"
                     />
                     <button
                       type="button"
                       onClick={() => setShowAccountPassword(!showAccountPassword)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-700"
                     >
                       {showAccountPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -861,7 +1136,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="+62 812-xxxx-xxxx"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-medium text-slate-900"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-medium text-slate-900"
                   />
                 </div>
               </div>
@@ -876,7 +1151,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                     disabled={editingUser?.id === currentUserId && editingUser?.role === 'Super Admin'}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-900 disabled:opacity-60"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 font-semibold text-slate-900 disabled:opacity-60"
                   >
                     <option value="Super Admin">Super Admin</option>
                     <option value="Admin">Admin</option>
@@ -894,7 +1169,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as UserStatus })}
                     disabled={editingUser?.id === currentUserId}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-900 disabled:opacity-60"
+                    className="w-full text-xs px-3.5 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 font-semibold text-slate-900 disabled:opacity-60"
                   >
                     <option value="Aktif">{isId ? 'Aktif' : 'Active'}</option>
                     <option value="Nonaktif">{isId ? 'Nonaktif' : 'Inactive'}</option>
@@ -908,26 +1183,26 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                 <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   {isId ? 'Cakupan Akses Proyek' : 'Assigned Project Scope'}
                 </label>
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 max-h-40 overflow-y-auto">
+                <div className="bg-orange-50/30 border border-orange-100 rounded-xl p-3 space-y-2 max-h-40 overflow-y-auto">
                   <label className="flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={formData.assignedProjectIds.includes('all')}
                       onChange={() => toggleProjectScope('all')}
-                      className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                      className="rounded border-orange-300 text-orange-600 focus:ring-orange-500 accent-orange-600"
                     />
                     <span>{isId ? 'Semua Proyek (Akses Global)' : 'All Projects (Global Access)'}</span>
                   </label>
-                  <div className="border-t border-slate-200/80 pt-1.5 space-y-1.5">
+                  <div className="border-t border-orange-100 pt-1.5 space-y-1.5">
                     {projects.map(p => (
                       <label key={p.id} className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
                         <input
                           type="checkbox"
                           checked={!formData.assignedProjectIds.includes('all') && formData.assignedProjectIds.includes(p.id)}
                           onChange={() => toggleProjectScope(p.id)}
-                          className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                          className="rounded border-orange-300 text-orange-600 focus:ring-orange-500 accent-orange-600"
                         />
-                        <span className="font-mono text-[11px] font-semibold text-slate-600">[{p.code}]</span>
+                        <span className="font-mono text-[11px] font-semibold text-orange-700">[{p.code}]</span>
                         <span className="truncate">{p.title}</span>
                       </label>
                     ))}
@@ -936,20 +1211,20 @@ export const UserManagement: React.FC<UserManagementProps> = ({
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-orange-100">
                 <button
                   type="button"
                   onClick={() => {
                     setIsAccountModalOpen(false);
                     setEditingUser(null);
                   }}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
+                  className="px-4 py-2.5 bg-orange-50 hover:bg-orange-100 text-slate-700 rounded-xl text-xs font-semibold transition"
                 >
                   {isId ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95 flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95 flex items-center gap-1.5"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>
@@ -967,17 +1242,17 @@ export const UserManagement: React.FC<UserManagementProps> = ({
       {/* Modal: Quick Change Username & Password */}
       {credentialsTarget && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200 my-8">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-orange-100 relative animate-in fade-in zoom-in-95 duration-200 my-8">
             <button
               type="button"
               onClick={() => setCredentialsTarget(null)}
-              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-orange-50 hover:text-orange-700 transition"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-5">
-              <div className="p-3 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200">
+              <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl border border-orange-100">
                 <KeyRound className="w-6 h-6" />
               </div>
               <div className="min-w-0 pr-6">
@@ -1009,7 +1284,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     required
                     value={credUsername}
                     onChange={(e) => setCredUsername(e.target.value.replace(/\s+/g, '').toLowerCase())}
-                    className="w-full text-xs pl-7 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white font-mono text-slate-900"
+                    className="w-full text-xs pl-7 pr-3 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white font-mono text-slate-900"
                   />
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1">
@@ -1028,12 +1303,12 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder={isId ? 'Kosongkan jika tidak ganti password' : 'Leave blank to keep current password'}
                     value={credNewPassword}
                     onChange={(e) => setCredNewPassword(e.target.value)}
-                    className="w-full text-xs pl-8 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-slate-900"
+                    className="w-full text-xs pl-8 pr-10 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white text-slate-900"
                   />
                   <button
                     type="button"
                     onClick={() => setShowCredNewPw(!showCredNewPw)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-700"
                   >
                     {showCredNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -1051,29 +1326,29 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="••••••••"
                     value={credConfirmPassword}
                     onChange={(e) => setCredConfirmPassword(e.target.value)}
-                    className="w-full text-xs pl-8 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-slate-900"
+                    className="w-full text-xs pl-8 pr-10 py-2.5 bg-orange-50/40 border border-orange-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:bg-white text-slate-900"
                   />
                   <button
                     type="button"
                     onClick={() => setShowCredConfirmPw(!showCredConfirmPw)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-700"
                   >
                     {showCredConfirmPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-orange-100">
                 <button
                   type="button"
                   onClick={() => setCredentialsTarget(null)}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
+                  className="px-4 py-2.5 bg-orange-50 hover:bg-orange-100 text-slate-700 rounded-xl text-xs font-semibold transition"
                 >
                   {isId ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5"
                 >
                   <KeyRound className="w-3.5 h-3.5" />
                   <span>{isId ? 'Simpan Kredensial' : 'Save Credentials'}</span>
@@ -1087,7 +1362,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
       {/* Modal: Delete Confirmation */}
       {userToDelete && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 border border-orange-100 relative animate-in fade-in zoom-in-95 duration-200">
             <div className="p-3 bg-rose-50 text-rose-600 rounded-2xl w-fit mb-4">
               <AlertTriangle className="w-6 h-6" />
             </div>
@@ -1100,7 +1375,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                 : `Are you sure you want to delete user account "${userToDelete.fullName}" (@${userToDelete.username})? This action cannot be undone.`}
             </p>
 
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 mb-5 text-xs space-y-1">
+            <div className="p-3 bg-orange-50/40 rounded-xl border border-orange-100 mb-5 text-xs space-y-1">
               <div className="font-semibold text-slate-800">{userToDelete.fullName}</div>
               <div className="text-slate-500 font-mono">@{userToDelete.username} · {userToDelete.email} · {userToDelete.role}</div>
             </div>
@@ -1108,7 +1383,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
             <div className="flex items-center justify-end gap-2.5">
               <button
                 onClick={() => setUserToDelete(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
+                className="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-slate-700 rounded-xl text-xs font-semibold transition"
               >
                 {isId ? 'Batal' : 'Cancel'}
               </button>

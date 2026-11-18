@@ -370,18 +370,18 @@ export default function AccompaniedGroupManager({
   return (
     <div className="space-y-6 pb-16">
       {/* Top Header & Page Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-orange-400/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-md bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-blue-600" />
+            <span className="px-2.5 py-1 rounded-md bg-white/20 text-white border border-white/25 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-amber-100" />
               {isId ? 'Organisasi & Kelompok Dampingan' : 'Accompanied Community Groups'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-2">
             {isId ? 'Kelompok Masyarakat yang Didampingi' : 'Facilitated Community Groups'}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-3xl">
+          <p className="text-xs sm:text-sm text-orange-50 mt-1 max-w-3xl">
             {isId 
               ? 'Kelola data kelompok berbasis masyarakat (OPS, POKJA, KADER SBCC, TPS3R, PDU, Bank Sampah, Pokdarwis, KWT, KUPS, Lembaga Adat) dan integrasi anggota langsung dari basis data Penerima Manfaat terdaftar.' 
               : 'Manage facilitated community-based organizations (OPS, POKJA, SBCC Cadres, TPS3R, PDU, Waste Banks, Tourism Groups, etc.) with member rosters linked directly to registered beneficiaries.'}
@@ -391,17 +391,17 @@ export default function AccompaniedGroupManager({
         <div className="flex items-center gap-2.5 self-start sm:self-auto shrink-0">
           <button
             onClick={handleExportXLSX}
-            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs flex items-center gap-1.5 transition"
+            className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold border border-white/25 shadow-xs flex items-center gap-1.5 transition backdrop-blur-xs"
             title={isId ? 'Ekspor Data Kelompok dan Anggota ke Excel (.xlsx)' : 'Export Groups and Members to Excel'}
           >
-            <Download className="w-4 h-4 text-emerald-600" />
+            <Download className="w-4 h-4 text-emerald-200" />
             <span>{isId ? 'Ekspor Excel' : 'Export XLSX'}</span>
           </button>
 
           {isAdmin && (
             <button
               onClick={handleOpenAddGroup}
-              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
+              className="px-4 py-2 rounded-xl bg-white hover:bg-orange-50 text-orange-700 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
             >
               <Plus className="w-4 h-4" />
               <span>{isId ? 'Tambah Kelompok' : 'Add Group'}</span>
@@ -413,12 +413,12 @@ export default function AccompaniedGroupManager({
       {/* KPI STATS CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         {/* Total Groups */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               {isId ? 'Total Kelompok' : 'Total Groups'}
             </span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
               <Building2 className="w-4 h-4" />
             </div>
           </div>
@@ -429,7 +429,7 @@ export default function AccompaniedGroupManager({
         </div>
 
         {/* Total Unique Members */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-orange-100 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               {isId ? 'Anggota Terdata' : 'Group Members'}
@@ -514,12 +514,12 @@ export default function AccompaniedGroupManager({
           onClick={() => setFilterType('all')}
           className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${
             filterType === 'all'
-              ? 'bg-slate-900 text-white shadow-xs'
-              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              ? 'bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-xs'
+              : 'bg-white text-slate-600 hover:bg-orange-50 border border-orange-100'
           }`}
         >
           <span>{isId ? 'Semua Jenis Kelompok' : 'All Group Types'}</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-700 text-white">
+          <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${filterType === 'all' ? 'bg-white/25 text-white' : 'bg-orange-100 text-orange-800'}`}>
             {groups.length}
           </span>
         </button>
@@ -536,14 +536,14 @@ export default function AccompaniedGroupManager({
               onClick={() => setFilterType(filterType === gt ? 'all' : gt)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${
                 filterType === gt
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                  ? 'bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-xs'
+                  : 'bg-white text-slate-700 hover:bg-orange-50 border border-orange-100'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${filterType === gt ? 'text-white' : 'text-slate-500'}`} />
+              <Icon className={`w-3.5 h-3.5 ${filterType === gt ? 'text-white' : 'text-orange-500'}`} />
               <span>{badge.shortName}</span>
               <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                filterType === gt ? 'bg-blue-800 text-white' : 'bg-slate-100 text-slate-600'
+                filterType === gt ? 'bg-white/25 text-white' : 'bg-orange-50 text-orange-800'
               }`}>
                 {count}
               </span>
@@ -553,21 +553,21 @@ export default function AccompaniedGroupManager({
       </div>
 
       {/* SEARCH AND ADVANCED FILTERS BAR */}
-      <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="bg-white p-3.5 rounded-2xl border border-orange-100 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 min-w-0">
         {/* Search */}
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative w-full md:w-auto md:flex-1 md:min-w-[220px] min-w-0">
+          <Search className="w-4 h-4 text-orange-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isId ? 'Cari nama kelompok, kode, nama ketua, desa, bidang fokus, atau anggota...' : 'Search by group name, code, leader, village, focus, or member...'}
-            className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition"
+            className="w-full pl-9 pr-8 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white transition"
           />
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-orange-600 text-xs"
             >
               ✕
             </button>
@@ -575,12 +575,12 @@ export default function AccompaniedGroupManager({
         </div>
 
         {/* Dropdowns */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
           {/* Filter Status */}
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-blue-500"
+            className="flex-1 sm:flex-none px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 outline-hidden focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Status' : 'All Statuses'}</option>
             <option value="Aktif">Aktif</option>
@@ -594,7 +594,7 @@ export default function AccompaniedGroupManager({
           <select
             value={filterVillage}
             onChange={(e) => setFilterVillage(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-blue-500"
+            className="flex-1 sm:flex-none px-3 py-2 bg-orange-50/40 border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 outline-hidden focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">{isId ? 'Semua Desa / Lokasi' : 'All Villages'}</option>
             {allVillages.map(v => (
@@ -603,11 +603,11 @@ export default function AccompaniedGroupManager({
           </select>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <div className="flex items-center bg-orange-50 p-1 rounded-xl border border-orange-200">
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition ${
-                viewMode === 'grid' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-500 hover:text-slate-700'
+                viewMode === 'grid' ? 'bg-white text-orange-600 shadow-xs' : 'text-slate-500 hover:text-orange-700'
               }`}
               title="Tampilan Kartu"
             >
@@ -616,7 +616,7 @@ export default function AccompaniedGroupManager({
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition ${
-                viewMode === 'table' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-500 hover:text-slate-700'
+                viewMode === 'table' ? 'bg-white text-orange-600 shadow-xs' : 'text-slate-500 hover:text-orange-700'
               }`}
               title="Tampilan Tabel"
             >
@@ -628,8 +628,8 @@ export default function AccompaniedGroupManager({
 
       {/* GROUPS LIST CONTAINER */}
       {filteredGroups.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
+        <div className="bg-white rounded-2xl border border-orange-100 p-12 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto mb-3">
             <Users className="w-8 h-8" />
           </div>
           <h3 className="font-bold text-slate-800 text-base">
@@ -643,7 +643,7 @@ export default function AccompaniedGroupManager({
           {isAdmin && (
             <button
               onClick={handleOpenAddGroup}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition"
+              className="mt-4 px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>{isId ? 'Tambah Kelompok Baru' : 'Add New Group'}</span>
@@ -671,7 +671,7 @@ export default function AccompaniedGroupManager({
             return (
               <div 
                 key={group.id} 
-                className="bg-white rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition flex flex-col justify-between overflow-hidden group"
+                className="bg-white rounded-2xl border border-orange-100 hover:border-orange-300 hover:shadow-md transition flex flex-col justify-between overflow-hidden group"
               >
                 <div className="p-5">
                   {/* Top Badges */}
@@ -681,7 +681,7 @@ export default function AccompaniedGroupManager({
                         <Icon className="w-3 h-3" />
                         <span>{badge.shortName}</span>
                       </span>
-                      <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-mono font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded">
                         {group.code}
                       </span>
                     </div>
@@ -692,13 +692,13 @@ export default function AccompaniedGroupManager({
                   </div>
 
                   {/* Group Name */}
-                  <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-blue-600 transition">
+                  <h3 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-orange-600 transition">
                     {group.name}
                   </h3>
 
                   {/* Project Tag */}
                   {project && (
-                    <p className="text-[10px] text-blue-600 font-semibold mt-1 truncate">
+                    <p className="text-[10px] text-orange-700 font-semibold mt-1 truncate">
                       📁 {project.code} - {project.title}
                     </p>
                   )}
@@ -706,7 +706,7 @@ export default function AccompaniedGroupManager({
                   {/* Location & Legalitas */}
                   <div className="mt-3 space-y-1.5 text-xs text-slate-600">
                     <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                       <span className="truncate">{group.village}, {group.regency}</span>
                     </div>
                     {group.legalDocumentNumber && (
@@ -719,7 +719,7 @@ export default function AccompaniedGroupManager({
                     )}
                     {group.leaderName && (
                       <div className="flex items-center gap-1.5">
-                        <UserCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                        <UserCheck className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                         <span className="truncate">
                           {isId ? 'Ketua' : 'Leader'}: <strong className="text-slate-800">{group.leaderName}</strong>
                           {group.leaderPhone && <span className="text-slate-400 ml-1">({group.leaderPhone})</span>}
@@ -730,23 +730,23 @@ export default function AccompaniedGroupManager({
 
                   {/* Focus Area */}
                   {group.focusArea && (
-                    <div className="mt-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[11px] text-slate-600 line-clamp-2">
+                    <div className="mt-3 p-2.5 rounded-xl bg-orange-50/40 border border-orange-100 text-[11px] text-slate-600 line-clamp-2">
                       <span className="font-semibold text-slate-700">{isId ? 'Fokus Dampingan: ' : 'Focus: '}</span>
                       {group.focusArea}
                     </div>
                   )}
 
                   {/* Member Summary Section */}
-                  <div className="mt-4 pt-3.5 border-t border-slate-100">
+                  <div className="mt-4 pt-3.5 border-t border-orange-100">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-blue-600" />
+                        <Users className="w-3.5 h-3.5 text-orange-600" />
                         <span>{group.members.length} {isId ? 'Anggota Terdata' : 'Members'}</span>
                       </span>
 
                       <button
                         onClick={() => handleOpenManageMembers(group)}
-                        className="text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1"
+                        className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline flex items-center gap-1"
                       >
                         <UserPlus className="w-3 h-3" />
                         <span>{isId ? 'Kelola Anggota' : 'Manage Members'}</span>
@@ -775,7 +775,7 @@ export default function AccompaniedGroupManager({
                       {members.slice(0, 4).map((m, idx) => (
                         <span
                           key={idx}
-                          className="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold flex items-center justify-center border border-white shrink-0"
+                          className="w-6 h-6 rounded-full bg-orange-100 text-orange-800 text-[10px] font-bold flex items-center justify-center border border-white shrink-0"
                           title={`${m.beneficiary?.fullName || 'Anggota'} (${m.roleInGroup})`}
                         >
                           {(m.beneficiary?.fullName || 'U').charAt(0).toUpperCase()}
@@ -796,10 +796,10 @@ export default function AccompaniedGroupManager({
                 </div>
 
                 {/* Bottom Actions Bar */}
-                <div className="bg-slate-50 px-4 py-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                <div className="bg-orange-50/30 px-4 py-2.5 border-t border-orange-100 flex items-center justify-between gap-2">
                   <button
                     onClick={() => setDetailGroup(group)}
-                    className="text-xs font-semibold text-slate-700 hover:text-blue-600 flex items-center gap-1 transition"
+                    className="text-xs font-semibold text-slate-700 hover:text-orange-600 flex items-center gap-1 transition"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>{isId ? 'Detail' : 'View'}</span>
@@ -810,7 +810,7 @@ export default function AccompaniedGroupManager({
                       <>
                         <button
                           onClick={() => handleOpenEditGroup(group)}
-                          className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-white rounded-lg transition"
+                          className="p-1.5 text-slate-500 hover:text-orange-600 hover:bg-white rounded-lg transition"
                           title={isId ? 'Edit Profil Kelompok' : 'Edit Group'}
                         >
                           <Edit3 className="w-3.5 h-3.5" />
@@ -832,11 +832,11 @@ export default function AccompaniedGroupManager({
         </div>
       ) : (
         /* TABLE VIEW */
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div className="bg-white rounded-2xl border border-orange-100 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
+                <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold uppercase tracking-wider text-[11px]">
                   <th className="p-3.5">Kode & Nama Kelompok</th>
                   <th className="p-3.5">Jenis Kelompok</th>
                   <th className="p-3.5">Desa & Wilayah</th>
@@ -847,7 +847,7 @@ export default function AccompaniedGroupManager({
                   <th className="p-3.5 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-orange-100/70 text-slate-700">
                 {filteredGroups.map(group => {
                   const badge = getTypeBadge(group.type);
                   const Icon = badge.icon;
@@ -857,10 +857,10 @@ export default function AccompaniedGroupManager({
                   const disCount = members.filter(b => b?.hasDisability).length;
 
                   return (
-                    <tr key={group.id} className="hover:bg-slate-50/80 transition">
+                    <tr key={group.id} className="hover:bg-orange-50/40 transition">
                       <td className="p-3.5">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                          <span className="font-mono text-[10px] font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded">
                             {group.code}
                           </span>
                           <div>
@@ -891,7 +891,7 @@ export default function AccompaniedGroupManager({
                       <td className="p-3.5 text-center">
                         <button
                           onClick={() => handleOpenManageMembers(group)}
-                          className="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs inline-flex items-center gap-1 transition"
+                          className="px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-xs inline-flex items-center gap-1 transition"
                         >
                           <Users className="w-3.5 h-3.5" />
                           <span>{group.members.length}</span>
@@ -907,14 +907,14 @@ export default function AccompaniedGroupManager({
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => setDetailGroup(group)}
-                            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition"
                             title="Detail"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleOpenManageMembers(group)}
-                            className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 rounded-lg transition"
+                            className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
                             title="Kelola Anggota"
                           >
                             <UserPlus className="w-4 h-4" />
@@ -923,14 +923,14 @@ export default function AccompaniedGroupManager({
                             <>
                               <button
                                 onClick={() => handleOpenEditGroup(group)}
-                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-slate-100 rounded-lg transition"
+                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
                                 title="Edit"
                               >
                                 <Edit3 className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setDeleteCandidate(group)}
-                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition"
+                                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
                                 title="Hapus"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -953,36 +953,36 @@ export default function AccompaniedGroupManager({
       {/* ======================================================== */}
       {activeGroupForMembers && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-orange-100 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+            <div className="px-6 py-4 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-blue-500/30 text-blue-300 font-mono font-bold text-xs">
+                  <span className="px-2 py-0.5 rounded bg-white/20 text-white font-mono font-bold text-xs">
                     {activeGroupForMembers.code}
                   </span>
-                  <span className="text-xs text-slate-300 font-medium">
+                  <span className="text-xs text-orange-50 font-medium">
                     {activeGroupForMembers.type}
                   </span>
                 </div>
                 <h3 className="text-lg font-bold text-white mt-1">
                   {isId ? 'Manajemen Anggota: ' : 'Member Roster: '} {activeGroupForMembers.name}
                 </h3>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-orange-50 mt-0.5">
                   📍 {activeGroupForMembers.village}, {activeGroupForMembers.regency} • {activeGroupForMembers.members.length} {isId ? 'Anggota Terdaftar' : 'Members'}
                 </p>
               </div>
 
               <button
                 onClick={() => setActiveGroupForMembers(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                className="text-orange-100 hover:text-white p-1 rounded-lg hover:bg-white/20 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Action Bar inside Drawer */}
-            <div className="px-6 py-3.5 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="px-6 py-3.5 bg-orange-50/40 border-b border-orange-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="text-xs text-slate-600">
                 <span className="font-semibold">{isId ? 'Hubungkan Penerima Manfaat: ' : 'Link Beneficiaries: '}</span>
                 {isId ? 'Pilih individu yang telah diinput pada data Penerima Manfaat untuk dijadikan anggota kelompok ini.' : 'Select individuals from beneficiary database to add as members.'}
@@ -991,7 +991,7 @@ export default function AccompaniedGroupManager({
               {isAdmin && (
                 <button
                   onClick={() => setShowMemberPickerModal(true)}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition self-start sm:self-auto shrink-0"
+                  className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition self-start sm:self-auto shrink-0"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>{isId ? '+ Tambah Anggota dari Penerima Manfaat' : '+ Add Members from Beneficiaries'}</span>
@@ -1002,8 +1002,8 @@ export default function AccompaniedGroupManager({
             {/* Members List Table */}
             <div className="p-6 overflow-y-auto flex-1">
               {activeGroupForMembers.members.length === 0 ? (
-                <div className="p-10 text-center border-2 border-dashed border-slate-200 rounded-2xl">
-                  <Users className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                <div className="p-10 text-center border-2 border-dashed border-orange-200 rounded-2xl">
+                  <Users className="w-10 h-10 text-orange-300 mx-auto mb-2" />
                   <p className="text-sm font-bold text-slate-700">
                     {isId ? 'Belum Ada Anggota yang Ditambahkan' : 'No Members Added Yet'}
                   </p>
@@ -1015,7 +1015,7 @@ export default function AccompaniedGroupManager({
                   {isAdmin && (
                     <button
                       onClick={() => setShowMemberPickerModal(true)}
-                      className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition"
+                      className="mt-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition"
                     >
                       <UserPlus className="w-4 h-4" />
                       <span>{isId ? 'Pilih Penerima Manfaat Sekarang' : 'Select Beneficiaries'}</span>
@@ -1023,10 +1023,10 @@ export default function AccompaniedGroupManager({
                   )}
                 </div>
               ) : (
-                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                <div className="border border-orange-100 rounded-xl overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
+                      <tr className="bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold uppercase tracking-wider text-[11px]">
                         <th className="p-3">No</th>
                         <th className="p-3">Nama Lengkap & NIK</th>
                         <th className="p-3">Gender & Usia</th>
@@ -1047,7 +1047,7 @@ export default function AccompaniedGroupManager({
                                 <div>
                                   <button
                                     onClick={() => onNavigateToBeneficiary && onNavigateToBeneficiary(ben.id)}
-                                    className="font-bold text-slate-900 hover:text-blue-600 text-left"
+                                    className="font-bold text-slate-900 hover:text-orange-600 text-left"
                                   >
                                     {ben.fullName}
                                   </button>
@@ -1109,14 +1109,14 @@ export default function AccompaniedGroupManager({
                                       )
                                     });
                                   }}
-                                  className="px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500"
+                                  className="px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-orange-500"
                                 >
                                   {MEMBER_ROLES.map(role => (
                                     <option key={role} value={role}>{role}</option>
                                   ))}
                                 </select>
                               ) : (
-                                <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-semibold text-xs border border-blue-200">
+                                <span className="px-2.5 py-1 rounded-lg bg-orange-50 text-orange-800 font-semibold text-xs border border-orange-200">
                                   {member.roleInGroup}
                                 </span>
                               )}
@@ -1153,13 +1153,13 @@ export default function AccompaniedGroupManager({
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <div className="px-6 py-3.5 bg-orange-50/40 border-t border-orange-100 flex items-center justify-between">
               <span className="text-xs text-slate-500">
                 {isId ? 'Perubahan peran dan anggota otomatis tersimpan dalam basis data.' : 'Changes are automatically saved.'}
               </span>
               <button
                 onClick={() => setActiveGroupForMembers(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition"
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold transition"
               >
                 {isId ? 'Tutup' : 'Close'}
               </button>
@@ -1216,18 +1216,18 @@ export default function AccompaniedGroupManager({
       {/* ======================================================== */}
       {detailGroup && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 bg-gradient-to-r from-slate-900 to-blue-950 text-white flex items-center justify-between">
+          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-orange-100 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white flex items-center justify-between">
               <div>
-                <span className="px-2 py-0.5 rounded bg-blue-500/30 text-blue-300 font-mono font-bold text-xs">
+                <span className="px-2 py-0.5 rounded bg-white/20 text-white font-mono font-bold text-xs">
                   {detailGroup.code}
                 </span>
                 <h3 className="text-lg font-bold text-white mt-1">{detailGroup.name}</h3>
-                <p className="text-xs text-blue-200 mt-0.5">{detailGroup.type}</p>
+                <p className="text-xs text-orange-50 mt-0.5">{detailGroup.type}</p>
               </div>
               <button
                 onClick={() => setDetailGroup(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+                className="text-orange-100 hover:text-white p-1 rounded-lg hover:bg-white/20 transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1235,7 +1235,7 @@ export default function AccompaniedGroupManager({
 
             <div className="p-6 space-y-5 overflow-y-auto text-xs">
               {/* Information Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 bg-orange-50/40 p-4 rounded-xl border border-orange-100">
                 <div>
                   <span className="text-slate-400 font-medium block mb-0.5">{isId ? 'Status Kelompok' : 'Status'}</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${getStatusBadge(detailGroup.status)}`}>
@@ -1268,7 +1268,7 @@ export default function AccompaniedGroupManager({
                 </div>
                 <div>
                   <span className="text-slate-400 font-medium block mb-0.5">{isId ? 'Total Anggota' : 'Total Members'}</span>
-                  <span className="font-bold text-blue-600">{detailGroup.members.length} Orang</span>
+                  <span className="font-bold text-orange-600">{detailGroup.members.length} Orang</span>
                 </div>
               </div>
 
@@ -1276,7 +1276,7 @@ export default function AccompaniedGroupManager({
               {detailGroup.focusArea && (
                 <div>
                   <h4 className="font-bold text-slate-900 mb-1">{isId ? 'Bidang Fokus & Program Kerja Dampingan' : 'Focus Area & Workplan'}</h4>
-                  <div className="p-3 bg-blue-50/50 border border-blue-100 rounded-xl text-slate-700 leading-relaxed">
+                  <div className="p-3 bg-orange-50/50 border border-orange-100 rounded-xl text-slate-700 leading-relaxed">
                     {detailGroup.focusArea}
                   </div>
                 </div>
@@ -1300,27 +1300,27 @@ export default function AccompaniedGroupManager({
                       setDetailGroup(null);
                       handleOpenManageMembers(g);
                     }}
-                    className="text-blue-600 hover:underline font-bold"
+                    className="text-orange-600 hover:underline font-bold"
                   >
                     {isId ? 'Kelola / Ubah Anggota' : 'Manage Members'}
                   </button>
                 </div>
 
-                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                <div className="border border-orange-100 rounded-xl overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                      <tr className="bg-orange-50/60 border-b border-orange-100 text-orange-900 font-bold uppercase tracking-wider text-[10px]">
                         <th className="p-2.5">Nama Anggota</th>
                         <th className="p-2.5">Gender / Usia</th>
                         <th className="p-2.5">Status GESI / IPLC</th>
                         <th className="p-2.5">Peran</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-orange-100/60">
                       {detailGroup.members.map(m => {
                         const ben = beneficiaryMap.get(m.beneficiaryId);
                         return (
-                          <tr key={m.beneficiaryId} className="hover:bg-slate-50">
+                          <tr key={m.beneficiaryId} className="hover:bg-orange-50/30">
                             <td className="p-2.5">
                               <p className="font-bold text-slate-900">{ben ? ben.fullName : m.beneficiaryId}</p>
                               {ben && <p className="text-[10px] font-mono text-slate-400">{ben.nikOrIdentifier}</p>}
@@ -1343,7 +1343,7 @@ export default function AccompaniedGroupManager({
                                 <span className="text-slate-400 text-[10px]">-</span>
                               )}
                             </td>
-                            <td className="p-2.5 font-bold text-blue-700">
+                            <td className="p-2.5 font-bold text-orange-700">
                               {m.roleInGroup}
                             </td>
                           </tr>
@@ -1355,10 +1355,10 @@ export default function AccompaniedGroupManager({
               </div>
             </div>
 
-            <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="px-6 py-3 bg-orange-50/40 border-t border-orange-100 flex justify-end">
               <button
                 onClick={() => setDetailGroup(null)}
-                className="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-900 transition"
+                className="px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-semibold hover:bg-orange-700 transition"
               >
                 {isId ? 'Tutup' : 'Close'}
               </button>
@@ -1494,11 +1494,11 @@ function MemberPickerModal({
 
   return (
     <div className="fixed inset-0 z-60 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[88vh] animate-in fade-in zoom-in-95">
+      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-orange-100 overflow-hidden flex flex-col max-h-[88vh] animate-in fade-in zoom-in-95">
         {/* Header */}
-        <div className="px-6 py-4 bg-blue-600 text-white flex items-center justify-between">
+        <div className="px-6 py-4 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-700 px-2 py-0.5 rounded text-blue-100">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded text-white">
               {isId ? 'Integrasi Penerima Manfaat Terdaftar' : 'Registered Beneficiaries Integration'}
             </span>
             <h3 className="text-base font-bold text-white mt-0.5">
@@ -1507,23 +1507,23 @@ function MemberPickerModal({
           </div>
           <button
             onClick={onClose}
-            className="text-blue-200 hover:text-white p-1 rounded-lg hover:bg-blue-700 transition"
+            className="text-orange-100 hover:text-white p-1 rounded-lg hover:bg-white/20 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Filter controls */}
-        <div className="p-4 bg-slate-50 border-b border-slate-200 space-y-3">
+        <div className="p-4 bg-orange-50/40 border-b border-orange-100 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 text-xs">
             <div className="sm:col-span-2 relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-orange-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={isId ? 'Cari nama lengkap, NIK, profesi...' : 'Search name, NIK, occupation...'}
-                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-2 bg-white border border-orange-200 rounded-xl text-xs font-medium outline-hidden focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -1531,7 +1531,7 @@ function MemberPickerModal({
               <select
                 value={filterVillage}
                 onChange={(e) => setFilterVillage(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
+                className="w-full px-3 py-2 bg-white border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 outline-hidden focus:ring-2 focus:ring-orange-500"
               >
                 <option value="all">{isId ? 'Semua Desa' : 'All Villages'}</option>
                 {Array.from(new Set(beneficiaries.map(b => b.village))).sort().map(v => (
@@ -1544,7 +1544,7 @@ function MemberPickerModal({
               <select
                 value={filterGender}
                 onChange={(e) => setFilterGender(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
+                className="w-full px-3 py-2 bg-white border border-orange-200 rounded-xl text-xs font-semibold text-slate-700 outline-hidden focus:ring-2 focus:ring-orange-500"
               >
                 <option value="all">{isId ? 'Semua Gender' : 'All Genders'}</option>
                 <option value="Perempuan">Perempuan (Women)</option>
@@ -1558,7 +1558,7 @@ function MemberPickerModal({
               <button
                 type="button"
                 onClick={handleSelectAllFiltered}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 underline"
+                className="text-xs font-bold text-orange-600 hover:text-orange-700 underline"
               >
                 {selectedBeneficiaryIds.size > 0 ? (isId ? 'Batal Pilih Semua' : 'Deselect All') : (isId ? 'Pilih Semua yang Tampil' : 'Select All Filtered')}
               </button>
@@ -1575,7 +1575,7 @@ function MemberPickerModal({
               <select
                 value={defaultRole}
                 onChange={(e) => setDefaultRole(e.target.value as GroupMemberRole)}
-                className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800"
+                className="px-2.5 py-1.5 bg-white border border-orange-200 rounded-lg text-xs font-bold text-slate-800 outline-hidden focus:ring-2 focus:ring-orange-500"
               >
                 {MEMBER_ROLES.map(r => (
                   <option key={r} value={r}>{r}</option>
@@ -1605,8 +1605,8 @@ function MemberPickerModal({
                       isAlreadyMember 
                         ? 'bg-slate-100 border-slate-200 opacity-60 cursor-not-allowed'
                         : isSelected
-                          ? 'bg-blue-50/80 border-blue-500 shadow-xs cursor-pointer ring-1 ring-blue-500'
-                          : 'bg-white border-slate-200 hover:border-slate-300 cursor-pointer'
+                          ? 'bg-orange-50/80 border-orange-500 shadow-xs cursor-pointer ring-1 ring-orange-500'
+                          : 'bg-white border-orange-100 hover:border-orange-300 cursor-pointer'
                     }`}
                   >
                     <div className="flex items-start gap-2.5 min-w-0">
@@ -1615,7 +1615,7 @@ function MemberPickerModal({
                         checked={isAlreadyMember || isSelected}
                         disabled={isAlreadyMember}
                         onChange={() => toggleSelect(ben.id)}
-                        className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        className="mt-1 w-4 h-4 rounded text-orange-600 focus:ring-orange-500 accent-orange-600 cursor-pointer"
                       />
                       <div className="min-w-0">
                         <p className="font-bold text-slate-900 truncate">{ben.fullName}</p>
@@ -1656,10 +1656,10 @@ function MemberPickerModal({
         </div>
 
         {/* Footer actions */}
-        <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <div className="px-6 py-3.5 bg-orange-50/40 border-t border-orange-100 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-200 transition"
+            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-orange-100/60 transition"
           >
             {isId ? 'Batal' : 'Cancel'}
           </button>
@@ -1667,7 +1667,7 @@ function MemberPickerModal({
           <button
             onClick={handleConfirmAdd}
             disabled={selectedBeneficiaryIds.size === 0}
-            className="px-5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white shadow-xs flex items-center gap-1.5 transition"
+            className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed text-white shadow-xs flex items-center gap-1.5 transition"
           >
             <Check className="w-4 h-4" />
             <span>
@@ -1774,17 +1774,17 @@ function GroupFormModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95">
-        <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-orange-100 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95">
+        <div className="px-6 py-4 bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 text-white flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-100">
               {editingGroup ? (isId ? 'Ubah Data Kelompok' : 'Edit Group Data') : (isId ? 'Registrasi Kelompok Dampingan Baru' : 'Register New Facilitated Group')}
             </span>
             <h3 className="text-lg font-bold text-white mt-0.5">
               {editingGroup ? editingGroup.name : (isId ? 'Formulir Kelompok / Komunitas Dampingan' : 'Accompanied Group Setup')}
             </h3>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg">
+          <button onClick={onClose} className="text-orange-100 hover:text-white p-1 rounded-lg hover:bg-white/20">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -1799,7 +1799,7 @@ function GroupFormModal({
               <select
                 value={projectId}
                 onChange={(e) => setProjectId(e.target.value)}
-                className="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-orange-500"
               >
                 <option value="all">{isId ? 'Seluruh Portofolio / Multi-Proyek' : 'All Projects / Multi-Project'}</option>
                 {projects.map(p => (
@@ -1815,7 +1815,7 @@ function GroupFormModal({
               <select
                 value={type}
                 onChange={(e) => handleTypeChange(e.target.value)}
-                className="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-orange-500"
               >
                 {GROUP_TYPES.map(gt => (
                   <option key={gt} value={gt}>{gt}</option>
@@ -1836,7 +1836,7 @@ function GroupFormModal({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="e.g. OPS-01"
-                className="w-full p-2.5 border border-slate-300 rounded-xl font-mono font-bold focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 border border-slate-300 rounded-xl font-mono font-bold focus:ring-2 focus:ring-orange-500"
               />
             </div>
 
@@ -1850,7 +1850,7 @@ function GroupFormModal({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={isId ? 'Contoh: OPS Tirta Lestari Desa Mahu / Bank Sampah Berkah Sejahtera' : 'e.g. Clean Water CBO...'}
-                className="w-full p-2.5 border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2.5 border border-slate-300 rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-orange-500"
               />
             </div>
           </div>
@@ -2006,17 +2006,17 @@ function GroupFormModal({
           </div>
 
           {/* Footer Submit */}
-          <div className="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+          <div className="pt-3 border-t border-orange-100 flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-orange-50 transition"
             >
               {isId ? 'Batal' : 'Cancel'}
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition"
+              className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white shadow-xs transition"
             >
               {editingGroup ? (isId ? 'Simpan Perubahan' : 'Save Changes') : (isId ? 'Simpan Kelompok' : 'Save Group')}
             </button>
