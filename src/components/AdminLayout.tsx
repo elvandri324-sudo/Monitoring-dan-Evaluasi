@@ -601,28 +601,6 @@ export default function AdminLayout({
 
         {/* Dynamic Page Container */}
         <main className="flex-1 p-3.5 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden max-w-7xl w-full mx-auto min-w-0">
-          {!firebaseUser && onConnectFirebase && (
-            <div className="mb-4 p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 flex flex-wrap items-center justify-between gap-2.5 text-xs">
-              <div className="flex items-center gap-2 text-slate-800 min-w-0">
-                <CloudOff className="w-4 h-4 text-orange-600 shrink-0" />
-                <span className="leading-snug">
-                  {isId
-                    ? 'Saat ini data tersimpan di browser lokal. Hubungkan akun Google agar data tersimpan di database Firebase dan sinkron di semua perangkat.'
-                    : 'Data is currently saved locally. Connect your Google account to save and sync data to Firebase across devices.'}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={onConnectFirebase}
-                disabled={firebaseSyncing}
-                className="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white font-bold text-xs shadow-2xs shrink-0 transition cursor-pointer"
-              >
-                {firebaseSyncing
-                  ? (isId ? 'Menghubungkan...' : 'Connecting...')
-                  : (isId ? 'Hubungkan Database Firebase' : 'Connect Firebase Database')}
-              </button>
-            </div>
-          )}
           {children}
         </main>
       </div>

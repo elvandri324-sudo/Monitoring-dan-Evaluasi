@@ -4,10 +4,14 @@ import { auth } from './firebase';
 import {
   batchDeleteFromFirestore,
   batchUpsertToFirestore,
+  connectFirebaseAndFetchUsers,
   deleteDocFromFirestore,
   ensureWorkspaceSeeded,
+  PublicPortalData,
+  publishPublicSnapshot,
   signInWithGoogleFirebase,
   signOutFirebase,
+  subscribeToPublicSnapshot,
   subscribeToWorkspace,
   upsertDocToFirestore,
 } from './services/firebaseSync';
@@ -267,6 +271,8 @@ export default function App() {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [firebaseSyncing, setFirebaseSyncing] = useState(false);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
+  const [workspaceSyncedOnce, setWorkspaceSyncedOnce] = useState(false);
+  const [publicSnapshot, setPublicSnapshot] = useState<PublicPortalData | null>(null);
 
   const latestDataRef = useRef({
     projects,
@@ -309,6 +315,7 @@ export default function App() {
       if (!user || !user.emailVerified) {
         setFirebaseUser(null);
         setFirebaseSyncing(false);
+        setWorkspaceSyncedOnce(false);
         return;
       }
 
@@ -334,7 +341,10 @@ export default function App() {
             if (data.length > 0) setUsers(data);
           },
           onErrorReports: (data) => setErrorReports(data),
-          onSyncUpdate: () => setFirebaseSyncing(false),
+          onSyncUpdate: () => {
+            setFirebaseSyncing(false);
+            setWorkspaceSyncedOnce(true);
+          },
         });
       } catch (err) {
         if (!isCancelled) {
@@ -351,6 +361,44 @@ export default function App() {
     };
   }, []);
 
+  const isCloudConnected = Boolean(firebaseUser && firebaseUser.emailVerified);
+
+  // Automatic Public Portal listener so visitors across Preview and any other browser immediately see identical live data
+  useEffect(() => {
+    if (isCloudConnected) return;
+    const unsubscribePublic = subscribeToPublicSnapshot((data) => {
+      setPublicSnapshot(data);
+    });
+    return () => unsubscribePublic();
+  }, [isCloudConnected]);
+
+  // Automatically keep the zero-PII publicPortal/snapshot synchronized whenever workspace data updates
+  useEffect(() => {
+    if (!isCloudConnected || !workspaceSyncedOnce) return;
+    const timer = setTimeout(() => {
+      void publishPublicSnapshot({
+        projects,
+        beneficiaries,
+        attendances,
+        knowledgeProducts,
+        storiesOfChange,
+        mediaCoverages,
+        learnings,
+      });
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [
+    isCloudConnected,
+    workspaceSyncedOnce,
+    projects,
+    beneficiaries,
+    attendances,
+    knowledgeProducts,
+    storiesOfChange,
+    mediaCoverages,
+    learnings,
+  ]);
+
   const handleConnectFirebase = async () => {
     setFirebaseError(null);
     setFirebaseSyncing(true);
@@ -366,13 +414,32 @@ export default function App() {
     }
   };
 
+  const handleConnectAndFetchUsers = async (): Promise<UserAccount[] | null> => {
+    setFirebaseError(null);
+    setFirebaseSyncing(true);
+    try {
+      const result = await connectFirebaseAndFetchUsers(latestDataRef.current);
+      if (result.users.length > 0) {
+        setUsers(result.users);
+      }
+      return result.users;
+    } catch (err) {
+      setFirebaseSyncing(false);
+      // Do not block username/password login if popup was closed or blocked; log cleanly
+      const msg = err instanceof Error ? err.message : '';
+      if (msg && !msg.includes('popup-closed-by-user') && !msg.includes('cancelled-popup-request')) {
+        setFirebaseError(msg);
+      }
+      return null;
+    }
+  };
+
   const handleDisconnectFirebase = async () => {
     setFirebaseError(null);
     await signOutFirebase();
     setFirebaseUser(null);
+    setWorkspaceSyncedOnce(false);
   };
-
-  const isCloudConnected = Boolean(firebaseUser && firebaseUser.emailVerified);
 
   // Login / Logout Handlers
   const handleLogin = (session: UserSession) => {
@@ -1548,15 +1615,19 @@ export default function App() {
 
   // If in Public Visitor Mode, display the Public Home & Statistics Page
   if (viewMode === 'public') {
+    const useSnapshot = !isCloudConnected && publicSnapshot !== null;
+    const publicProjects = useSnapshot
+      ? [...publicSnapshot.projects].sort((a, b) => (new Date(a.startDate || '').getTime() || 0) - (new Date(b.startDate || '').getTime() || 0))
+      : sortedProjects;
     return (
       <PublicHomePage
-        projects={sortedProjects}
-        beneficiaries={beneficiaries}
-        attendances={attendances}
-        knowledgeProducts={knowledgeProducts}
-        storiesOfChange={storiesOfChange}
-        mediaCoverages={mediaCoverages}
-        learnings={learnings}
+        projects={publicProjects}
+        beneficiaries={useSnapshot ? publicSnapshot.beneficiaries : beneficiaries}
+        attendances={useSnapshot ? publicSnapshot.attendances : attendances}
+        knowledgeProducts={useSnapshot ? publicSnapshot.knowledgeProducts : knowledgeProducts}
+        storiesOfChange={useSnapshot ? publicSnapshot.storiesOfChange : storiesOfChange}
+        mediaCoverages={useSnapshot ? publicSnapshot.mediaCoverages : mediaCoverages}
+        learnings={useSnapshot ? publicSnapshot.learnings : learnings}
         onGoToAdmin={() => setViewMode('admin')}
       />
     );
@@ -1581,8 +1652,7 @@ export default function App() {
         firebaseUser={firebaseUser ? { email: firebaseUser.email, uid: firebaseUser.uid } : null}
         firebaseSyncing={firebaseSyncing}
         firebaseError={firebaseError}
-        onConnectFirebase={handleConnectFirebase}
-        onDisconnectFirebase={handleDisconnectFirebase}
+        onConnectAndFetchUsers={handleConnectAndFetchUsers}
       />
     );
   }

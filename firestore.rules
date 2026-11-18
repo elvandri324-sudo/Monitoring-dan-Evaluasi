@@ -435,6 +435,29 @@ service cloud.firestore {
         data.updatedAt is timestamp;
     }
 
+    function isValidPublicSnapshot(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'projects', 'beneficiaries', 'attendances',
+          'knowledgeProducts', 'storiesOfChange', 'mediaCoverages', 'learnings', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projects', 'beneficiaries', 'attendances',
+          'knowledgeProducts', 'storiesOfChange', 'mediaCoverages', 'learnings', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        data.id == 'snapshot' &&
+        isValidId(data.ownerUid) &&
+        isValidMapList(data.projects, 50) &&
+        isValidMapList(data.beneficiaries, 2000) &&
+        isValidMapList(data.attendances, 5000) &&
+        isValidMapList(data.knowledgeProducts, 300) &&
+        isValidMapList(data.storiesOfChange, 300) &&
+        isValidMapList(data.mediaCoverages, 300) &&
+        isValidMapList(data.learnings, 300) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
     // 4. Collection Rules
     match /test/{docId} {
       allow get: if isValidId(docId) && docId == 'connection' && isEmailVerified();
@@ -606,6 +629,18 @@ service cloud.firestore {
         ]))
       );
       allow delete: if isValidId(errorId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /publicPortal/{docId} {
+      allow get: if isValidId(docId) && docId == 'snapshot';
+      allow create: if isValidId(docId) && docId == 'snapshot' && isEmailVerified() && isValidPublicSnapshot(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == docId;
+      allow update: if isValidId(docId) && docId == 'snapshot' && isEmailVerified() && isValidPublicSnapshot(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projects', 'beneficiaries', 'attendances', 'knowledgeProducts', 'storiesOfChange', 'mediaCoverages', 'learnings', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(docId) && isAdmin();
     }
   }
 }

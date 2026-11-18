@@ -429,6 +429,241 @@ export interface WorkspaceSeedData {
   errorReports: ErrorReport[];
 }
 
+export interface PublicPortalData {
+  projects: Project[];
+  beneficiaries: Beneficiary[];
+  attendances: ActivityAttendance[];
+  knowledgeProducts: KnowledgeProduct[];
+  storiesOfChange: StoryOfChange[];
+  mediaCoverages: MediaCoverage[];
+  learnings: ProjectLearning[];
+}
+
+function buildSanitizedPublicSnapshot(data: PublicPortalData) {
+  const stripMovBlobs = (docs: unknown) => {
+    if (!Array.isArray(docs)) return [];
+    return docs.slice(0, 30).map((d) => {
+      if (!d || typeof d !== 'object') return d;
+      const clone = { ...(d as Record<string, unknown>) };
+      delete clone.fileData;
+      return clone;
+    });
+  };
+
+  const sanitizeIndicators = (inds: unknown) => {
+    if (!Array.isArray(inds)) return [];
+    return inds.map((ind) => {
+      if (!ind || typeof ind !== 'object') return ind;
+      const clone = { ...(ind as Record<string, unknown>) };
+      if (clone.movDocuments) clone.movDocuments = stripMovBlobs(clone.movDocuments);
+      if (Array.isArray(clone.progressHistory)) {
+        clone.progressHistory = clone.progressHistory.map((h) => {
+          if (!h || typeof h !== 'object') return h;
+          const hClone = { ...(h as Record<string, unknown>) };
+          if (hClone.movDocuments) hClone.movDocuments = stripMovBlobs(hClone.movDocuments);
+          return hClone;
+        });
+      }
+      return clone;
+    });
+  };
+
+  const safeProjects = stripUndefinedDeep(data.projects.slice(0, 50)).map((proj) => ({
+    ...proj,
+    goalIndicators: sanitizeIndicators(proj.goalIndicators),
+    outcomes: (proj.outcomes || []).map((oc) => ({
+      ...oc,
+      indicators: sanitizeIndicators(oc.indicators),
+      outputs: (oc.outputs || []).map((op) => ({
+        ...op,
+        indicators: sanitizeIndicators(op.indicators),
+        activities: (op.activities || []).map((act) => ({
+          ...act,
+          indicators: sanitizeIndicators(act.indicators),
+        })),
+      })),
+    })),
+    // Strip teamMember PII (email & phone) before publishing public snapshot
+    teamMembers: (proj.teamMembers || []).map((tm) => ({
+      id: tm.id,
+      name: tm.name,
+      role: tm.role,
+      email: '',
+      phone: '',
+      ...(tm.assignedOutcomes ? { assignedOutcomes: tm.assignedOutcomes } : {}),
+    })),
+  }));
+
+  // Strip all personal identifying info (fullName, nikOrIdentifier, phone, occupation, disabilityBarrierNotes)
+  const safeBeneficiaries = stripUndefinedDeep(data.beneficiaries.slice(0, 2000)).map((b) => ({
+    id: b.id,
+    gender: b.gender,
+    birthYear: b.birthYear,
+    age: b.age,
+    ageGroup: b.ageGroup,
+    hasDisability: b.hasDisability,
+    ...(b.disabilityType ? { disabilityType: b.disabilityType } : {}),
+    ...(b.disabilityDifficultyLevel ? { disabilityDifficultyLevel: b.disabilityDifficultyLevel } : {}),
+    iplcStatus: b.iplcStatus,
+    ...(b.customIplcCommunityName ? { customIplcCommunityName: b.customIplcCommunityName } : {}),
+    ...(b.targetGroup ? { targetGroup: b.targetGroup } : {}),
+    ...(b.beneficiaryLevel ? { beneficiaryLevel: b.beneficiaryLevel } : {}),
+    ...(b.levelName ? { levelName: b.levelName } : {}),
+    ...(b.institutionOrAgency ? { institutionOrAgency: b.institutionOrAgency } : {}),
+    province: b.province,
+    regency: b.regency,
+    ...(b.district ? { district: b.district } : {}),
+    village: b.village,
+    ...(b.registeredProjectId ? { registeredProjectId: b.registeredProjectId } : {}),
+    createdAt: b.createdAt || '',
+  }));
+
+  const safeAttendances = stripUndefinedDeep(data.attendances.slice(0, 5000)).map((a) => ({
+    id: a.id,
+    activityId: a.activityId,
+    projectId: a.projectId,
+    beneficiaryId: a.beneficiaryId,
+    attendanceDate: a.attendanceDate,
+    attendanceStatus: a.attendanceStatus,
+  }));
+
+  const safeKnowledgeProducts = stripUndefinedDeep(data.knowledgeProducts.slice(0, 300)).map((kp) => {
+    const clone = { ...kp } as Record<string, unknown>;
+    if (typeof clone.coverImageUrl === 'string' && clone.coverImageUrl.length > 60000) {
+      delete clone.coverImageUrl;
+    }
+    return clone;
+  });
+
+  const safeStories = stripUndefinedDeep(data.storiesOfChange.slice(0, 300)).map((st) => {
+    const clone = { ...st } as Record<string, unknown>;
+    if (typeof clone.photoUrl === 'string' && clone.photoUrl.length > 60000) {
+      delete clone.photoUrl;
+    }
+    return clone;
+  });
+
+  const safeMedia = stripUndefinedDeep(data.mediaCoverages.slice(0, 300));
+  const safeLearnings = stripUndefinedDeep(data.learnings.slice(0, 300));
+
+  const snapshot = {
+    projects: safeProjects,
+    beneficiaries: safeBeneficiaries,
+    attendances: safeAttendances,
+    knowledgeProducts: safeKnowledgeProducts,
+    storiesOfChange: safeStories,
+    mediaCoverages: safeMedia,
+    learnings: safeLearnings,
+  };
+
+  // Final safeguard below 1MB Firestore ceiling
+  if (JSON.stringify(snapshot).length > 820000) {
+    snapshot.storiesOfChange = snapshot.storiesOfChange.map((st) => {
+      const c = { ...st };
+      delete c.photoUrl;
+      return c;
+    });
+    snapshot.knowledgeProducts = snapshot.knowledgeProducts.map((kp) => {
+      const c = { ...kp };
+      delete c.coverImageUrl;
+      return c;
+    });
+  }
+
+  return snapshot;
+}
+
+export async function publishPublicSnapshot(data: PublicPortalData): Promise<void> {
+  const user = auth.currentUser;
+  if (!user || !user.emailVerified) return;
+
+  const snapRef = doc(db, 'publicPortal', 'snapshot');
+  const sanitized = buildSanitizedPublicSnapshot(data);
+
+  try {
+    const existingSnap = await getDoc(snapRef);
+    if (existingSnap.exists()) {
+      await updateDoc(snapRef, {
+        ...sanitized,
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      await setDoc(snapRef, {
+        id: 'snapshot',
+        ownerUid: user.uid,
+        ...sanitized,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, 'publicPortal/snapshot');
+  }
+}
+
+export function subscribeToPublicSnapshot(
+  onData: (data: PublicPortalData) => void
+): Unsubscribe {
+  const snapRef = doc(db, 'publicPortal', 'snapshot');
+  return onSnapshot(
+    snapRef,
+    (snapshot) => {
+      if (!snapshot.exists()) return;
+      const raw = snapshot.data() as Record<string, unknown>;
+      const rawBeneficiaries = Array.isArray(raw.beneficiaries)
+        ? (raw.beneficiaries as Record<string, unknown>[])
+        : [];
+      const reconstructedBeneficiaries: Beneficiary[] = rawBeneficiaries.map((b) => ({
+        id: String(b.id || ''),
+        nikOrIdentifier: '-',
+        fullName: 'Anonim',
+        gender: (b.gender as Beneficiary['gender']) || 'Laki-laki',
+        birthYear: Number(b.birthYear) || 1990,
+        age: Number(b.age) || 30,
+        ageGroup: (b.ageGroup as Beneficiary['ageGroup']) || '25-40',
+        hasDisability: Boolean(b.hasDisability),
+        disabilityType: b.disabilityType as Beneficiary['disabilityType'],
+        disabilityDifficultyLevel: b.disabilityDifficultyLevel as Beneficiary['disabilityDifficultyLevel'],
+        iplcStatus: (b.iplcStatus as Beneficiary['iplcStatus']) || 'Bukan IPLC (Non-IPLC)',
+        customIplcCommunityName: b.customIplcCommunityName as string | undefined,
+        targetGroup: b.targetGroup as Beneficiary['targetGroup'],
+        beneficiaryLevel: b.beneficiaryLevel as Beneficiary['beneficiaryLevel'],
+        levelName: b.levelName as string | undefined,
+        institutionOrAgency: b.institutionOrAgency as string | undefined,
+        province: String(b.province || ''),
+        regency: String(b.regency || ''),
+        district: b.district as string | undefined,
+        village: String(b.village || ''),
+        registeredProjectId: b.registeredProjectId as string | undefined,
+        createdAt: String(b.createdAt || ''),
+      }));
+
+      onData({
+        projects: Array.isArray(raw.projects) ? (raw.projects as Project[]) : [],
+        beneficiaries: reconstructedBeneficiaries,
+        attendances: Array.isArray(raw.attendances)
+          ? (raw.attendances as ActivityAttendance[])
+          : [],
+        knowledgeProducts: Array.isArray(raw.knowledgeProducts)
+          ? (raw.knowledgeProducts as KnowledgeProduct[])
+          : [],
+        storiesOfChange: Array.isArray(raw.storiesOfChange)
+          ? (raw.storiesOfChange as StoryOfChange[])
+          : [],
+        mediaCoverages: Array.isArray(raw.mediaCoverages)
+          ? (raw.mediaCoverages as MediaCoverage[])
+          : [],
+        learnings: Array.isArray(raw.learnings)
+          ? (raw.learnings as ProjectLearning[])
+          : [],
+      });
+    },
+    (error) => {
+      handleFirestoreError(error, OperationType.GET, 'publicPortal/snapshot');
+    }
+  );
+}
+
 export async function ensureWorkspaceSeeded(
   user: User,
   localData: WorkspaceSeedData
@@ -441,6 +676,10 @@ export async function ensureWorkspaceSeeded(
   try {
     const metaSnap = await getDoc(metaRef);
     if (metaSnap.exists() && metaSnap.data()?.seeded === true) {
+      const pubSnap = await getDoc(doc(db, 'publicPortal', 'snapshot'));
+      if (!pubSnap.exists()) {
+        await publishPublicSnapshot(localData);
+      }
       return false; // Already seeded in cloud; remote snapshots are source of truth
     }
 
@@ -457,6 +696,10 @@ export async function ensureWorkspaceSeeded(
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
+      const pubSnap = await getDoc(doc(db, 'publicPortal', 'snapshot'));
+      if (!pubSnap.exists()) {
+        await publishPublicSnapshot(localData);
+      }
       return false;
     }
 
@@ -511,9 +754,32 @@ export async function ensureWorkspaceSeeded(
       updatedAt: serverTimestamp(),
     });
 
+    await publishPublicSnapshot(localData);
+
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `workspaceMeta/${metaId}`);
+  }
+}
+
+export async function connectFirebaseAndFetchUsers(
+  localData: WorkspaceSeedData
+): Promise<{ user: User; users: UserAccount[] }> {
+  const user = await signInWithGoogleFirebase();
+  await ensureWorkspaceSeeded(user, localData);
+  try {
+    const usersSnap = await getDocs(
+      query(collection(db, 'appUsers'), where('ownerUid', '==', user.uid))
+    );
+    const remoteUsers = usersSnap.docs.map((d) =>
+      mapFromFirestoreDoc<UserAccount>('appUsers', d.id, d.data() as Record<string, unknown>)
+    );
+    return {
+      user,
+      users: remoteUsers.length > 0 ? remoteUsers : localData.users,
+    };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, 'appUsers');
   }
 }
 

@@ -235,6 +235,7 @@ export interface Beneficiary {
   village: string;
   phone?: string;
   occupation?: string;
+  registeredProjectId?: string;
   createdAt: string;
 }
 

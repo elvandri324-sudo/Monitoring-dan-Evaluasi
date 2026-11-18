@@ -490,6 +490,37 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["uid", "email", "role", "createdAt", "updatedAt"]
+    },
+    "PublicPortalSnapshot": {
+      "title": "PublicPortalSnapshot",
+      "description": "Sanitized, zero-PII public portal snapshot synchronized automatically across browsers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projects": { "type": "array" },
+        "beneficiaries": { "type": "array" },
+        "attendances": { "type": "array" },
+        "knowledgeProducts": { "type": "array" },
+        "storiesOfChange": { "type": "array" },
+        "mediaCoverages": { "type": "array" },
+        "learnings": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "projects",
+        "beneficiaries",
+        "attendances",
+        "knowledgeProducts",
+        "storiesOfChange",
+        "mediaCoverages",
+        "learnings",
+        "createdAt",
+        "updatedAt"
+      ]
     }
   },
   "firestore": {
@@ -544,6 +575,10 @@
     "/admins/{userId}": {
       "schema": { "$ref": "#/entities/AdminEntry" },
       "description": "Authorized admin role registry keyed by Firebase UID."
+    },
+    "/publicPortal/{docId}": {
+      "schema": { "$ref": "#/entities/PublicPortalSnapshot" },
+      "description": "Non-PII public portal snapshot for instant cross-browser parity."
     }
   }
 }
