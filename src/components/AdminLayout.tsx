@@ -309,18 +309,21 @@ export default function AdminLayout({
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {(firebaseSyncing || firebaseUser) && (
               <div
-                className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[11px] font-semibold shrink-0 ${
+                className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold shrink-0 shadow-2xs ${
                   firebaseSyncing
                     ? 'bg-orange-50 border-orange-200 text-orange-700'
-                    : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                    : 'bg-sky-50/80 border-sky-200 text-slate-700'
                 }`}
               >
-                <Cloud className={`w-3.5 h-3.5 shrink-0 ${firebaseSyncing ? 'animate-pulse' : ''}`} />
+                <Cloud className={`w-3.5 h-3.5 shrink-0 ${firebaseSyncing ? 'text-orange-600 animate-pulse' : 'text-sky-600'}`} />
                 <span>
                   {firebaseSyncing
-                    ? (isId ? 'Menghubungkan' : 'Syncing')
-                    : (isId ? 'Tersinkron' : 'Synced')}
+                    ? (isId ? 'Menghubungkan' : 'Connecting')
+                    : (isId ? 'Cloud Aktif' : 'Cloud Active')}
                 </span>
+                {!firebaseSyncing && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                )}
               </div>
             )}
 

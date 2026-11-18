@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from './firebase';
 import {
@@ -12,6 +12,7 @@ import {
   subscribeToPublicSnapshot,
   subscribeToWorkspace,
   upsertDocToFirestore,
+  WorkspaceSeedData,
 } from './services/firebaseSync';
 import { 
   Project, 
@@ -67,187 +68,70 @@ import ActivityFormModal from './components/ActivityFormModal';
 import AccountSettingsModal from './components/AccountSettingsModal';
 import PublicHomePage from './components/PublicHomePage';
 
+const LEGACY_LOCAL_STORAGE_KEYS = [
+  'simev_user_session_v3',
+  'simev_user_session_v4',
+  'simev_projects_v2',
+  'simev_beneficiaries_v2',
+  'simev_attendances_v2',
+  'simev_accompanied_groups_v1',
+  'simev_knowledge_products_v1',
+  'simev_stories_of_change_v1',
+  'simev_media_coverages_v1',
+  'simev_learnings_v1',
+  'simev_reports_v2',
+  'simev_deliverables_v1',
+  'simev_users_v1',
+  'simev_error_reports_v1',
+];
+
+const DEFAULT_WORKSPACE_SEED: WorkspaceSeedData = {
+  projects: INITIAL_PROJECTS,
+  beneficiaries: INITIAL_BENEFICIARIES,
+  attendances: INITIAL_ATTENDANCES,
+  accompaniedGroups: INITIAL_ACCOMPANIED_GROUPS,
+  knowledgeProducts: INITIAL_KNOWLEDGE_PRODUCTS,
+  storiesOfChange: INITIAL_STORIES_OF_CHANGE,
+  mediaCoverages: INITIAL_MEDIA_COVERAGES,
+  learnings: INITIAL_PROJECT_LEARNINGS,
+  reports: INITIAL_REPORTS,
+  users: INITIAL_USERS,
+  errorReports: INITIAL_ERROR_REPORTS,
+};
+
 export default function App() {
   // View mode: 'public' (Home page statistik pengunjung) vs 'admin' (Entri data & manajemen)
   const [viewMode, setViewMode] = useState<'public' | 'admin'>('public');
 
-  // Authentication & User Session state (Mandatory login with username & password)
-  const [userSession, setUserSession] = useState<UserSession | null>(() => {
-    localStorage.removeItem('simev_user_session_v3');
-    const saved = localStorage.getItem('simev_user_session_v4');
-    if (saved) {
-      try { 
-        const parsed = JSON.parse(saved);
-        if (parsed && parsed.isLoggedIn && parsed.username) {
-          return {
-            ...parsed,
-            assignedProjectIds: parsed.assignedProjectIds || ['all']
-          };
-        }
-      } catch (e) { /* ignore */ }
-    }
-    return null;
-  });
-
+  // Authentication & User Session state (Memory + Firebase Auth only, never persisted in localStorage)
+  const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [showLoginToast, setShowLoginToast] = useState(false);
 
   // Navigation state
   const [currentTab, setCurrentTab] = useState<AdminTabType>('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
 
-  // Persistent States
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('simev_projects_v2');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch (e) { /* ignore */ }
-    }
-    return INITIAL_PROJECTS;
-  });
+  // Database-driven States (Populated exclusively from Firebase Firestore)
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
+  const [attendances, setAttendances] = useState<ActivityAttendance[]>([]);
+  const [knowledgeProducts, setKnowledgeProducts] = useState<KnowledgeProduct[]>([]);
+  const [storiesOfChange, setStoriesOfChange] = useState<StoryOfChange[]>([]);
+  const [mediaCoverages, setMediaCoverages] = useState<MediaCoverage[]>([]);
+  const [learnings, setLearnings] = useState<ProjectLearning[]>([]);
+  const [reports, setReports] = useState<ReportItem[]>([]);
+  const [users, setUsers] = useState<UserAccount[]>([]);
+  const [accompaniedGroups, setAccompaniedGroups] = useState<AccompaniedGroup[]>([]);
+  const [errorReports, setErrorReports] = useState<ErrorReport[]>([]);
 
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(() => {
-    const saved = localStorage.getItem('simev_beneficiaries_v2');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_BENEFICIARIES;
-  });
-
-  const [attendances, setAttendances] = useState<ActivityAttendance[]>(() => {
-    const saved = localStorage.getItem('simev_attendances_v2');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_ATTENDANCES;
-  });
-
-  const [knowledgeProducts, setKnowledgeProducts] = useState<KnowledgeProduct[]>(() => {
-    const saved = localStorage.getItem('simev_knowledge_products_v1');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_KNOWLEDGE_PRODUCTS;
-  });
-
-  const [storiesOfChange, setStoriesOfChange] = useState<StoryOfChange[]>(() => {
-    const saved = localStorage.getItem('simev_stories_of_change_v1');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_STORIES_OF_CHANGE;
-  });
-
-  const [mediaCoverages, setMediaCoverages] = useState<MediaCoverage[]>(() => {
-    const saved = localStorage.getItem('simev_media_coverages_v1');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_MEDIA_COVERAGES;
-  });
-
-  const [learnings, setLearnings] = useState<ProjectLearning[]>(() => {
-    const saved = localStorage.getItem('simev_learnings_v1');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_PROJECT_LEARNINGS;
-  });
-
-  const [reports, setReports] = useState<ReportItem[]>(() => {
-    const saved = localStorage.getItem('simev_reports_v2');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    const oldSaved = localStorage.getItem('simev_deliverables_v1');
-    if (oldSaved) {
-      try { return JSON.parse(oldSaved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_REPORTS;
-  });
-
-  const [users, setUsers] = useState<UserAccount[]>(() => {
-    const saved = localStorage.getItem('simev_users_v1');
-    if (saved) {
-      try { 
-        const parsed: UserAccount[] = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed.filter(u => u.id !== 'user-001' && u.email !== 'admin@monitoring.com' && u.username !== 'admin');
-        }
-      } catch (e) { /* ignore */ }
-    }
-    return INITIAL_USERS;
-  });
-
-  const [accompaniedGroups, setAccompaniedGroups] = useState<AccompaniedGroup[]>(() => {
-    const saved = localStorage.getItem('simev_accompanied_groups_v1');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_ACCOMPANIED_GROUPS;
-  });
-
-  const [errorReports, setErrorReports] = useState<ErrorReport[]>(() => {
-    const saved = localStorage.getItem('simev_error_reports_v1');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
-    }
-    return INITIAL_ERROR_REPORTS;
-  });
-
-  // Save to LocalStorage
+  // Purge any legacy browser localStorage data keys so all browsers read exclusively from Firestore
   useEffect(() => {
-    if (userSession && userSession.isLoggedIn) {
-      localStorage.setItem('simev_user_session_v4', JSON.stringify(userSession));
-    } else {
-      localStorage.removeItem('simev_user_session_v4');
+    try {
+      LEGACY_LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    } catch {
+      // ignore storage errors
     }
-  }, [userSession]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_projects_v2', JSON.stringify(projects));
-  }, [projects]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_accompanied_groups_v1', JSON.stringify(accompaniedGroups));
-  }, [accompaniedGroups]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_beneficiaries_v2', JSON.stringify(beneficiaries));
-  }, [beneficiaries]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_attendances_v2', JSON.stringify(attendances));
-  }, [attendances]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_knowledge_products_v1', JSON.stringify(knowledgeProducts));
-  }, [knowledgeProducts]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_stories_of_change_v1', JSON.stringify(storiesOfChange));
-  }, [storiesOfChange]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_media_coverages_v1', JSON.stringify(mediaCoverages));
-  }, [mediaCoverages]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_learnings_v1', JSON.stringify(learnings));
-  }, [learnings]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_reports_v2', JSON.stringify(reports));
-  }, [reports]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_users_v1', JSON.stringify(users));
-  }, [users]);
-
-  useEffect(() => {
-    localStorage.setItem('simev_error_reports_v1', JSON.stringify(errorReports));
-  }, [errorReports]);
+  }, []);
 
   // Modals state
   const [showBeneficiaryModal, setShowBeneficiaryModal] = useState(false);
@@ -272,35 +156,7 @@ export default function App() {
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
   const [workspaceSyncedOnce, setWorkspaceSyncedOnce] = useState(false);
   const [publicSnapshot, setPublicSnapshot] = useState<PublicPortalData | null>(null);
-  const initialAuthResolvedRef = useRef(false);
-
-  const latestDataRef = useRef({
-    projects,
-    beneficiaries,
-    attendances,
-    accompaniedGroups,
-    knowledgeProducts,
-    storiesOfChange,
-    mediaCoverages,
-    learnings,
-    reports,
-    users,
-    errorReports,
-  });
-
-  latestDataRef.current = {
-    projects,
-    beneficiaries,
-    attendances,
-    accompaniedGroups,
-    knowledgeProducts,
-    storiesOfChange,
-    mediaCoverages,
-    learnings,
-    reports,
-    users,
-    errorReports,
-  };
+  const [publicSnapshotLoaded, setPublicSnapshotLoaded] = useState(false);
 
   useEffect(() => {
     let unsubscribeWorkspace: (() => void) | null = null;
@@ -312,18 +168,24 @@ export default function App() {
         unsubscribeWorkspace = null;
       }
 
-      const isInitialCheck = !initialAuthResolvedRef.current;
-      initialAuthResolvedRef.current = true;
       setAuthChecked(true);
 
       if (!user || !user.emailVerified) {
         setFirebaseUser(null);
         setFirebaseSyncing(false);
         setWorkspaceSyncedOnce(false);
-        // Clear stale localStorage-only session on startup so Preview & browsers always authenticate & sync with Firestore instead of showing diverged local data
-        if (isInitialCheck) {
-          setUserSession(null);
-        }
+        setUserSession(null);
+        setProjects([]);
+        setBeneficiaries([]);
+        setAttendances([]);
+        setAccompaniedGroups([]);
+        setKnowledgeProducts([]);
+        setStoriesOfChange([]);
+        setMediaCoverages([]);
+        setLearnings([]);
+        setReports([]);
+        setUsers([]);
+        setErrorReports([]);
         return;
       }
 
@@ -332,7 +194,7 @@ export default function App() {
       setFirebaseSyncing(true);
 
       try {
-        await ensureWorkspaceSeeded(user, latestDataRef.current);
+        await ensureWorkspaceSeeded(user, DEFAULT_WORKSPACE_SEED);
         if (isCancelled) return;
 
         unsubscribeWorkspace = subscribeToWorkspace(user, {
@@ -345,9 +207,7 @@ export default function App() {
           onMediaCoverages: (data) => setMediaCoverages(data),
           onLearnings: (data) => setLearnings(data),
           onReports: (data) => setReports(data),
-          onUsers: (data) => {
-            if (data.length > 0) setUsers(data);
-          },
+          onUsers: (data) => setUsers(data),
           onErrorReports: (data) => setErrorReports(data),
           onSyncUpdate: () => {
             setFirebaseSyncing(false);
@@ -376,6 +236,7 @@ export default function App() {
     if (isCloudConnected) return;
     const unsubscribePublic = subscribeToPublicSnapshot((data) => {
       setPublicSnapshot(data);
+      setPublicSnapshotLoaded(true);
     });
     return () => unsubscribePublic();
   }, [isCloudConnected]);
@@ -411,20 +272,24 @@ export default function App() {
     setFirebaseError(null);
     setFirebaseSyncing(true);
     try {
-      const result = await connectFirebaseAndFetchUsers(latestDataRef.current);
+      const result = await connectFirebaseAndFetchUsers(DEFAULT_WORKSPACE_SEED);
+      setFirebaseUser(result.user);
       if (result.users.length > 0) {
         setUsers(result.users);
       }
       return result.users;
     } catch (err) {
       setFirebaseSyncing(false);
-      // Do not block username/password login if popup was closed or blocked; log cleanly
       const msg = err instanceof Error ? err.message : '';
       if (msg.includes('popup-blocked')) {
         setFirebaseError(
           'Browser memblokir jendela verifikasi Google pada mode preview. Izinkan popup untuk situs ini atau buka lewat tab browser baru.'
         );
-      } else if (msg && !msg.includes('popup-closed-by-user') && !msg.includes('cancelled-popup-request')) {
+      } else if (msg.includes('popup-closed-by-user') || msg.includes('cancelled-popup-request')) {
+        setFirebaseError(
+          'Verifikasi Google dibatalkan. Silakan selesaikan verifikasi agar aplikasi terhubung langsung ke database Firebase.'
+        );
+      } else if (msg) {
         setFirebaseError(msg);
       }
       return null;
@@ -439,18 +304,20 @@ export default function App() {
     // Update lastLogin in users state & Firestore
     const now = new Date();
     const formattedDate = `${now.toISOString().split('T')[0]} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    const updatedUsers = users.map(u =>
-      u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
-        ? { ...u, lastLogin: formattedDate }
-        : u
-    );
-    setUsers(updatedUsers);
-    if (isCloudConnected) {
-      const targetUser = updatedUsers.find(
-        u => u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
+    setUsers(prev => {
+      const next = prev.map(u =>
+        u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
+          ? { ...u, lastLogin: formattedDate }
+          : u
       );
-      if (targetUser) void upsertDocToFirestore('appUsers', targetUser);
-    }
+      if (isCloudConnected) {
+        const targetUser = next.find(
+          u => u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
+        );
+        if (targetUser) void upsertDocToFirestore('appUsers', targetUser);
+      }
+      return next;
+    });
 
     // Determine initial project scope
     const hasAllAccess = session.role === 'Super Admin' || session.assignedProjectIds?.includes('all');
@@ -1603,40 +1470,53 @@ export default function App() {
     }
   };
 
-  // If in Public Visitor Mode, display the Public Home & Statistics Page
+  // If in Public Visitor Mode, render strictly from Firestore (snapshot or authenticated live collections)
   if (viewMode === 'public') {
-    const useSnapshot = !isCloudConnected && publicSnapshot !== null;
-    const publicProjects = useSnapshot
-      ? [...publicSnapshot.projects].sort((a, b) => (new Date(a.startDate || '').getTime() || 0) - (new Date(b.startDate || '').getTime() || 0))
-      : sortedProjects;
+    const waitingForPublicDb = isCloudConnected ? !workspaceSyncedOnce : !publicSnapshotLoaded;
+    if (waitingForPublicDb) {
+      return (
+        <div className="min-h-screen bg-[#FFFBF7] flex items-center justify-center p-4">
+          <div className="bg-white border border-orange-100 rounded-2xl shadow-lg px-6 py-5 flex items-center gap-3">
+            <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm font-semibold text-slate-700">Memuat data dari database Firebase...</span>
+          </div>
+        </div>
+      );
+    }
+
+    const publicProjects = isCloudConnected
+      ? sortedProjects
+      : [...(publicSnapshot?.projects || [])].sort(
+          (a, b) => (new Date(a.startDate || '').getTime() || 0) - (new Date(b.startDate || '').getTime() || 0)
+        );
     return (
       <PublicHomePage
         projects={publicProjects}
-        beneficiaries={useSnapshot ? publicSnapshot.beneficiaries : beneficiaries}
-        attendances={useSnapshot ? publicSnapshot.attendances : attendances}
-        knowledgeProducts={useSnapshot ? publicSnapshot.knowledgeProducts : knowledgeProducts}
-        storiesOfChange={useSnapshot ? publicSnapshot.storiesOfChange : storiesOfChange}
-        mediaCoverages={useSnapshot ? publicSnapshot.mediaCoverages : mediaCoverages}
-        learnings={useSnapshot ? publicSnapshot.learnings : learnings}
+        beneficiaries={isCloudConnected ? beneficiaries : (publicSnapshot?.beneficiaries || [])}
+        attendances={isCloudConnected ? attendances : (publicSnapshot?.attendances || [])}
+        knowledgeProducts={isCloudConnected ? knowledgeProducts : (publicSnapshot?.knowledgeProducts || [])}
+        storiesOfChange={isCloudConnected ? storiesOfChange : (publicSnapshot?.storiesOfChange || [])}
+        mediaCoverages={isCloudConnected ? mediaCoverages : (publicSnapshot?.mediaCoverages || [])}
+        learnings={isCloudConnected ? learnings : (publicSnapshot?.learnings || [])}
         onGoToAdmin={() => setViewMode('admin')}
       />
     );
   }
 
-  // Wait briefly for Firebase Auth initialization before rendering an existing Admin session
-  if (!authChecked && viewMode === 'admin' && userSession?.isLoggedIn) {
+  // Wait briefly for Firebase Auth & workspace synchronization before rendering Admin screens
+  if (!authChecked || (isCloudConnected && !workspaceSyncedOnce)) {
     return (
       <div className="min-h-screen bg-[#FFFBF7] flex items-center justify-center p-4">
         <div className="bg-white border border-orange-100 rounded-2xl shadow-lg px-6 py-5 flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-semibold text-slate-700">Menyinkronkan sesi database...</span>
+          <span className="text-sm font-semibold text-slate-700">Menyinkronkan data database Firebase...</span>
         </div>
       </div>
     );
   }
 
-  // If in Admin Mode and user is not logged in, display the Login Screen
-  if (!userSession || !userSession.isLoggedIn) {
+  // Strictly require active Firebase database connection AND valid logged-in session to enter Admin Dashboard
+  if (!isCloudConnected || !userSession || !userSession.isLoggedIn) {
     return (
       <LoginPage 
         users={users}

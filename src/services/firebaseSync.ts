@@ -602,13 +602,16 @@ export async function publishPublicSnapshot(data: PublicPortalData): Promise<voi
 }
 
 export function subscribeToPublicSnapshot(
-  onData: (data: PublicPortalData) => void
+  onData: (data: PublicPortalData | null) => void
 ): Unsubscribe {
   const snapRef = doc(db, 'publicPortal', 'snapshot');
   return onSnapshot(
     snapRef,
     (snapshot) => {
-      if (!snapshot.exists()) return;
+      if (!snapshot.exists()) {
+        onData(null);
+        return;
+      }
       const raw = snapshot.data() as Record<string, unknown>;
       const rawBeneficiaries = Array.isArray(raw.beneficiaries)
         ? (raw.beneficiaries as Record<string, unknown>[])
@@ -676,10 +679,6 @@ export async function ensureWorkspaceSeeded(
   try {
     const metaSnap = await getDoc(metaRef);
     if (metaSnap.exists() && metaSnap.data()?.seeded === true) {
-      const pubSnap = await getDoc(doc(db, 'publicPortal', 'snapshot'));
-      if (!pubSnap.exists()) {
-        await publishPublicSnapshot(localData);
-      }
       return false; // Already seeded in cloud; remote snapshots are source of truth
     }
 
@@ -696,10 +695,6 @@ export async function ensureWorkspaceSeeded(
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      const pubSnap = await getDoc(doc(db, 'publicPortal', 'snapshot'));
-      if (!pubSnap.exists()) {
-        await publishPublicSnapshot(localData);
-      }
       return false;
     }
 

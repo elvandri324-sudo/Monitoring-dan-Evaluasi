@@ -126,16 +126,28 @@ export default function LoginPage({
     setIsLoggingIn(true);
     let candidateUsers = users;
 
-    // Automatically link & sync Firebase database during login if not yet connected on this browser
-    if (!firebaseUser && onConnectAndFetchUsers) {
-      try {
-        const fetched = await onConnectAndFetchUsers();
-        if (fetched && fetched.length > 0) {
-          candidateUsers = fetched;
-        }
-      } catch {
-        // Fallback gracefully to local users if popup was closed or unavailable
+    // Require active Firebase database connection before authenticating against Firestore appUsers
+    if (!firebaseUser) {
+      if (!onConnectAndFetchUsers) {
+        setIsLoggingIn(false);
+        setErrorMessage(
+          isId
+            ? 'Koneksi database Firebase belum tersedia.'
+            : 'Firebase database connection is unavailable.'
+        );
+        return;
       }
+      const fetched = await onConnectAndFetchUsers();
+      if (!fetched) {
+        setIsLoggingIn(false);
+        setErrorMessage(
+          isId
+            ? 'Gagal terhubung ke database Firebase. Izinkan popup verifikasi Google atau buka aplikasi di tab browser penuh agar data tersinkron.'
+            : 'Failed to connect to Firebase database. Allow Google verification popup or open in a full browser tab.'
+        );
+        return;
+      }
+      candidateUsers = fetched;
     }
 
     setIsLoggingIn(false);
@@ -533,60 +545,62 @@ export default function LoginPage({
                 </button>
               </form>
 
-              {/* Registered Users Reference Accordion for testing */}
-              <div className="pt-2 border-t border-orange-100">
-                <button
-                  type="button"
-                  onClick={() => setShowAccountsGuide(!showAccountsGuide)}
-                  className="w-full flex items-center justify-between text-[11px] font-semibold text-slate-500 hover:text-orange-600 py-1 transition"
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Info className="w-3.5 h-3.5 text-orange-500" />
-                    {isId ? 'Daftar Akun Pengguna Terdaftar (Referensi)' : 'Registered User Accounts (Reference)'}
-                  </span>
-                  {showAccountsGuide ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                </button>
+              {/* Registered Users Reference Accordion (shown when Firestore users loaded) */}
+              {users.length > 0 && (
+                <div className="pt-2 border-t border-orange-100">
+                  <button
+                    type="button"
+                    onClick={() => setShowAccountsGuide(!showAccountsGuide)}
+                    className="w-full flex items-center justify-between text-[11px] font-semibold text-slate-500 hover:text-orange-600 py-1 transition"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Info className="w-3.5 h-3.5 text-orange-500" />
+                      {isId ? 'Daftar Akun Pengguna Terdaftar (Database)' : 'Registered User Accounts (Database)'}
+                    </span>
+                    {showAccountsGuide ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  </button>
 
-                {showAccountsGuide && (
-                  <div className="mt-2 p-3 bg-orange-50/40 rounded-xl border border-orange-100 text-xs space-y-2 max-h-56 overflow-y-auto">
-                    <p className="text-[11px] text-slate-500 italic">
-                      {isId 
-                        ? 'Login wajib menggunakan Username dan Password akun terdaftar:' 
-                        : 'Sign in requires a registered Username and Password:'}
-                    </p>
-                    <div className="space-y-1.5 divide-y divide-orange-100">
-                      {users.map(u => {
-                        const isAll = u.assignedProjectIds?.includes('all');
-                        const projectNames = isAll 
-                          ? (isId ? 'Semua Proyek' : 'All Projects') 
-                          : (u.assignedProjectIds || []).map(pId => projects.find(p => p.id === pId)?.code || pId).join(', ');
+                  {showAccountsGuide && (
+                    <div className="mt-2 p-3 bg-orange-50/40 rounded-xl border border-orange-100 text-xs space-y-2 max-h-56 overflow-y-auto">
+                      <p className="text-[11px] text-slate-500 italic">
+                        {isId 
+                          ? 'Login wajib menggunakan Username dan Password akun terdaftar:' 
+                          : 'Sign in requires a registered Username and Password:'}
+                      </p>
+                      <div className="space-y-1.5 divide-y divide-orange-100">
+                        {users.map(u => {
+                          const isAll = u.assignedProjectIds?.includes('all');
+                          const projectNames = isAll 
+                            ? (isId ? 'Semua Proyek' : 'All Projects') 
+                            : (u.assignedProjectIds || []).map(pId => projects.find(p => p.id === pId)?.code || pId).join(', ');
 
-                        return (
-                          <div key={u.id} className="pt-1.5 first:pt-0 flex items-start justify-between gap-2 text-[11px]">
-                            <div>
-                              <div className="font-bold text-slate-800 flex items-center gap-1">
-                                <span>{u.fullName}</span>
-                                <span className="text-[10px] px-1.5 py-0.2 bg-orange-100 text-orange-800 rounded font-medium">
-                                  {u.role}
+                          return (
+                            <div key={u.id} className="pt-1.5 first:pt-0 flex items-start justify-between gap-2 text-[11px]">
+                              <div>
+                                <div className="font-bold text-slate-800 flex items-center gap-1">
+                                  <span>{u.fullName}</span>
+                                  <span className="text-[10px] px-1.5 py-0.2 bg-orange-100 text-orange-800 rounded font-medium">
+                                    {u.role}
+                                  </span>
+                                </div>
+                                <div className="text-slate-600 font-mono text-[10px]">
+                                  Username: <strong>{u.username}</strong>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="text-[10px] bg-white border border-orange-200/80 text-slate-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-1">
+                                  <FolderKanban className="w-2.5 h-2.5 text-orange-500" />
+                                  {projectNames}
                                 </span>
                               </div>
-                              <div className="text-slate-600 font-mono text-[10px]">
-                                Username: <strong>{u.username}</strong>
-                              </div>
                             </div>
-                            <div className="text-right shrink-0">
-                              <span className="text-[10px] bg-white border border-orange-200/80 text-slate-700 px-1.5 py-0.5 rounded font-medium flex items-center gap-1">
-                                <FolderKanban className="w-2.5 h-2.5 text-orange-500" />
-                                {projectNames}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </>
           )}
 
