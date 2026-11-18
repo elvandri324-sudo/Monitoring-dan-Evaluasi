@@ -23,9 +23,7 @@ import {
   Clock,
   ExternalLink,
   Copy,
-  Check,
-  Cloud,
-  CloudOff
+  Check
 } from 'lucide-react';
 import { UserSession, UserAccount, Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -37,7 +35,6 @@ interface LoginPageProps {
   onResetPassword?: (userId: string, newPassword: string) => void;
   onBackToPublic?: () => void;
   firebaseUser?: { email: string | null; uid: string } | null;
-  firebaseSyncing?: boolean;
   firebaseError?: string | null;
   onConnectAndFetchUsers?: () => Promise<UserAccount[] | null>;
 }
@@ -49,7 +46,6 @@ export default function LoginPage({
   onResetPassword,
   onBackToPublic,
   firebaseUser,
-  firebaseSyncing = false,
   firebaseError,
   onConnectAndFetchUsers
 }: LoginPageProps) {
@@ -426,25 +422,6 @@ export default function LoginPage({
                   >
                     {isId ? '← Beranda' : '← Home'}
                   </button>
-                )}
-              </div>
-
-              {/* Subtle Automatic Cloud Status Strip */}
-              <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-orange-50/50 border border-orange-100 text-[11px] text-slate-600">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <Cloud className={`w-3.5 h-3.5 shrink-0 ${firebaseUser ? 'text-emerald-600' : 'text-orange-500'}`} />
-                  <span className="truncate">
-                    {firebaseUser
-                      ? (isId
-                          ? `Tersinkron ke Database Firebase (${firebaseUser.email || 'Aktif'})`
-                          : `Synced to Firebase Database (${firebaseUser.email || 'Active'})`)
-                      : (isId
-                          ? 'Database Firebase akan otomatis terhubung saat Anda masuk'
-                          : 'Firebase database connects automatically upon sign in')}
-                  </span>
-                </div>
-                {firebaseSyncing && (
-                  <RefreshCw className="w-3 h-3 text-orange-500 animate-spin shrink-0" />
                 )}
               </div>
 

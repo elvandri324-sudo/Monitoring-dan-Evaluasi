@@ -9,8 +9,6 @@ import {
   ensureWorkspaceSeeded,
   PublicPortalData,
   publishPublicSnapshot,
-  signInWithGoogleFirebase,
-  signOutFirebase,
   subscribeToPublicSnapshot,
   subscribeToWorkspace,
   upsertDocToFirestore,
@@ -399,21 +397,6 @@ export default function App() {
     learnings,
   ]);
 
-  const handleConnectFirebase = async () => {
-    setFirebaseError(null);
-    setFirebaseSyncing(true);
-    try {
-      await signInWithGoogleFirebase();
-    } catch (err) {
-      setFirebaseSyncing(false);
-      setFirebaseError(
-        err instanceof Error
-          ? err.message
-          : 'Gagal menghubungkan akun Google ke Firebase.'
-      );
-    }
-  };
-
   const handleConnectAndFetchUsers = async (): Promise<UserAccount[] | null> => {
     setFirebaseError(null);
     setFirebaseSyncing(true);
@@ -432,13 +415,6 @@ export default function App() {
       }
       return null;
     }
-  };
-
-  const handleDisconnectFirebase = async () => {
-    setFirebaseError(null);
-    await signOutFirebase();
-    setFirebaseUser(null);
-    setWorkspaceSyncedOnce(false);
   };
 
   // Login / Logout Handlers
@@ -1650,7 +1626,6 @@ export default function App() {
         }}
         onBackToPublic={() => setViewMode('public')}
         firebaseUser={firebaseUser ? { email: firebaseUser.email, uid: firebaseUser.uid } : null}
-        firebaseSyncing={firebaseSyncing}
         firebaseError={firebaseError}
         onConnectAndFetchUsers={handleConnectAndFetchUsers}
       />
@@ -1685,8 +1660,6 @@ export default function App() {
       onDismissToast={() => setShowLoginToast(false)}
       firebaseUser={firebaseUser ? { email: firebaseUser.email, uid: firebaseUser.uid } : null}
       firebaseSyncing={firebaseSyncing}
-      onConnectFirebase={handleConnectFirebase}
-      onDisconnectFirebase={handleDisconnectFirebase}
     >
       {/* Dynamic View by Selected Tab */}
       {currentTab === 'dashboard' && (

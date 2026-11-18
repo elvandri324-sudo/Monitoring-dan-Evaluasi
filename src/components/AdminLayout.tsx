@@ -27,8 +27,7 @@ import {
   Edit3,
   Building2,
   KeyRound,
-  Cloud,
-  CloudOff
+  Cloud
 } from 'lucide-react';
 import { Project, UserSession } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -67,8 +66,6 @@ interface AdminLayoutProps {
   onDismissToast: () => void;
   firebaseUser?: { email: string | null; uid: string } | null;
   firebaseSyncing?: boolean;
-  onConnectFirebase?: () => void;
-  onDisconnectFirebase?: () => void;
   children: ReactNode;
 }
 
@@ -91,8 +88,6 @@ export default function AdminLayout({
   onDismissToast,
   firebaseUser,
   firebaseSyncing = false,
-  onConnectFirebase,
-  onDisconnectFirebase,
   children
 }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -231,52 +226,6 @@ export default function AdminLayout({
 
         {/* Sidebar Bottom Actions */}
         <div className="pt-4 border-t border-orange-100 space-y-3">
-          {/* Firebase Cloud Sync Control */}
-          <div className={`px-3 py-2 rounded-xl border text-xs space-y-1.5 ${
-            firebaseUser
-              ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
-              : 'bg-orange-50/70 border-orange-200 text-slate-800'
-          }`}>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5 min-w-0">
-                {firebaseUser ? (
-                  <Cloud className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                ) : (
-                  <CloudOff className="w-3.5 h-3.5 text-orange-600 shrink-0" />
-                )}
-                <span className="font-bold truncate">
-                  {firebaseUser
-                    ? (firebaseSyncing ? (isId ? 'Menyinkronkan...' : 'Syncing...') : (isId ? 'Firebase Tersinkron' : 'Firebase Synced'))
-                    : (isId ? 'Cloud Belum Aktif' : 'Cloud Not Linked')}
-                </span>
-              </div>
-              {firebaseUser ? (
-                onDisconnectFirebase && (
-                  <button
-                    type="button"
-                    onClick={onDisconnectFirebase}
-                    className="text-[10px] font-semibold text-emerald-700 hover:underline shrink-0"
-                  >
-                    {isId ? 'Putuskan' : 'Unlink'}
-                  </button>
-                )
-              ) : (
-                onConnectFirebase && (
-                  <button
-                    type="button"
-                    onClick={onConnectFirebase}
-                    className="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-600 text-white hover:bg-orange-700 shrink-0 transition"
-                  >
-                    {isId ? 'Hubungkan' : 'Connect'}
-                  </button>
-                )
-              )}
-            </div>
-            {firebaseUser?.email && (
-              <p className="text-[10px] text-emerald-700 truncate">{firebaseUser.email}</p>
-            )}
-          </div>
-
           {/* Language Switcher in Sidebar */}
           <div className="flex items-center justify-between px-3 py-1.5 bg-orange-50/50 border border-orange-100 rounded-xl text-xs">
             <span className="text-slate-600 font-medium flex items-center gap-1.5">
@@ -358,6 +307,23 @@ export default function AdminLayout({
 
           {/* Header Right Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {(firebaseSyncing || firebaseUser) && (
+              <div
+                className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[11px] font-semibold shrink-0 ${
+                  firebaseSyncing
+                    ? 'bg-orange-50 border-orange-200 text-orange-700'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                }`}
+              >
+                <Cloud className={`w-3.5 h-3.5 shrink-0 ${firebaseSyncing ? 'animate-pulse' : ''}`} />
+                <span>
+                  {firebaseSyncing
+                    ? (isId ? 'Menghubungkan' : 'Syncing')
+                    : (isId ? 'Tersinkron' : 'Synced')}
+                </span>
+              </div>
+            )}
+
             {/* Top Bar Language Toggle */}
             <div className="flex items-center bg-orange-50/80 border border-orange-200/70 p-0.5 rounded-xl">
               <button
