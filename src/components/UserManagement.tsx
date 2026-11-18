@@ -7,18 +7,18 @@ import {
   ShieldCheck, 
   Mail, 
   Phone, 
-  Calendar, 
-  Clock, 
   CheckCircle2, 
   X, 
   FileSpreadsheet, 
   Download, 
   KeyRound, 
   AlertTriangle,
+  AlertCircle,
+  Edit3,
+  Eye,
+  EyeOff,
   Lock,
-  Building,
-  UserCheck,
-  UserX
+  Save
 } from 'lucide-react';
 import { UserAccount, UserRole, UserStatus, Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -28,9 +28,10 @@ interface UserManagementProps {
   users: UserAccount[];
   projects: Project[];
   isAdmin: boolean;
+  currentUserId?: string;
   onAddUser: (user: UserAccount) => void;
   onDeleteUser: (userId: string) => void;
-  onUpdateUser?: (user: UserAccount) => void;
+  onUpdateUser: (user: UserAccount) => void;
 }
 
 const ROLE_BADGES: Record<UserRole, { bg: string; text: string; border: string; desc: string }> = {
@@ -46,6 +47,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
   users,
   projects,
   isAdmin,
+  currentUserId,
   onAddUser,
   onDeleteUser,
   onUpdateUser
@@ -56,18 +58,33 @@ export const UserManagement: React.FC<UserManagementProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Add / Edit Account Modal states
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserAccount | null>(null);
+  const [accountFormError, setAccountFormError] = useState('');
+  const [showAccountPassword, setShowAccountPassword] = useState(false);
+
+  // Quick Change Credentials (Username & Password) Modal states
+  const [credentialsTarget, setCredentialsTarget] = useState<UserAccount | null>(null);
+  const [credUsername, setCredUsername] = useState('');
+  const [credNewPassword, setCredNewPassword] = useState('');
+  const [credConfirmPassword, setCredConfirmPassword] = useState('');
+  const [showCredNewPw, setShowCredNewPw] = useState(false);
+  const [showCredConfirmPw, setShowCredConfirmPw] = useState(false);
+  const [credError, setCredError] = useState('');
+
   const [userToDelete, setUserToDelete] = useState<UserAccount | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Form State
+  // Add/Edit Form State
   const [formData, setFormData] = useState({
     username: '',
     fullName: '',
     email: '',
     password: '',
     role: 'Staff M&E' as UserRole,
-    assignedProjectIds: ['all'],
+    assignedProjectIds: ['all'] as string[],
     status: 'Aktif' as UserStatus,
     phone: ''
   });
@@ -75,6 +92,50 @@ export const UserManagement: React.FC<UserManagementProps> = ({
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const openAddModal = () => {
+    setEditingUser(null);
+    setAccountFormError('');
+    setShowAccountPassword(false);
+    setFormData({
+      username: '',
+      fullName: '',
+      email: '',
+      password: '',
+      role: 'Staff M&E',
+      assignedProjectIds: ['all'],
+      status: 'Aktif',
+      phone: ''
+    });
+    setIsAccountModalOpen(true);
+  };
+
+  const openEditModal = (user: UserAccount) => {
+    setEditingUser(user);
+    setAccountFormError('');
+    setShowAccountPassword(false);
+    setFormData({
+      username: user.username,
+      fullName: user.fullName,
+      email: user.email,
+      password: '',
+      role: user.role,
+      assignedProjectIds: user.assignedProjectIds && user.assignedProjectIds.length > 0 ? user.assignedProjectIds : ['all'],
+      status: user.status,
+      phone: user.phone || ''
+    });
+    setIsAccountModalOpen(true);
+  };
+
+  const openCredentialsModal = (user: UserAccount) => {
+    setCredentialsTarget(user);
+    setCredUsername(user.username);
+    setCredNewPassword('');
+    setCredConfirmPassword('');
+    setShowCredNewPw(false);
+    setShowCredConfirmPw(false);
+    setCredError('');
   };
 
   // Filtered Users
@@ -93,60 +154,219 @@ export const UserManagement: React.FC<UserManagementProps> = ({
     });
   }, [users, searchQuery, roleFilter, statusFilter]);
 
-  // Handle Add User Submit
+  const toggleProjectScope = (projectId: string) => {
+    if (projectId === 'all') {
+      setFormData(prev => ({ ...prev, assignedProjectIds: ['all'] }));
+      return;
+    }
+
+    setFormData(prev => {
+      const withoutAll = prev.assignedProjectIds.filter(id => id !== 'all');
+      const exists = withoutAll.includes(projectId);
+      const next = exists
+        ? withoutAll.filter(id => id !== projectId)
+        : [...withoutAll, projectId];
+
+      return {
+        ...prev,
+        assignedProjectIds: next.length > 0 ? next : ['all']
+      };
+    });
+  };
+
+  // Handle Add / Edit User Submit
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.username.trim() || !formData.fullName.trim() || !formData.email.trim()) {
-      alert(isId ? 'Nama Lengkap, Username, dan Email wajib diisi.' : 'Full Name, Username, and Email are required.');
+    setAccountFormError('');
+
+    const cleanFullName = formData.fullName.trim();
+    const cleanUsername = formData.username.trim().toLowerCase().replace(/\s+/g, '');
+    const cleanEmail = formData.email.trim();
+    const cleanPassword = formData.password.trim();
+
+    if (!cleanUsername || !cleanFullName || !cleanEmail) {
+      setAccountFormError(
+        isId ? 'Nama Lengkap, Username, dan Email wajib diisi.' : 'Full Name, Username, and Email are required.'
+      );
       return;
     }
 
-    // Check duplicate username or email
-    const duplicate = users.find(
-      u => u.username.toLowerCase() === formData.username.trim().toLowerCase() ||
-           u.email.toLowerCase() === formData.email.trim().toLowerCase()
+    if (cleanUsername.length < 3) {
+      setAccountFormError(
+        isId ? 'Username minimal 3 karakter.' : 'Username must be at least 3 characters.'
+      );
+      return;
+    }
+
+    if (!/^[a-z0-9._-]+$/.test(cleanUsername)) {
+      setAccountFormError(
+        isId
+          ? 'Username hanya boleh berisi huruf kecil, angka, titik (.), garis bawah (_), atau tanda hubung (-).'
+          : 'Username can only contain lowercase letters, numbers, dots (.), underscores (_), or hyphens (-).'
+      );
+      return;
+    }
+
+    // Check duplicate username or email (excluding currently edited user)
+    const duplicateUsername = users.find(
+      u => u.id !== editingUser?.id && u.username.toLowerCase() === cleanUsername
     );
-    if (duplicate) {
-      alert(isId ? 'Username atau Email sudah terdaftar dalam sistem!' : 'Username or Email is already registered!');
+    if (duplicateUsername) {
+      setAccountFormError(
+        isId ? `Username "@${cleanUsername}" sudah terdaftar pada akun lain.` : `Username "@${cleanUsername}" is already registered.`
+      );
       return;
     }
 
-    const newUser: UserAccount = {
-      id: `user-${Date.now().toString().slice(-6)}`,
-      username: formData.username.trim().toLowerCase(),
-      fullName: formData.fullName.trim(),
-      email: formData.email.trim(),
-      password: formData.password.trim() || 'password123',
-      role: formData.role,
-      assignedProjectIds: formData.assignedProjectIds.length > 0 ? formData.assignedProjectIds : ['all'],
-      status: formData.status,
-      phone: formData.phone.trim() || undefined,
-      avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(formData.username.trim())}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      lastLogin: '-'
+    const duplicateEmail = users.find(
+      u => u.id !== editingUser?.id && u.email.toLowerCase() === cleanEmail.toLowerCase()
+    );
+    if (duplicateEmail) {
+      setAccountFormError(
+        isId ? `Email "${cleanEmail}" sudah terdaftar pada akun lain.` : `Email "${cleanEmail}" is already registered.`
+      );
+      return;
+    }
+
+    if (!editingUser) {
+      // Creating a new user requires a password (min 6 chars)
+      if (!cleanPassword || cleanPassword.length < 6) {
+        setAccountFormError(
+          isId
+            ? 'Password wajib diisi (minimal 6 karakter) agar pengguna dapat masuk ke sistem.'
+            : 'Password is required (minimum 6 characters) for system login.'
+        );
+        return;
+      }
+
+      const newUser: UserAccount = {
+        id: `user-${Date.now().toString().slice(-6)}`,
+        username: cleanUsername,
+        fullName: cleanFullName,
+        email: cleanEmail,
+        password: cleanPassword,
+        role: formData.role,
+        assignedProjectIds: formData.assignedProjectIds.length > 0 ? formData.assignedProjectIds : ['all'],
+        status: formData.status,
+        phone: formData.phone.trim() || undefined,
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(cleanUsername)}`,
+        createdAt: new Date().toISOString().split('T')[0],
+        lastLogin: '-'
+      };
+
+      onAddUser(newUser);
+      setIsAccountModalOpen(false);
+      showToast(isId ? `Akun "${newUser.fullName}" berhasil ditambahkan.` : `User account "${newUser.fullName}" added successfully.`);
+    } else {
+      // Editing existing user: password is optional (only updated if filled)
+      if (cleanPassword && cleanPassword.length < 6) {
+        setAccountFormError(
+          isId
+            ? 'Password baru minimal 6 karakter (atau kosongkan jika tidak ingin mengubah password).'
+            : 'New password must be at least 6 characters (or leave blank to keep current password).'
+        );
+        return;
+      }
+
+      const updatedUser: UserAccount = {
+        ...editingUser,
+        username: cleanUsername,
+        fullName: cleanFullName,
+        email: cleanEmail,
+        password: cleanPassword ? cleanPassword : (editingUser.password || 'password123'),
+        role: formData.role,
+        assignedProjectIds: formData.assignedProjectIds.length > 0 ? formData.assignedProjectIds : ['all'],
+        status: formData.status,
+        phone: formData.phone.trim() || undefined
+      };
+
+      onUpdateUser(updatedUser);
+      setIsAccountModalOpen(false);
+      setEditingUser(null);
+      showToast(isId ? `Akun "${updatedUser.fullName}" berhasil diperbarui.` : `User account "${updatedUser.fullName}" updated successfully.`);
+    }
+  };
+
+  // Handle Quick Change Username & Password
+  const handleCredentialsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!credentialsTarget) return;
+    setCredError('');
+
+    const cleanUsername = credUsername.trim().toLowerCase().replace(/\s+/g, '');
+    if (!cleanUsername || cleanUsername.length < 3) {
+      setCredError(
+        isId ? 'Username minimal 3 karakter.' : 'Username must be at least 3 characters.'
+      );
+      return;
+    }
+
+    if (!/^[a-z0-9._-]+$/.test(cleanUsername)) {
+      setCredError(
+        isId
+          ? 'Username hanya boleh berisi huruf kecil, angka, titik (.), garis bawah (_), atau tanda hubung (-).'
+          : 'Username can only contain lowercase letters, numbers, dots (.), underscores (_), or hyphens (-).'
+      );
+      return;
+    }
+
+    const duplicateUsername = users.find(
+      u => u.id !== credentialsTarget.id && u.username.toLowerCase() === cleanUsername
+    );
+    if (duplicateUsername) {
+      setCredError(
+        isId ? `Username "@${cleanUsername}" sudah digunakan oleh akun lain.` : `Username "@${cleanUsername}" is already taken.`
+      );
+      return;
+    }
+
+    const isChangingPassword = credNewPassword.length > 0 || credConfirmPassword.length > 0;
+    const isChangingUsername = cleanUsername !== credentialsTarget.username.toLowerCase();
+
+    if (!isChangingPassword && !isChangingUsername) {
+      setCredError(
+        isId ? 'Masukkan username baru atau password baru untuk menyimpan perubahan.' : 'Enter a new username or new password to save changes.'
+      );
+      return;
+    }
+
+    if (isChangingPassword) {
+      if (credNewPassword.length < 6) {
+        setCredError(
+          isId ? 'Password baru minimal 6 karakter.' : 'New password must be at least 6 characters.'
+        );
+        return;
+      }
+
+      if (credNewPassword !== credConfirmPassword) {
+        setCredError(
+          isId ? 'Konfirmasi password baru tidak cocok.' : 'Password confirmation does not match.'
+        );
+        return;
+      }
+    }
+
+    const updatedUser: UserAccount = {
+      ...credentialsTarget,
+      username: cleanUsername,
+      password: isChangingPassword ? credNewPassword : (credentialsTarget.password || 'password123')
     };
 
-    onAddUser(newUser);
-    setIsAddModalOpen(false);
-    setFormData({
-      username: '',
-      fullName: '',
-      email: '',
-      password: '',
-      role: 'Staff M&E',
-      assignedProjectIds: ['all'],
-      status: 'Aktif',
-      phone: ''
-    });
-    showToast(isId ? `Akun "${newUser.fullName}" berhasil ditambahkan.` : `User account "${newUser.fullName}" added successfully.`);
+    onUpdateUser(updatedUser);
+    setCredentialsTarget(null);
+    showToast(
+      isId
+        ? `Kredensial login untuk "${updatedUser.fullName}" (@${updatedUser.username}) berhasil diperbarui.`
+        : `Login credentials for "${updatedUser.fullName}" (@${updatedUser.username}) updated.`
+    );
   };
 
   // Handle Delete Confirmation
   const confirmDelete = () => {
     if (!userToDelete) return;
-    if (userToDelete.username === 'admin') {
-      alert(isId ? 'Akun Super Administrator Utama tidak dapat dihapus!' : 'Main Super Administrator account cannot be deleted!');
+    if (userToDelete.id === currentUserId) {
       setUserToDelete(null);
+      showToast(isId ? 'Akun yang sedang aktif digunakan tidak dapat dihapus.' : 'Currently active account cannot be deleted.');
       return;
     }
     onDeleteUser(userToDelete.id);
@@ -156,8 +376,11 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
   // Handle Toggle Status
   const handleToggleStatus = (user: UserAccount) => {
-    if (!onUpdateUser) return;
-    if (user.username === 'admin') return;
+    if (!isAdmin) return;
+    if (user.id === currentUserId) {
+      showToast(isId ? 'Tidak dapat menonaktifkan akun Anda sendiri yang sedang login.' : 'Cannot deactivate your own active session.');
+      return;
+    }
     const newStatus: UserStatus = user.status === 'Aktif' ? 'Nonaktif' : 'Aktif';
     onUpdateUser({
       ...user,
@@ -199,11 +422,13 @@ export const UserManagement: React.FC<UserManagementProps> = ({
     showToast(isId ? 'Daftar akun diekspor ke CSV' : 'User list exported to CSV');
   };
 
+  const superAdminCount = users.filter(u => u.role === 'Super Admin').length;
+
   return (
     <div className="space-y-6 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           <span className="text-sm font-medium">{toastMessage}</span>
           <button onClick={() => setToastMessage(null)} className="ml-2 text-slate-400 hover:text-white">
@@ -226,15 +451,15 @@ export const UserManagement: React.FC<UserManagementProps> = ({
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed">
               {isId 
-                ? 'Kelola akun administrator, koordinator lapangan, staf M&E, dan mitra donor. Tambah akun baru, atur hak akses per proyek, atau hapus akun pengguna.'
-                : 'Manage administrator, field coordinator, M&E staff, and donor partner accounts. Add new users, assign project permissions, or remove user accounts.'}
+                ? 'Kelola akun administrator, koordinator lapangan, staf M&E, dan mitra donor. Tambah akun baru, edit profil, ganti username & password, atau atur hak akses proyek.'
+                : 'Manage administrator, field coordinator, M&E staff, and donor partner accounts. Add new users, edit profiles, change username & password, or assign project permissions.'}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleExportXLSX}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-md"
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-md whitespace-nowrap shrink-0"
               title={isId ? 'Ekspor Daftar Akun ke Excel (.xlsx)' : 'Export Users to Excel (.xlsx)'}
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
@@ -243,7 +468,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
             <button
               onClick={handleExportCSV}
-              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-semibold transition flex items-center gap-2 backdrop-blur-sm"
+              className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-sm font-semibold transition flex items-center gap-2 backdrop-blur-sm whitespace-nowrap shrink-0"
               title={isId ? 'Ekspor CSV' : 'Export CSV'}
             >
               <Download className="w-4 h-4 text-slate-300" />
@@ -252,8 +477,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
             {isAdmin && (
               <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95"
+                onClick={openAddModal}
+                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center gap-2 active:scale-95 whitespace-nowrap shrink-0"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>{isId ? '+ Tambah Akun Baru' : '+ Add New User'}</span>
@@ -266,19 +491,19 @@ export const UserManagement: React.FC<UserManagementProps> = ({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/10">
           <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
             <div className="text-[11px] text-slate-300 font-medium">{isId ? 'Total Pengguna' : 'Total Users'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-white">{users.length}</div>
+            <div className="text-2xl font-bold mt-0.5 text-white tabular-nums">{users.length}</div>
           </div>
           <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-emerald-300 font-medium">🟢 {isId ? 'Akun Aktif' : 'Active Users'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-emerald-400">{users.filter(u => u.status === 'Aktif').length}</div>
+            <div className="text-[11px] text-emerald-300 font-medium">{isId ? 'Akun Aktif' : 'Active Users'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-emerald-400 tabular-nums">{users.filter(u => u.status === 'Aktif').length}</div>
           </div>
           <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-purple-300 font-medium">🛡️ {isId ? 'Administrator' : 'Administrators'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-purple-300">{users.filter(u => u.role === 'Super Admin' || u.role === 'Admin').length}</div>
+            <div className="text-[11px] text-purple-300 font-medium">{isId ? 'Administrator' : 'Administrators'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-purple-300 tabular-nums">{users.filter(u => u.role === 'Super Admin' || u.role === 'Admin').length}</div>
           </div>
           <div className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/10">
-            <div className="text-[11px] text-amber-300 font-medium">👥 {isId ? 'Staf & Lapangan' : 'Staff & Field'}</div>
-            <div className="text-2xl font-bold mt-0.5 text-amber-300">{users.filter(u => u.role === 'Staff M&E' || u.role === 'Field Coordinator').length}</div>
+            <div className="text-[11px] text-amber-300 font-medium">{isId ? 'Staf & Lapangan' : 'Staff & Field'}</div>
+            <div className="text-2xl font-bold mt-0.5 text-amber-300 tabular-nums">{users.filter(u => u.role === 'Staff M&E' || u.role === 'Field Coordinator').length}</div>
           </div>
         </div>
       </div>
@@ -328,13 +553,13 @@ export const UserManagement: React.FC<UserManagementProps> = ({
             className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
           >
             <option value="all">{isId ? 'Semua Status' : 'All Status'}</option>
-            <option value="Aktif">{isId ? '🟢 Aktif' : '🟢 Active'}</option>
-            <option value="Nonaktif">{isId ? '⚪ Nonaktif' : '⚪ Inactive'}</option>
-            <option value="Terkunci">{isId ? '🔒 Terkunci' : '🔒 Locked'}</option>
+            <option value="Aktif">{isId ? 'Aktif' : 'Active'}</option>
+            <option value="Nonaktif">{isId ? 'Nonaktif' : 'Inactive'}</option>
+            <option value="Terkunci">{isId ? 'Terkunci' : 'Locked'}</option>
           </select>
         </div>
 
-        <div className="text-xs text-slate-500 font-medium">
+        <div className="text-xs text-slate-500 font-medium tabular-nums">
           {isId ? `Menampilkan ${filteredUsers.length} dari ${users.length} akun` : `Showing ${filteredUsers.length} of ${users.length} users`}
         </div>
       </div>
@@ -358,7 +583,9 @@ export const UserManagement: React.FC<UserManagementProps> = ({
               {filteredUsers.length > 0 ? (
                 filteredUsers.map(user => {
                   const roleStyle = ROLE_BADGES[user.role] || ROLE_BADGES['Viewer / Guest'];
-                  const isProtected = user.username === 'admin';
+                  const isCurrentSessionUser = user.id === currentUserId;
+                  const isLastSuperAdmin = user.role === 'Super Admin' && superAdminCount <= 1;
+                  const cannotDelete = isCurrentSessionUser || isLastSuperAdmin;
 
                   return (
                     <tr key={user.id} className="hover:bg-slate-50/80 transition">
@@ -368,25 +595,26 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                           <img 
                             src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} 
                             alt={user.fullName} 
-                            className="w-10 h-10 rounded-full bg-slate-100 object-cover border border-slate-200 shadow-2xs" 
+                            className="w-10 h-10 rounded-full bg-slate-100 object-cover border border-slate-200 shadow-2xs shrink-0" 
+                            referrerPolicy="no-referrer"
                           />
                           <div>
-                            <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <div className="font-bold text-slate-900 flex items-center gap-1.5 flex-wrap">
                               <span>{user.fullName}</span>
-                              {isProtected && (
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-100 text-purple-800 border border-purple-200">
-                                  MASTER
+                              {isCurrentSessionUser && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                  {isId ? 'Sesi Aktif' : 'Current'}
                                 </span>
                               )}
                             </div>
-                            <div className="text-[11px] text-slate-400 font-mono">@{user.username}</div>
+                            <div className="text-[11px] text-slate-500 font-mono">@{user.username}</div>
                           </div>
                         </div>
                       </td>
 
                       {/* Role */}
                       <td className="py-3.5 px-3">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${roleStyle.bg} ${roleStyle.text} ${roleStyle.border}`}>
                           {user.role}
                         </span>
                       </td>
@@ -408,8 +636,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                       {/* Assigned Projects */}
                       <td className="py-3.5 px-3">
                         {user.assignedProjectIds.includes('all') ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-                            🌐 {isId ? 'Semua Proyek' : 'All Projects'}
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap">
+                            {isId ? 'Semua Proyek' : 'All Projects'}
                           </span>
                         ) : (
                           <div className="flex flex-wrap gap-1">
@@ -429,14 +657,14 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                       <td className="py-3.5 px-3">
                         <button
                           onClick={() => handleToggleStatus(user)}
-                          disabled={isProtected || !isAdmin}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition ${
+                          disabled={isCurrentSessionUser || !isAdmin}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition whitespace-nowrap ${
                             user.status === 'Aktif'
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
                               : user.status === 'Terkunci'
                               ? 'bg-rose-50 text-rose-700 border border-rose-200'
                               : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
-                          } ${isProtected ? 'cursor-default' : 'cursor-pointer'}`}
+                          } ${isCurrentSessionUser ? 'cursor-default' : 'cursor-pointer'}`}
                           title={isId ? 'Klik untuk mengubah status aktif' : 'Click to toggle status'}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'Aktif' ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
@@ -445,28 +673,55 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                       </td>
 
                       {/* Last Login */}
-                      <td className="py-3.5 px-3 text-slate-500 font-mono text-[11px]">
+                      <td className="py-3.5 px-3 text-slate-500 font-mono text-[11px] tabular-nums whitespace-nowrap">
                         {user.lastLogin || '-'}
                       </td>
 
                       {/* Action */}
                       <td className="py-3.5 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          {isAdmin && !isProtected && (
+                        {isAdmin && (
+                          <div className="flex items-center justify-end gap-1.5">
                             <button
-                              onClick={() => setUserToDelete(user)}
-                              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
-                              title={isId ? `Hapus akun ${user.username}` : `Delete user ${user.username}`}
+                              type="button"
+                              onClick={() => openEditModal(user)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-[11px] font-semibold transition whitespace-nowrap shrink-0"
+                              title={isId ? `Edit akun ${user.username}` : `Edit account ${user.username}`}
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                              <span>{isId ? 'Edit' : 'Edit'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => openCredentialsModal(user)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg text-[11px] font-semibold transition whitespace-nowrap shrink-0"
+                              title={isId ? `Ganti Username & Password ${user.username}` : `Change Username & Password ${user.username}`}
+                            >
+                              <KeyRound className="w-3.5 h-3.5" />
+                              <span>{isId ? 'Username & Password' : 'Credentials'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => !cannotDelete && setUserToDelete(user)}
+                              disabled={cannotDelete}
+                              className={`p-1.5 rounded-lg transition ${
+                                cannotDelete
+                                  ? 'text-slate-300 cursor-not-allowed'
+                                  : 'text-rose-500 hover:text-rose-700 hover:bg-rose-50'
+                              }`}
+                              title={
+                                isCurrentSessionUser
+                                  ? (isId ? 'Tidak dapat menghapus akun yang sedang aktif login' : 'Cannot delete active session user')
+                                  : isLastSuperAdmin
+                                  ? (isId ? 'Minimal harus ada 1 Super Admin aktif' : 'At least 1 Super Admin is required')
+                                  : (isId ? `Hapus akun ${user.username}` : `Delete user ${user.username}`)
+                              }
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
-                          )}
-                          {isProtected && (
-                            <span className="text-[10px] text-slate-400 italic px-2 py-1 bg-slate-50 rounded-md">
-                              {isId ? 'Terkunci' : 'Protected'}
-                            </span>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -485,12 +740,16 @@ export const UserManagement: React.FC<UserManagementProps> = ({
         </div>
       </div>
 
-      {/* Modal: Add New User */}
-      {isAddModalOpen && (
+      {/* Modal: Add or Edit User Account */}
+      {isAccountModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-7 border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200 my-8">
             <button
-              onClick={() => setIsAddModalOpen(false)}
+              type="button"
+              onClick={() => {
+                setIsAccountModalOpen(false);
+                setEditingUser(null);
+              }}
               className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
             >
               <X className="w-5 h-5" />
@@ -498,17 +757,28 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
             <div className="flex items-center gap-3 mb-5">
               <div className="p-3 bg-indigo-50 text-indigo-700 rounded-2xl border border-indigo-100">
-                <UserPlus className="w-6 h-6" />
+                {editingUser ? <Edit3 className="w-6 h-6" /> : <UserPlus className="w-6 h-6" />}
               </div>
               <div>
                 <h3 className="text-lg font-extrabold text-slate-900">
-                  {isId ? 'Tambah Akun Pengguna Baru' : 'Add New User Account'}
+                  {editingUser
+                    ? (isId ? 'Edit Akun Pengguna' : 'Edit User Account')
+                    : (isId ? 'Tambah Akun Pengguna Baru' : 'Add New User Account')}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  {isId ? 'Daftarkan pengguna baru dan tentukan hak akses peran sistem.' : 'Register a new user and assign permission role.'}
+                  {editingUser
+                    ? (isId ? 'Perbarui profil, username, peran, cakupan proyek, atau kata sandi akun.' : 'Update profile, username, role, project scope, or password.')
+                    : (isId ? 'Daftarkan pengguna baru beserta username dan password untuk login.' : 'Register a new user with username and password for login.')}
                 </p>
               </div>
             </div>
+
+            {accountFormError && (
+              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-rose-800 text-xs">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <span className="font-medium leading-relaxed">{accountFormError}</span>
+              </div>
+            )}
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
               {/* Full Name */}
@@ -522,7 +792,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                   placeholder={isId ? 'Contoh: Siti Rahmawati, S.Stat' : 'e.g., Siti Rahmawati, S.Stat'}
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-medium"
+                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-medium text-slate-900"
                 />
               </div>
 
@@ -530,7 +800,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    {isId ? 'Username *' : 'Username *'}
+                    {isId ? 'Username Login *' : 'Login Username *'}
                   </label>
                   <input
                     type="text"
@@ -538,7 +808,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="siti.rahma"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value.replace(/\s+/g, '').toLowerCase() })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-mono"
+                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-mono text-slate-900"
                   />
                 </div>
                 <div>
@@ -551,7 +821,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="siti@monitoring.org"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-medium"
+                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-medium text-slate-900"
                   />
                 </div>
               </div>
@@ -560,15 +830,27 @@ export const UserManagement: React.FC<UserManagementProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    {isId ? 'Password Awal' : 'Initial Password'}
+                    {editingUser
+                      ? (isId ? 'Password Baru (Opsional)' : 'New Password (Optional)')
+                      : (isId ? 'Password Login * (Min. 6 Karakter)' : 'Login Password * (Min. 6 Chars)')}
                   </label>
-                  <input
-                    type="text"
-                    placeholder="password123"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-mono"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showAccountPassword ? 'text' : 'password'}
+                      required={!editingUser}
+                      placeholder={editingUser ? (isId ? 'Kosongkan jika tetap' : 'Leave blank to keep') : 'Minimal 6 karakter'}
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full text-xs pl-3.5 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-mono text-slate-900"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAccountPassword(!showAccountPassword)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showAccountPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -579,7 +861,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                     placeholder="+62 812-xxxx-xxxx"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-medium"
+                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:bg-white font-medium text-slate-900"
                   />
                 </div>
               </div>
@@ -593,7 +875,8 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold"
+                    disabled={editingUser?.id === currentUserId && editingUser?.role === 'Super Admin'}
+                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-900 disabled:opacity-60"
                   >
                     <option value="Super Admin">Super Admin</option>
                     <option value="Admin">Admin</option>
@@ -610,48 +893,190 @@ export const UserManagement: React.FC<UserManagementProps> = ({
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as UserStatus })}
-                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold"
+                    disabled={editingUser?.id === currentUserId}
+                    className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-900 disabled:opacity-60"
                   >
-                    <option value="Aktif">🟢 Aktif</option>
-                    <option value="Nonaktif">⚪ Nonaktif</option>
-                    <option value="Terkunci">🔒 Terkunci</option>
+                    <option value="Aktif">{isId ? 'Aktif' : 'Active'}</option>
+                    <option value="Nonaktif">{isId ? 'Nonaktif' : 'Inactive'}</option>
+                    <option value="Terkunci">{isId ? 'Terkunci' : 'Locked'}</option>
                   </select>
                 </div>
               </div>
 
               {/* Assigned Project Scope */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   {isId ? 'Cakupan Akses Proyek' : 'Assigned Project Scope'}
                 </label>
-                <select
-                  value={formData.assignedProjectIds[0] || 'all'}
-                  onChange={(e) => setFormData({ ...formData, assignedProjectIds: [e.target.value] })}
-                  className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-medium"
-                >
-                  <option value="all">🌐 {isId ? 'Semua Proyek (Global)' : 'All Projects (Global)'}</option>
-                  {projects.map(p => (
-                    <option key={p.id} value={p.id}>
-                      [{p.code}] {p.title}
-                    </option>
-                  ))}
-                </select>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 max-h-40 overflow-y-auto">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-800 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.assignedProjectIds.includes('all')}
+                      onChange={() => toggleProjectScope('all')}
+                      className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span>{isId ? 'Semua Proyek (Akses Global)' : 'All Projects (Global Access)'}</span>
+                  </label>
+                  <div className="border-t border-slate-200/80 pt-1.5 space-y-1.5">
+                    {projects.map(p => (
+                      <label key={p.id} className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={!formData.assignedProjectIds.includes('all') && formData.assignedProjectIds.includes(p.id)}
+                          onChange={() => toggleProjectScope(p.id)}
+                          className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span className="font-mono text-[11px] font-semibold text-slate-600">[{p.code}]</span>
+                        <span className="truncate">{p.title}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Submit Buttons */}
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="button"
-                  onClick={() => setIsAddModalOpen(false)}
+                  onClick={() => {
+                    setIsAccountModalOpen(false);
+                    setEditingUser(null);
+                  }}
                   className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
                 >
                   {isId ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95"
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95 flex items-center gap-1.5"
                 >
-                  {isId ? 'Simpan Akun Baru' : 'Save New Account'}
+                  <Save className="w-3.5 h-3.5" />
+                  <span>
+                    {editingUser
+                      ? (isId ? 'Simpan Perubahan Akun' : 'Save Account Changes')
+                      : (isId ? 'Simpan Akun Baru' : 'Save New Account')}
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Quick Change Username & Password */}
+      {credentialsTarget && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200 my-8">
+            <button
+              type="button"
+              onClick={() => setCredentialsTarget(null)}
+              className="absolute top-5 right-5 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-5">
+              <div className="p-3 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200">
+                <KeyRound className="w-6 h-6" />
+              </div>
+              <div className="min-w-0 pr-6">
+                <h3 className="text-lg font-extrabold text-slate-900 truncate">
+                  {isId ? 'Ganti Username & Password' : 'Change Username & Password'}
+                </h3>
+                <p className="text-xs text-slate-500 truncate">
+                  {credentialsTarget.fullName}
+                </p>
+              </div>
+            </div>
+
+            {credError && (
+              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-2.5 text-rose-800 text-xs">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <span className="font-medium leading-relaxed">{credError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleCredentialsSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {isId ? 'Username Login *' : 'Login Username *'}
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">@</span>
+                  <input
+                    type="text"
+                    required
+                    value={credUsername}
+                    onChange={(e) => setCredUsername(e.target.value.replace(/\s+/g, '').toLowerCase())}
+                    className="w-full text-xs pl-7 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white font-mono text-slate-900"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  {isId ? 'Login ke sistem wajib menggunakan username ini.' : 'System login requires this username.'}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {isId ? 'Password Baru (Min. 6 Karakter)' : 'New Password (Min. 6 Characters)'}
+                </label>
+                <div className="relative">
+                  <Lock className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showCredNewPw ? 'text' : 'password'}
+                    placeholder={isId ? 'Kosongkan jika tidak ganti password' : 'Leave blank to keep current password'}
+                    value={credNewPassword}
+                    onChange={(e) => setCredNewPassword(e.target.value)}
+                    className="w-full text-xs pl-8 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-slate-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCredNewPw(!showCredNewPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showCredNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  {isId ? 'Konfirmasi Password Baru' : 'Confirm New Password'}
+                </label>
+                <div className="relative">
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showCredConfirmPw ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={credConfirmPassword}
+                    onChange={(e) => setCredConfirmPassword(e.target.value)}
+                    className="w-full text-xs pl-8 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white text-slate-900"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCredConfirmPw(!showCredConfirmPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showCredConfirmPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setCredentialsTarget(null)}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
+                >
+                  {isId ? 'Batal' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-1.5"
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>{isId ? 'Simpan Kredensial' : 'Save Credentials'}</span>
                 </button>
               </div>
             </form>
@@ -677,7 +1102,7 @@ export const UserManagement: React.FC<UserManagementProps> = ({
 
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 mb-5 text-xs space-y-1">
               <div className="font-semibold text-slate-800">{userToDelete.fullName}</div>
-              <div className="text-slate-500 font-mono">{userToDelete.email} • Role: {userToDelete.role}</div>
+              <div className="text-slate-500 font-mono">@{userToDelete.username} · {userToDelete.email} · {userToDelete.role}</div>
             </div>
 
             <div className="flex items-center justify-end gap-2.5">

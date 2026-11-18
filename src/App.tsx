@@ -50,19 +50,21 @@ import ProjectFormModal from './components/ProjectFormModal';
 import ReportGeneratorModal from './components/ReportGeneratorModal';
 import DeleteProjectModal from './components/DeleteProjectModal';
 import ActivityFormModal from './components/ActivityFormModal';
+import AccountSettingsModal from './components/AccountSettingsModal';
 import PublicHomePage from './components/PublicHomePage';
 
 export default function App() {
   // View mode: 'public' (Home page statistik pengunjung) vs 'admin' (Entri data & manajemen)
   const [viewMode, setViewMode] = useState<'public' | 'admin'>('public');
 
-  // Authentication & User Session state
+  // Authentication & User Session state (Mandatory login with username & password)
   const [userSession, setUserSession] = useState<UserSession | null>(() => {
-    const saved = localStorage.getItem('simev_user_session_v3');
+    localStorage.removeItem('simev_user_session_v3');
+    const saved = localStorage.getItem('simev_user_session_v4');
     if (saved) {
       try { 
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.email && parsed.email !== 'admin@monitoring.com' && parsed.id !== 'user-001') {
+        if (parsed && parsed.isLoggedIn && parsed.username) {
           return {
             ...parsed,
             assignedProjectIds: parsed.assignedProjectIds || ['all']
@@ -70,17 +72,7 @@ export default function App() {
         }
       } catch (e) { /* ignore */ }
     }
-    // Default active Super Admin session (Elvandri, S.Stat, M.Sc)
-    return {
-      id: 'user-002',
-      username: 'elvandri.me',
-      email: 'elvandri.me@monitoring.org',
-      name: 'Elvandri, S.Stat, M.Sc (M&E Lead)',
-      role: 'Super Admin',
-      assignedProjectIds: ['all'],
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-      isLoggedIn: true
-    };
+    return null;
   });
 
   const [showLoginToast, setShowLoginToast] = useState(false);
@@ -192,10 +184,10 @@ export default function App() {
 
   // Save to LocalStorage
   useEffect(() => {
-    if (userSession) {
-      localStorage.setItem('simev_user_session_v3', JSON.stringify(userSession));
+    if (userSession && userSession.isLoggedIn) {
+      localStorage.setItem('simev_user_session_v4', JSON.stringify(userSession));
     } else {
-      localStorage.removeItem('simev_user_session_v3');
+      localStorage.removeItem('simev_user_session_v4');
     }
   }, [userSession]);
 
@@ -256,6 +248,7 @@ export default function App() {
   const [activityModalOutputId, setActivityModalOutputId] = useState<string>('');
 
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   // Login / Logout Handlers
@@ -958,6 +951,18 @@ export default function App() {
 
   const handleUpdateUser = (updatedUser: UserAccount) => {
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+    if (userSession && (userSession.id === updatedUser.id || (userSession.username && userSession.username.toLowerCase() === updatedUser.username.toLowerCase()))) {
+      setUserSession(prev => prev ? {
+        ...prev,
+        id: updatedUser.id,
+        username: updatedUser.username,
+        name: updatedUser.fullName,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        assignedProjectIds: updatedUser.assignedProjectIds && updatedUser.assignedProjectIds.length > 0 ? updatedUser.assignedProjectIds : ['all'],
+        avatarUrl: updatedUser.avatarUrl
+      } : prev);
+    }
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -1036,9 +1041,17 @@ export default function App() {
 
   // Role and access control calculations
   const canAccessAllProjects = useMemo(() => {
-    if (!userSession) return true;
+    if (!userSession) return false;
     return userSession.role === 'Super Admin' || (userSession.assignedProjectIds && userSession.assignedProjectIds.includes('all'));
   }, [userSession]);
+
+  const currentUserAccount = useMemo(() => {
+    if (!userSession) return null;
+    return users.find(
+      u => (userSession.id && u.id === userSession.id) ||
+           (userSession.username && u.username.toLowerCase() === userSession.username.toLowerCase())
+    ) || null;
+  }, [users, userSession]);
 
   const isAdmin = userSession?.role === 'Super Admin' || userSession?.role === 'Admin';
   const canEdit = isAdmin || userSession?.role === 'Staff M&E' || userSession?.role === 'Field Coordinator';
@@ -1389,6 +1402,7 @@ export default function App() {
         setShowBeneficiaryModal(true);
       }}
       onOpenReportModal={() => setShowReportModal(true)}
+      onOpenAccountSettings={() => setShowAccountSettingsModal(true)}
       showLoginToast={showLoginToast}
       onDismissToast={() => setShowLoginToast(false)}
     >
@@ -1571,6 +1585,7 @@ export default function App() {
           users={users}
           projects={sortedProjects}
           isAdmin={isAdmin}
+          currentUserId={userSession.id}
           onAddUser={handleAddUser}
           onUpdateUser={handleUpdateUser}
           onDeleteUser={handleDeleteUser}
@@ -1639,6 +1654,16 @@ export default function App() {
         onClose={() => setProjectToDelete(null)}
         onConfirmDelete={handleConfirmDeleteProject}
       />
+
+      {currentUserAccount && (
+        <AccountSettingsModal
+          isOpen={showAccountSettingsModal}
+          onClose={() => setShowAccountSettingsModal(false)}
+          currentUser={currentUserAccount}
+          allUsers={users}
+          onSaveAccount={handleUpdateUser}
+        />
+      )}
     </AdminLayout>
   );
 }

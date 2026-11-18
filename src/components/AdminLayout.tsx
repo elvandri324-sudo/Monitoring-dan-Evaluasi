@@ -25,7 +25,8 @@ import {
   UserPlus,
   Bug,
   Edit3,
-  Building2
+  Building2,
+  KeyRound
 } from 'lucide-react';
 import { Project, UserSession } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -59,6 +60,7 @@ interface AdminLayoutProps {
   onOpenNewActivityModal?: () => void;
   onOpenNewBeneficiaryModal: () => void;
   onOpenReportModal: () => void;
+  onOpenAccountSettings?: () => void;
   showLoginToast: boolean;
   onDismissToast: () => void;
   children: ReactNode;
@@ -78,6 +80,7 @@ export default function AdminLayout({
   onOpenNewActivityModal,
   onOpenNewBeneficiaryModal,
   onOpenReportModal,
+  onOpenAccountSettings,
   showLoginToast,
   onDismissToast,
   children
@@ -246,6 +249,17 @@ export default function AdminLayout({
             <FileText className="w-4 h-4 text-blue-600" />
             <span>{isId ? 'Generate Laporan M&E' : 'Generate M&E Report'}</span>
           </button>
+
+          {onOpenAccountSettings && (
+            <button
+              id="sidebar-account-settings-btn"
+              onClick={onOpenAccountSettings}
+              className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-indigo-700 hover:bg-indigo-50 border border-slate-200/80 transition"
+            >
+              <KeyRound className="w-4 h-4 text-indigo-600 shrink-0" />
+              <span className="truncate">{isId ? 'Edit Akun & Password' : 'Edit Account & Password'}</span>
+            </button>
+          )}
 
           <button
             id="sidebar-logout-btn"
@@ -450,8 +464,14 @@ export default function AdminLayout({
               </button>
             )}
 
-            {/* User Profile Card */}
-            <div className="flex items-center gap-2.5 bg-slate-50/80 border border-slate-200/80 py-1.5 px-3 rounded-xl">
+            {/* User Profile Card (Clickable to Edit Account, Username & Password) */}
+            <button
+              type="button"
+              id="header-account-settings-btn"
+              onClick={onOpenAccountSettings}
+              className="flex items-center gap-2.5 bg-slate-50/80 hover:bg-indigo-50/70 border border-slate-200/80 hover:border-indigo-200 py-1.5 px-3 rounded-xl transition text-left cursor-pointer group"
+              title={isId ? 'Edit Akun, Ganti Username & Password' : 'Edit Account, Change Username & Password'}
+            >
               {userSession?.avatarUrl ? (
                 <img 
                   src={userSession.avatarUrl} 
@@ -465,10 +485,12 @@ export default function AdminLayout({
                 </div>
               )}
               <div className="hidden sm:block text-left">
-                <p className="text-xs font-bold text-slate-900 leading-tight truncate max-w-[150px]" title={userSession?.name || userSession?.email}>
+                <p className="text-xs font-bold text-slate-900 group-hover:text-indigo-700 leading-tight truncate max-w-[150px]" title={userSession?.name || userSession?.email}>
                   {userSession?.name || userSession?.username || userSession?.email || 'Administrator'}
                 </p>
                 <div className="flex items-center gap-1 text-[10px] text-slate-500 font-medium leading-tight">
+                  <span className="font-mono text-slate-500">@{userSession?.username}</span>
+                  <span aria-hidden="true">·</span>
                   <span className="font-semibold text-blue-700">{userSession?.role || 'Admin'}</span>
                   {!canAccessAllProjects && (
                     <span className="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-bold">
@@ -477,7 +499,8 @@ export default function AdminLayout({
                   )}
                 </div>
               </div>
-            </div>
+              <Edit3 className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 shrink-0 hidden sm:block" />
+            </button>
 
             {/* Logout Button */}
             <button

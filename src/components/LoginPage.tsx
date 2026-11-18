@@ -94,30 +94,38 @@ export default function LoginPage({
     setErrorMessage('');
     setSuccessMessage('');
 
-    const cleanIdentifier = identifier.trim().toLowerCase();
+    const cleanUsername = identifier.trim().toLowerCase();
     const cleanPassword = password.trim();
 
-    if (!cleanIdentifier) {
-      setErrorMessage(isId ? 'Silakan masukkan Email atau Username Anda.' : 'Please enter your Email or Username.');
+    if (!cleanUsername) {
+      setErrorMessage(isId ? 'Silakan masukkan Username Anda.' : 'Please enter your Username.');
+      return;
+    }
+
+    if (cleanUsername.includes('@')) {
+      setErrorMessage(
+        isId
+          ? 'Login ke sistem wajib menggunakan Username dan Password (bukan alamat email).'
+          : 'System login requires your Username and Password (not email address).'
+      );
       return;
     }
 
     if (!cleanPassword) {
-      setErrorMessage(isId ? 'Silakan masukkan Kata Sandi Anda.' : 'Please enter your Password.');
+      setErrorMessage(isId ? 'Silakan masukkan Password Anda.' : 'Please enter your Password.');
       return;
     }
 
-    // Lookup user in registered users database
-    const matchedUser = users.find(u => 
-      u.email.toLowerCase() === cleanIdentifier || 
-      u.username.toLowerCase() === cleanIdentifier
+    // Lookup user strictly by registered username
+    const matchedUser = users.find(
+      u => u.username.toLowerCase() === cleanUsername
     );
 
     if (!matchedUser) {
       setErrorMessage(
         isId 
-          ? 'Akun tidak terdaftar dalam sistem. Hanya pengguna yang telah didaftarkan oleh Administrator yang dapat masuk.' 
-          : 'Account is not registered. Only users authorized by the Administrator can log in.'
+          ? 'Username tidak terdaftar dalam sistem. Hanya pengguna yang telah didaftarkan oleh Administrator yang dapat masuk.' 
+          : 'Username is not registered. Only users authorized by the Administrator can log in.'
       );
       return;
     }
@@ -132,12 +140,13 @@ export default function LoginPage({
       return;
     }
 
-    // Verify password
-    if (matchedUser.password && matchedUser.password !== cleanPassword) {
+    // Mandatory password verification
+    const storedPassword = matchedUser.password || 'password123';
+    if (storedPassword !== cleanPassword) {
       setErrorMessage(
         isId 
-          ? 'Kata sandi tidak sesuai. Silakan periksa kembali atau gunakan fitur "Lupa kata sandi?".' 
-          : 'Incorrect password. Please verify and try again or use "Forgot password?".'
+          ? 'Username atau Password tidak sesuai. Silakan periksa kembali atau gunakan fitur "Lupa kata sandi?".' 
+          : 'Incorrect Username or Password. Please verify and try again or use "Forgot password?".'
       );
       return;
     }
@@ -415,7 +424,7 @@ export default function LoginPage({
               <form onSubmit={handleLoginSubmit} className="space-y-4 text-sm">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    {isId ? 'Email atau Username Terdaftar' : 'Registered Email or Username'}
+                    {isId ? 'Username *' : 'Username *'}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -424,13 +433,14 @@ export default function LoginPage({
                     <input
                       type="text"
                       required
+                      autoComplete="username"
                       value={identifier}
                       onChange={(e) => {
-                        setIdentifier(e.target.value);
+                        setIdentifier(e.target.value.replace(/\s+/g, ''));
                         if (errorMessage) setErrorMessage('');
                       }}
-                      placeholder={isId ? 'Contoh: elvandri.me atau elvandri.me@monitoring.org' : 'e.g. elvandri.me or elvandri.me@monitoring.org'}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                      placeholder={isId ? 'Masukkan username (contoh: elvandri.me)' : 'Enter username (e.g. elvandri.me)'}
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                     />
                   </div>
                 </div>
@@ -438,7 +448,7 @@ export default function LoginPage({
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-semibold text-slate-700">
-                      {isId ? 'Kata Sandi' : 'Password'}
+                      {isId ? 'Password *' : 'Password *'}
                     </label>
                     <button
                       type="button"
@@ -501,8 +511,8 @@ export default function LoginPage({
                   <div className="mt-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2 max-h-56 overflow-y-auto">
                     <p className="text-[11px] text-slate-500 italic">
                       {isId 
-                        ? 'Gunakan salah satu email/username di bawah untuk login atau menguji reset sandi via email:' 
-                        : 'Use any email/username below to log in or test email-based reset: '}
+                        ? 'Login wajib menggunakan Username dan Password akun terdaftar:' 
+                        : 'Sign in requires a registered Username and Password:'}
                     </p>
                     <div className="space-y-1.5 divide-y divide-slate-200/60">
                       {users.map(u => {
@@ -520,8 +530,8 @@ export default function LoginPage({
                                   {u.role}
                                 </span>
                               </div>
-                              <div className="text-slate-500 font-mono text-[10px]">
-                                {u.email} ({u.username})
+                              <div className="text-slate-600 font-mono text-[10px]">
+                                Username: <strong>{u.username}</strong>
                               </div>
                             </div>
                             <div className="text-right shrink-0">
