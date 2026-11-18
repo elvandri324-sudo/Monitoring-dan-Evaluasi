@@ -267,10 +267,12 @@ export default function App() {
 
   // Firebase Auth & Real-Time Firestore Synchronization State
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [firebaseSyncing, setFirebaseSyncing] = useState(false);
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
   const [workspaceSyncedOnce, setWorkspaceSyncedOnce] = useState(false);
   const [publicSnapshot, setPublicSnapshot] = useState<PublicPortalData | null>(null);
+  const initialAuthResolvedRef = useRef(false);
 
   const latestDataRef = useRef({
     projects,
@@ -310,10 +312,18 @@ export default function App() {
         unsubscribeWorkspace = null;
       }
 
+      const isInitialCheck = !initialAuthResolvedRef.current;
+      initialAuthResolvedRef.current = true;
+      setAuthChecked(true);
+
       if (!user || !user.emailVerified) {
         setFirebaseUser(null);
         setFirebaseSyncing(false);
         setWorkspaceSyncedOnce(false);
+        // Clear stale localStorage-only session on startup so Preview & browsers always authenticate & sync with Firestore instead of showing diverged local data
+        if (isInitialCheck) {
+          setUserSession(null);
+        }
         return;
       }
 
@@ -410,7 +420,11 @@ export default function App() {
       setFirebaseSyncing(false);
       // Do not block username/password login if popup was closed or blocked; log cleanly
       const msg = err instanceof Error ? err.message : '';
-      if (msg && !msg.includes('popup-closed-by-user') && !msg.includes('cancelled-popup-request')) {
+      if (msg.includes('popup-blocked')) {
+        setFirebaseError(
+          'Browser memblokir jendela verifikasi Google pada mode preview. Izinkan popup untuk situs ini atau buka lewat tab browser baru.'
+        );
+      } else if (msg && !msg.includes('popup-closed-by-user') && !msg.includes('cancelled-popup-request')) {
         setFirebaseError(msg);
       }
       return null;
@@ -1606,6 +1620,18 @@ export default function App() {
         learnings={useSnapshot ? publicSnapshot.learnings : learnings}
         onGoToAdmin={() => setViewMode('admin')}
       />
+    );
+  }
+
+  // Wait briefly for Firebase Auth initialization before rendering an existing Admin session
+  if (!authChecked && viewMode === 'admin' && userSession?.isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#FFFBF7] flex items-center justify-center p-4">
+        <div className="bg-white border border-orange-100 rounded-2xl shadow-lg px-6 py-5 flex items-center gap-3">
+          <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-semibold text-slate-700">Menyinkronkan sesi database...</span>
+        </div>
+      </div>
     );
   }
 
