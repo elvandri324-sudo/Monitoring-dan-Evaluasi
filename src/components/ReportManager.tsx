@@ -83,20 +83,20 @@ export const REPORT_TYPE_CONFIG: Record<ReportType, {
     descriptionId: 'Rekap capaian indikator kuartalan (Q1-Q4), serapan anggaran & mitigasi kendala.'
   },
   'Laporan Semester': {
-    labelId: 'Laporan Semester',
-    labelEn: 'Semester Report',
+    labelId: 'Laporan Mid Year',
+    labelEn: 'Mid Year Report',
     color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
     badgeBg: 'bg-cyan-600',
     icon: '📑',
-    descriptionId: 'Evaluasi paruh tahun (Semester 1 / 2) terhadap target rencana kerja tahunan.'
+    descriptionId: 'Evaluasi tengah tahun (Mid Year) terhadap target rencana kerja tahunan.'
   },
   'Laporan Tahunan': {
-    labelId: 'Laporan Tahunan',
+    labelId: 'Laporan Annual',
     labelEn: 'Annual Report',
     color: 'text-amber-800 bg-amber-50 border-amber-200',
     badgeBg: 'bg-amber-600',
     icon: '🏆',
-    descriptionId: 'Laporan komprehensif tahunan, audit naratif & finansial, serta capaian dampak.'
+    descriptionId: 'Laporan komprehensif tahunan (Annual), audit naratif & finansial, serta capaian dampak.'
   },
   'Laporan Final': {
     labelId: 'Laporan Final (Akhir Proyek)',
@@ -493,8 +493,8 @@ export default function ReportManager({
             </h1>
             <p className="text-sm text-orange-50/95 leading-relaxed">
               {isId 
-                ? 'Pusat manajemen dan pengunduhan seluruh laporan proyek: Laporan Kegiatan, Laporan Bulanan, Laporan Kuartal, Laporan Semester, Laporan Tahunan, hingga Laporan Final beserta berkas terunggah.'
-                : 'Central repository for all project reports: Activity Reports, Monthly Reports, Quarterly Reports, Semester Reports, Annual Reports, and Final Project Reports with instant file downloads.'}
+                ? 'Pusat manajemen dan pengunduhan seluruh laporan proyek: Laporan Kegiatan, Laporan Bulanan, Laporan Kuartal, Laporan Mid Year, Laporan Annual, hingga Laporan Final beserta berkas terunggah.'
+                : 'Central repository for all project reports: Activity Reports, Monthly Reports, Quarterly Reports, Mid Year Reports, Annual Reports, and Final Project Reports with instant file downloads.'}
             </p>
           </div>
 
@@ -549,11 +549,11 @@ export default function ReportManager({
             <div className="text-xl font-bold mt-0.5 text-white tabular-nums">{stats.byType.kuartal}</div>
           </div>
           <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
-            <div className="text-[11px] text-orange-50 font-medium">📑 {isId ? 'Semester' : 'Semester'}</div>
+            <div className="text-[11px] text-orange-50 font-medium">📑 Mid Year</div>
             <div className="text-xl font-bold mt-0.5 text-white tabular-nums">{stats.byType.semester}</div>
           </div>
           <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20">
-            <div className="text-[11px] text-orange-50 font-medium">🏆 {isId ? 'Tahunan' : 'Annual'}</div>
+            <div className="text-[11px] text-orange-50 font-medium">🏆 Annual</div>
             <div className="text-xl font-bold mt-0.5 text-white tabular-nums">{stats.byType.tahunan}</div>
           </div>
           <div className="bg-white/15 backdrop-blur-xs rounded-xl p-3 border border-white/20 col-span-2 sm:col-span-1">
@@ -1207,8 +1207,8 @@ export default function ReportManager({
                     <option value="Laporan Kegiatan">📌 Laporan Kegiatan (Activity Report)</option>
                     <option value="Laporan Bulanan">🗓️ Laporan Bulanan (Monthly Report)</option>
                     <option value="Laporan Kuartal">📊 Laporan Kuartal (Quarterly Report)</option>
-                    <option value="Laporan Semester">📑 Laporan Semester (Semester Report)</option>
-                    <option value="Laporan Tahunan">🏆 Laporan Tahunan (Annual Report)</option>
+                    <option value="Laporan Semester">📑 Laporan Mid Year (Mid Year Report)</option>
+                    <option value="Laporan Tahunan">🏆 Laporan Annual (Annual Report)</option>
                     <option value="Laporan Final">🎓 Laporan Final (Final Project Report)</option>
                   </select>
                 </div>
@@ -1237,7 +1237,7 @@ export default function ReportManager({
                   </label>
                   <input
                     type="text"
-                    placeholder={isId ? 'Contoh: 12-14 Jan 2026 / Q1 2026 / Semester 1' : 'e.g. Jan 2026 / Q1 2026'}
+                    placeholder={isId ? 'Contoh: Mei 2026 / Kuartal 1 (Q1) 2026 / Mid Year 2026 / Annual 2026' : 'e.g. May 2026 / Q1 2026 / Mid Year 2026 / Annual 2026'}
                     value={formPeriod}
                     onChange={(e) => setFormPeriod(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition"

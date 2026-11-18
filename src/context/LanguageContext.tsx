@@ -63,13 +63,13 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Reports & Archives
     'reports.title': 'Manajemen Laporan Proyek & Arsip Berkas',
-    'reports.subtitle': 'Kumpulan lengkap seluruh laporan proyek: Laporan Kegiatan, Laporan Bulanan, Laporan Kuartal, Laporan Semester, Laporan Tahunan, hingga Laporan Final beserta berkas terunggah yang dapat diunduh.',
+    'reports.subtitle': 'Kumpulan lengkap seluruh laporan proyek: Laporan Kegiatan, Laporan Bulanan, Laporan Kuartal, Laporan Mid Year, Laporan Annual, hingga Laporan Final beserta berkas terunggah yang dapat diunduh.',
     'reports.add': '+ Unggah / Tambah Laporan Baru',
     'reports.activity': 'Laporan Kegiatan',
     'reports.monthly': 'Laporan Bulanan',
     'reports.quarterly': 'Laporan Kuartal',
-    'reports.semester': 'Laporan Semester',
-    'reports.annual': 'Laporan Tahunan',
+    'reports.semester': 'Laporan Mid Year',
+    'reports.annual': 'Laporan Annual',
     'reports.final': 'Laporan Final',
     'reports.allTypes': 'Semua Kategori Laporan',
     'reports.deadline': 'Batas Waktu (Deadline)',
@@ -89,12 +89,12 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Deliverables (backward compatibility)
     'deliverables.title': 'Manajemen Laporan Proyek & Arsip Berkas',
-    'deliverables.subtitle': 'Kumpulan lengkap seluruh laporan proyek: Laporan Kegiatan, Laporan Bulanan, Laporan Kuartal, Laporan Semester, Laporan Tahunan, hingga Laporan Final.',
+    'deliverables.subtitle': 'Kumpulan lengkap seluruh laporan proyek: Laporan Kegiatan, Laporan Bulanan, Laporan Kuartal, Laporan Mid Year, Laporan Annual, hingga Laporan Final.',
     'deliverables.add': '+ Tambah Laporan Proyek',
     'deliverables.monthly': 'Laporan Bulanan',
     'deliverables.quarterly': 'Laporan Kuartal',
-    'deliverables.midterm': 'Laporan Semester',
-    'deliverables.annual': 'Laporan Tahunan',
+    'deliverables.midterm': 'Laporan Mid Year',
+    'deliverables.annual': 'Laporan Annual',
     'deliverables.allTypes': 'Semua Jenis Laporan',
     'deliverables.deadline': 'Batas Waktu (Deadline)',
     'deliverables.submitted': 'Tanggal Diserahkan',
@@ -176,12 +176,12 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Reports & Archives
     'reports.title': 'Project Reports Management & File Archive',
-    'reports.subtitle': 'Comprehensive repository of all project reports: Activity Reports, Monthly Reports, Quarterly Reports, Semester Reports, Annual Reports, and Final Project Reports with direct file downloads.',
+    'reports.subtitle': 'Comprehensive repository of all project reports: Activity Reports, Monthly Reports, Quarterly Reports, Mid Year Reports, Annual Reports, and Final Project Reports with direct file downloads.',
     'reports.add': '+ Upload / Add New Report',
     'reports.activity': 'Activity Report',
     'reports.monthly': 'Monthly Report',
     'reports.quarterly': 'Quarterly Report',
-    'reports.semester': 'Semester Report',
+    'reports.semester': 'Mid Year Report',
     'reports.annual': 'Annual Report',
     'reports.final': 'Final Project Report',
     'reports.allTypes': 'All Report Types',
@@ -202,11 +202,11 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Deliverables (backward compatibility)
     'deliverables.title': 'Project Reports & Deliverables Management',
-    'deliverables.subtitle': 'Comprehensive repository of all project reports: Activity Reports, Monthly Reports, Quarterly Reports, Semester Reports, Annual Reports, and Final Project Reports.',
+    'deliverables.subtitle': 'Comprehensive repository of all project reports: Activity Reports, Monthly Reports, Quarterly Reports, Mid Year Reports, Annual Reports, and Final Project Reports.',
     'deliverables.add': '+ Add Project Report',
     'deliverables.monthly': 'Monthly Report',
     'deliverables.quarterly': 'Quarterly Report',
-    'deliverables.midterm': 'Semester Report',
+    'deliverables.midterm': 'Mid Year Report',
     'deliverables.annual': 'Annual Report',
     'deliverables.allTypes': 'All Report Types',
     'deliverables.deadline': 'Submission Deadline',

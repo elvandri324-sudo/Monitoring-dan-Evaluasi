@@ -1,0 +1,611 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Global Primitives & Helpers
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isTokenAdmin() {
+      return isEmailVerified() && request.auth.token.email == 'elvandri324@gmail.com';
+    }
+
+    function isAdmin() {
+      return isTokenAdmin() || (isEmailVerified() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    function isOwner(data) {
+      return isEmailVerified() && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidOptionalString(data, field, maxLen) {
+      return !(field in data) || (data[field] is string && data[field].size() <= maxLen);
+    }
+
+    function isValidOptionalNumber(data, field) {
+      return !(field in data) || data[field] is number;
+    }
+
+    function isValidStringList(listVal, maxItems) {
+      return listVal is list && listVal.size() <= maxItems && (listVal.size() == 0 || listVal[0] is string);
+    }
+
+    function isValidMapList(listVal, maxItems) {
+      return listVal is list && listVal.size() <= maxItems && (listVal.size() == 0 || listVal[0] is map);
+    }
+
+    function hasImmutableOwnerAndTimestamps() {
+      return incoming().id == existing().id &&
+        incoming().ownerUid == existing().ownerUid &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+    }
+
+    function hasCreationIdentityAndTimestamps() {
+      return incoming().ownerUid == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+    }
+
+    // 3. Entity Validation Helpers (Synchronized with firebase-blueprint.json)
+    function isValidProject(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'code', 'title', 'donor', 'partnerOrg', 'budgetTotal', 'budgetCurrency',
+          'startDate', 'endDate', 'status', 'province', 'targetLocations', 'goalStatement',
+          'goalIndicators', 'outcomes', 'teamMembers', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'code', 'title', 'donor', 'partnerOrg', 'budgetTotal', 'budgetCurrency',
+          'startDate', 'endDate', 'status', 'province', 'targetLocations', 'targetVillages', 'goalStatement',
+          'goalIndicators', 'outcomes', 'teamMembers', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.code is string && data.code.size() >= 1 && data.code.size() <= 64 &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.donor is string && data.donor.size() <= 200 &&
+        data.partnerOrg is string && data.partnerOrg.size() <= 200 &&
+        data.budgetTotal is number &&
+        data.budgetCurrency is string && data.budgetCurrency.size() <= 16 &&
+        data.startDate is string && data.startDate.size() <= 32 &&
+        data.endDate is string && data.endDate.size() <= 32 &&
+        data.status is string && data.status in ['Aktif', 'Selesai', 'Perencanaan', 'Masa Perpanjangan'] &&
+        data.province is string && data.province.size() <= 120 &&
+        isValidStringList(data.targetLocations, 100) &&
+        (!('targetVillages' in data) || isValidStringList(data.targetVillages, 200)) &&
+        data.goalStatement is string && data.goalStatement.size() <= 2000 &&
+        isValidMapList(data.goalIndicators, 100) &&
+        isValidMapList(data.outcomes, 100) &&
+        isValidMapList(data.teamMembers, 100) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidBeneficiary(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'nikOrIdentifier', 'fullName', 'gender', 'birthYear', 'age', 'ageGroup',
+          'hasDisability', 'iplcStatus', 'province', 'regency', 'village', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'nikOrIdentifier', 'fullName', 'gender', 'birthYear', 'age', 'ageGroup',
+          'hasDisability', 'disabilityType', 'disabilityDifficultyLevel', 'disabilityBarrierNotes',
+          'iplcStatus', 'customIplcCommunityName', 'targetGroup', 'beneficiaryLevel', 'levelName',
+          'institutionOrAgency', 'province', 'regency', 'district', 'village', 'phone', 'occupation',
+          'registeredProjectId', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.nikOrIdentifier is string && data.nikOrIdentifier.size() <= 80 &&
+        data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 200 &&
+        data.gender is string && data.gender in ['Laki-laki', 'Perempuan'] &&
+        data.birthYear is number &&
+        data.age is number &&
+        data.ageGroup is string && data.ageGroup.size() <= 16 &&
+        data.hasDisability is bool &&
+        isValidOptionalString(data, 'disabilityType', 80) &&
+        isValidOptionalString(data, 'disabilityDifficultyLevel', 80) &&
+        isValidOptionalString(data, 'disabilityBarrierNotes', 500) &&
+        data.iplcStatus is string && data.iplcStatus.size() <= 80 &&
+        isValidOptionalString(data, 'customIplcCommunityName', 150) &&
+        isValidOptionalString(data, 'targetGroup', 150) &&
+        isValidOptionalString(data, 'beneficiaryLevel', 40) &&
+        isValidOptionalString(data, 'levelName', 150) &&
+        isValidOptionalString(data, 'institutionOrAgency', 200) &&
+        data.province is string && data.province.size() <= 120 &&
+        data.regency is string && data.regency.size() <= 120 &&
+        isValidOptionalString(data, 'district', 120) &&
+        data.village is string && data.village.size() <= 120 &&
+        isValidOptionalString(data, 'phone', 40) &&
+        isValidOptionalString(data, 'occupation', 120) &&
+        isValidOptionalString(data, 'registeredProjectId', 128) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAttendance(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'activityId', 'projectId', 'beneficiaryId', 'attendanceDate', 'attendanceStatus', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'activityId', 'projectId', 'beneficiaryId', 'attendanceDate',
+          'roleInActivity', 'attendanceStatus', 'notes', 'verifiedBy', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.activityId is string && data.activityId.size() <= 128 &&
+        data.projectId is string && data.projectId.size() <= 128 &&
+        data.beneficiaryId is string && data.beneficiaryId.size() <= 128 &&
+        data.attendanceDate is string && data.attendanceDate.size() <= 40 &&
+        isValidOptionalString(data, 'roleInActivity', 80) &&
+        data.attendanceStatus is string && data.attendanceStatus.size() <= 40 &&
+        isValidOptionalString(data, 'notes', 1000) &&
+        isValidOptionalString(data, 'verifiedBy', 120) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAccompaniedGroup(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'projectId', 'code', 'name', 'type', 'village', 'regency', 'province', 'status', 'members', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projectId', 'code', 'name', 'type', 'customType', 'village', 'district', 'regency', 'province',
+          'establishmentDate', 'legalStatus', 'legalDocumentNumber', 'leaderName', 'leaderPhone', 'focusArea', 'status', 'notes',
+          'members', 'recordCreatedAt', 'recordUpdatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.projectId is string && data.projectId.size() <= 128 &&
+        data.code is string && data.code.size() <= 64 &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 200 &&
+        data.type is string && data.type.size() <= 120 &&
+        isValidOptionalString(data, 'customType', 120) &&
+        data.village is string && data.village.size() <= 120 &&
+        isValidOptionalString(data, 'district', 120) &&
+        data.regency is string && data.regency.size() <= 120 &&
+        data.province is string && data.province.size() <= 120 &&
+        isValidOptionalString(data, 'establishmentDate', 40) &&
+        isValidOptionalString(data, 'legalStatus', 120) &&
+        isValidOptionalString(data, 'legalDocumentNumber', 120) &&
+        isValidOptionalString(data, 'leaderName', 150) &&
+        isValidOptionalString(data, 'leaderPhone', 40) &&
+        isValidOptionalString(data, 'focusArea', 300) &&
+        data.status is string && data.status.size() <= 40 &&
+        isValidOptionalString(data, 'notes', 2000) &&
+        isValidMapList(data.members, 200) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        isValidOptionalString(data, 'recordUpdatedAt', 40) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidKnowledgeProduct(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'type', 'title', 'description', 'language', 'publisherAuthor', 'contributeToOutputOutcome', 'linkDocument', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projectId', 'type', 'title', 'description', 'language', 'publisherAuthor',
+          'contributeToOutputOutcome', 'linkDocument', 'fileFormat', 'fileSize', 'releaseDate', 'coverImageUrl',
+          'recordCreatedAt', 'recordUpdatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        isValidOptionalString(data, 'projectId', 128) &&
+        data.type is string && data.type.size() <= 120 &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.description is string && data.description.size() <= 3000 &&
+        data.language is string && data.language.size() <= 80 &&
+        data.publisherAuthor is string && data.publisherAuthor.size() <= 200 &&
+        data.contributeToOutputOutcome is string && data.contributeToOutputOutcome.size() <= 300 &&
+        data.linkDocument is string && data.linkDocument.size() <= 2000 &&
+        isValidOptionalString(data, 'fileFormat', 40) &&
+        isValidOptionalString(data, 'fileSize', 40) &&
+        isValidOptionalString(data, 'releaseDate', 40) &&
+        isValidOptionalString(data, 'coverImageUrl', 400000) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        isValidOptionalString(data, 'recordUpdatedAt', 40) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidStoryOfChange(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'storyTitle', 'storiesLocation', 'whoHasChanged', 'highlightBefore', 'highlightAfter', 'importantQuotes', 'noteFullStory', 'dateRecorded', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projectId', 'storyTitle', 'storiesLocation', 'whoHasChanged', 'beneficiaryId',
+          'highlightBefore', 'highlightAfter', 'importantQuotes', 'noteFullStory', 'categoryTheme', 'photoUrl',
+          'authorOrWriter', 'dateRecorded', 'recordCreatedAt', 'recordUpdatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        isValidOptionalString(data, 'projectId', 128) &&
+        data.storyTitle is string && data.storyTitle.size() >= 1 && data.storyTitle.size() <= 300 &&
+        data.storiesLocation is string && data.storiesLocation.size() <= 200 &&
+        data.whoHasChanged is string && data.whoHasChanged.size() <= 300 &&
+        isValidOptionalString(data, 'beneficiaryId', 128) &&
+        data.highlightBefore is string && data.highlightBefore.size() <= 4000 &&
+        data.highlightAfter is string && data.highlightAfter.size() <= 4000 &&
+        data.importantQuotes is string && data.importantQuotes.size() <= 2000 &&
+        data.noteFullStory is string && data.noteFullStory.size() <= 4000 &&
+        isValidOptionalString(data, 'categoryTheme', 120) &&
+        isValidOptionalString(data, 'photoUrl', 400000) &&
+        isValidOptionalString(data, 'authorOrWriter', 200) &&
+        data.dateRecorded is string && data.dateRecorded.size() <= 40 &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        isValidOptionalString(data, 'recordUpdatedAt', 40) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidMediaCoverage(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'title', 'type', 'platform', 'linkToPublication', 'releaseDate', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projectId', 'title', 'type', 'platform', 'publisherMedia', 'linkToPublication',
+          'releaseDate', 'summaryNotes', 'recordCreatedAt', 'recordUpdatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        isValidOptionalString(data, 'projectId', 128) &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.type is string && data.type.size() <= 120 &&
+        data.platform is string && data.platform.size() <= 80 &&
+        isValidOptionalString(data, 'publisherMedia', 200) &&
+        data.linkToPublication is string && data.linkToPublication.size() <= 2000 &&
+        data.releaseDate is string && data.releaseDate.size() <= 40 &&
+        isValidOptionalString(data, 'summaryNotes', 2000) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        isValidOptionalString(data, 'recordUpdatedAt', 40) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidProjectLearning(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'title', 'learningFocus', 'keyLearning', 'whatWeDidDifferently',
+          'nextPhaseConduct', 'internalCapacityAdvocacyComm', 'whenToLearnImplement', 'dateRecorded', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projectId', 'title', 'learningFocus', 'customFocus', 'keyLearning', 'whatWeDidDifferently',
+          'nextPhaseConduct', 'internalCapacityAdvocacyComm', 'whenToLearnImplement', 'status', 'recordedBy',
+          'dateRecorded', 'recordCreatedAt', 'recordUpdatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        isValidOptionalString(data, 'projectId', 128) &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.learningFocus is string && data.learningFocus.size() <= 120 &&
+        isValidOptionalString(data, 'customFocus', 200) &&
+        data.keyLearning is string && data.keyLearning.size() <= 4000 &&
+        data.whatWeDidDifferently is string && data.whatWeDidDifferently.size() <= 4000 &&
+        data.nextPhaseConduct is string && data.nextPhaseConduct.size() <= 4000 &&
+        data.internalCapacityAdvocacyComm is string && data.internalCapacityAdvocacyComm.size() <= 4000 &&
+        data.whenToLearnImplement is string && data.whenToLearnImplement.size() <= 200 &&
+        isValidOptionalString(data, 'status', 60) &&
+        isValidOptionalString(data, 'recordedBy', 150) &&
+        data.dateRecorded is string && data.dateRecorded.size() <= 40 &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        isValidOptionalString(data, 'recordUpdatedAt', 40) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidReportItem(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'projectId', 'title', 'type', 'period', 'year', 'submissionDeadline',
+          'authorOrLead', 'status', 'summaryHighlights', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'projectId', 'title', 'type', 'period', 'year', 'submissionDeadline', 'submittedDate',
+          'authorOrLead', 'reviewerOrDonor', 'status', 'summaryHighlights', 'keyAchievements', 'challengesAndMitigation',
+          'fileUrl', 'fileName', 'fileSize', 'fileData', 'fileType', 'targetBeneficiariesPeriod', 'actualBeneficiariesPeriod',
+          'budgetSpentPeriod', 'reviewNotes', 'ratingOrScore', 'recordCreatedAt', 'recordUpdatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.projectId is string && data.projectId.size() <= 128 &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.type is string && data.type.size() <= 60 &&
+        data.period is string && data.period.size() <= 150 &&
+        data.year is number &&
+        data.submissionDeadline is string && data.submissionDeadline.size() <= 40 &&
+        isValidOptionalString(data, 'submittedDate', 40) &&
+        data.authorOrLead is string && data.authorOrLead.size() <= 200 &&
+        isValidOptionalString(data, 'reviewerOrDonor', 200) &&
+        data.status is string && data.status.size() <= 40 &&
+        data.summaryHighlights is string && data.summaryHighlights.size() <= 5000 &&
+        (!('keyAchievements' in data) || isValidStringList(data.keyAchievements, 50)) &&
+        isValidOptionalString(data, 'challengesAndMitigation', 4000) &&
+        isValidOptionalString(data, 'fileUrl', 2000) &&
+        isValidOptionalString(data, 'fileName', 260) &&
+        isValidOptionalString(data, 'fileSize', 40) &&
+        isValidOptionalString(data, 'fileData', 500000) &&
+        isValidOptionalString(data, 'fileType', 120) &&
+        isValidOptionalNumber(data, 'targetBeneficiariesPeriod') &&
+        isValidOptionalNumber(data, 'actualBeneficiariesPeriod') &&
+        isValidOptionalNumber(data, 'budgetSpentPeriod') &&
+        isValidOptionalString(data, 'reviewNotes', 2000) &&
+        isValidOptionalNumber(data, 'ratingOrScore') &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        isValidOptionalString(data, 'recordUpdatedAt', 40) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAppUser(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'username', 'fullName', 'email', 'role', 'assignedProjectIds', 'status', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'username', 'fullName', 'email', 'password', 'role', 'assignedProjectIds',
+          'status', 'phone', 'avatarUrl', 'lastLogin', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.username is string && data.username.size() >= 1 && data.username.size() <= 80 &&
+        data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 200 &&
+        data.email is string && data.email.size() <= 200 &&
+        isValidOptionalString(data, 'password', 200) &&
+        data.role is string && data.role.size() <= 60 &&
+        isValidStringList(data.assignedProjectIds, 100) &&
+        data.status is string && data.status.size() <= 30 &&
+        isValidOptionalString(data, 'phone', 40) &&
+        isValidOptionalString(data, 'avatarUrl', 500000) &&
+        isValidOptionalString(data, 'lastLogin', 60) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidErrorReport(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'title', 'module', 'severity', 'status', 'description', 'reportedBy', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'ownerUid', 'title', 'module', 'severity', 'status', 'description', 'stepsToReproduce',
+          'expectedBehavior', 'actualBehavior', 'screenshotUrl', 'systemInfo', 'reportedBy', 'reporterEmail',
+          'assignedTo', 'resolutionNotes', 'resolvedAt', 'recordCreatedAt', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.module is string && data.module.size() <= 100 &&
+        data.severity is string && data.severity.size() <= 50 &&
+        data.status is string && data.status.size() <= 50 &&
+        data.description is string && data.description.size() <= 4000 &&
+        isValidOptionalString(data, 'stepsToReproduce', 3000) &&
+        isValidOptionalString(data, 'expectedBehavior', 2000) &&
+        isValidOptionalString(data, 'actualBehavior', 2000) &&
+        isValidOptionalString(data, 'screenshotUrl', 400000) &&
+        isValidOptionalString(data, 'systemInfo', 500) &&
+        data.reportedBy is string && data.reportedBy.size() <= 150 &&
+        isValidOptionalString(data, 'reporterEmail', 200) &&
+        isValidOptionalString(data, 'assignedTo', 150) &&
+        isValidOptionalString(data, 'resolutionNotes', 3000) &&
+        isValidOptionalString(data, 'resolvedAt', 40) &&
+        data.recordCreatedAt is string && data.recordCreatedAt.size() <= 40 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidWorkspaceMeta(data) {
+      return data.keys().hasAll(['id', 'ownerUid', 'seeded', 'lastSyncedByEmail', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'ownerUid', 'seeded', 'lastSyncedByEmail', 'createdAt', 'updatedAt']) &&
+        isValidId(data.id) &&
+        isValidId(data.ownerUid) &&
+        data.seeded is bool &&
+        data.lastSyncedByEmail is string && data.lastSyncedByEmail.size() <= 200 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAdminEntry(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'role', 'createdAt', 'updatedAt']) &&
+        isValidId(data.uid) &&
+        data.email is string && data.email.size() <= 200 &&
+        data.role is string && data.role.size() <= 40 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // 4. Collection Rules
+    match /test/{docId} {
+      allow get: if isValidId(docId) && docId == 'connection' && isEmailVerified();
+    }
+
+    match /admins/{userId} {
+      allow get: if isValidId(userId) && isEmailVerified() && (request.auth.uid == userId || isAdmin());
+      allow create, update, delete: if isValidId(userId) && isTokenAdmin() && isValidAdminEntry(incoming());
+    }
+
+    match /workspaceMeta/{workspaceId} {
+      allow get: if isValidId(workspaceId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(workspaceId) && isEmailVerified() && isValidWorkspaceMeta(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == workspaceId;
+      allow update: if isValidId(workspaceId) && isEmailVerified() && isValidWorkspaceMeta(incoming()) && hasImmutableOwnerAndTimestamps() && (isAdmin() || (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly(['seeded', 'lastSyncedByEmail', 'updatedAt'])));
+      allow delete: if isValidId(workspaceId) && isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow get: if isValidId(projectId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(projectId) && isEmailVerified() && isValidProject(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == projectId;
+      allow update: if isValidId(projectId) && isEmailVerified() && isValidProject(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && existing().status != 'Selesai' && incoming().diff(existing()).affectedKeys().hasOnly([
+          'code', 'title', 'donor', 'partnerOrg', 'budgetTotal', 'budgetCurrency', 'startDate', 'endDate',
+          'status', 'province', 'targetLocations', 'targetVillages', 'goalStatement', 'goalIndicators', 'outcomes', 'teamMembers', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(projectId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /beneficiaries/{beneficiaryId} {
+      allow get: if isValidId(beneficiaryId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(beneficiaryId) && isEmailVerified() && isValidBeneficiary(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == beneficiaryId;
+      allow update: if isValidId(beneficiaryId) && isEmailVerified() && isValidBeneficiary(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'nikOrIdentifier', 'fullName', 'gender', 'birthYear', 'age', 'ageGroup', 'hasDisability', 'disabilityType',
+          'disabilityDifficultyLevel', 'disabilityBarrierNotes', 'iplcStatus', 'customIplcCommunityName',
+          'targetGroup', 'beneficiaryLevel', 'levelName', 'institutionOrAgency', 'province', 'regency',
+          'district', 'village', 'phone', 'occupation', 'registeredProjectId', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(beneficiaryId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /attendances/{attendanceId} {
+      allow get: if isValidId(attendanceId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(attendanceId) && isEmailVerified() && isValidAttendance(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == attendanceId;
+      allow update: if isValidId(attendanceId) && isEmailVerified() && isValidAttendance(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'activityId', 'projectId', 'beneficiaryId', 'attendanceDate', 'roleInActivity', 'attendanceStatus', 'notes', 'verifiedBy', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(attendanceId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /accompaniedGroups/{groupId} {
+      allow get: if isValidId(groupId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(groupId) && isEmailVerified() && isValidAccompaniedGroup(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == groupId;
+      allow update: if isValidId(groupId) && isEmailVerified() && isValidAccompaniedGroup(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projectId', 'code', 'name', 'type', 'customType', 'village', 'district', 'regency', 'province',
+          'establishmentDate', 'legalStatus', 'legalDocumentNumber', 'leaderName', 'leaderPhone', 'focusArea',
+          'status', 'notes', 'members', 'recordUpdatedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(groupId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /knowledgeProducts/{productId} {
+      allow get: if isValidId(productId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(productId) && isEmailVerified() && isValidKnowledgeProduct(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == productId;
+      allow update: if isValidId(productId) && isEmailVerified() && isValidKnowledgeProduct(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projectId', 'type', 'title', 'description', 'language', 'publisherAuthor', 'contributeToOutputOutcome',
+          'linkDocument', 'fileFormat', 'fileSize', 'releaseDate', 'coverImageUrl', 'recordUpdatedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(productId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /storiesOfChange/{storyId} {
+      allow get: if isValidId(storyId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(storyId) && isEmailVerified() && isValidStoryOfChange(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == storyId;
+      allow update: if isValidId(storyId) && isEmailVerified() && isValidStoryOfChange(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projectId', 'storyTitle', 'storiesLocation', 'whoHasChanged', 'beneficiaryId', 'highlightBefore', 'highlightAfter',
+          'importantQuotes', 'noteFullStory', 'categoryTheme', 'photoUrl', 'authorOrWriter', 'dateRecorded', 'recordUpdatedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(storyId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /mediaCoverages/{mediaId} {
+      allow get: if isValidId(mediaId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(mediaId) && isEmailVerified() && isValidMediaCoverage(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == mediaId;
+      allow update: if isValidId(mediaId) && isEmailVerified() && isValidMediaCoverage(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projectId', 'title', 'type', 'platform', 'publisherMedia', 'linkToPublication', 'releaseDate', 'summaryNotes', 'recordUpdatedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(mediaId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /learnings/{learningId} {
+      allow get: if isValidId(learningId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(learningId) && isEmailVerified() && isValidProjectLearning(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == learningId;
+      allow update: if isValidId(learningId) && isEmailVerified() && isValidProjectLearning(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projectId', 'title', 'learningFocus', 'customFocus', 'keyLearning', 'whatWeDidDifferently', 'nextPhaseConduct',
+          'internalCapacityAdvocacyComm', 'whenToLearnImplement', 'status', 'recordedBy', 'dateRecorded', 'recordUpdatedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(learningId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /reports/{reportId} {
+      allow get: if isValidId(reportId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(reportId) && isEmailVerified() && isValidReportItem(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == reportId;
+      allow update: if isValidId(reportId) && isEmailVerified() && isValidReportItem(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && existing().status != 'Telah Diterbitkan' && incoming().diff(existing()).affectedKeys().hasOnly([
+          'projectId', 'title', 'type', 'period', 'year', 'submissionDeadline', 'submittedDate', 'authorOrLead', 'reviewerOrDonor',
+          'status', 'summaryHighlights', 'keyAchievements', 'challengesAndMitigation', 'fileUrl', 'fileName', 'fileSize', 'fileData',
+          'fileType', 'targetBeneficiariesPeriod', 'actualBeneficiariesPeriod', 'budgetSpentPeriod', 'reviewNotes', 'ratingOrScore', 'recordUpdatedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(reportId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /appUsers/{appUserId} {
+      allow get: if isValidId(appUserId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(appUserId) && isEmailVerified() && isValidAppUser(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == appUserId;
+      allow update: if isValidId(appUserId) && isEmailVerified() && isValidAppUser(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly([
+          'username', 'fullName', 'email', 'password', 'role', 'assignedProjectIds', 'status', 'phone', 'avatarUrl', 'lastLogin', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(appUserId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+
+    match /errorReports/{errorId} {
+      allow get: if isValidId(errorId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+      allow list: if isEmailVerified() && (resource.data.ownerUid == request.auth.uid || isTokenAdmin());
+      allow create: if isValidId(errorId) && isEmailVerified() && isValidErrorReport(incoming()) && hasCreationIdentityAndTimestamps() && incoming().id == errorId;
+      allow update: if isValidId(errorId) && isEmailVerified() && isValidErrorReport(incoming()) && hasImmutableOwnerAndTimestamps() && (
+        isAdmin() ||
+        (isOwner(existing()) && existing().status != 'Ditutup (Closed)' && incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'module', 'severity', 'status', 'description', 'stepsToReproduce', 'expectedBehavior', 'actualBehavior',
+          'screenshotUrl', 'systemInfo', 'reportedBy', 'reporterEmail', 'assignedTo', 'resolutionNotes', 'resolvedAt', 'updatedAt'
+        ]))
+      );
+      allow delete: if isValidId(errorId) && isEmailVerified() && (existing().ownerUid == request.auth.uid || isAdmin());
+    }
+  }
+}

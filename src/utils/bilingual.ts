@@ -142,13 +142,17 @@ export const formatReportType = (type: ReportType | string, lang: Language): str
       case 'Laporan Kegiatan': return 'Activity Report';
       case 'Laporan Bulanan': return 'Monthly Report';
       case 'Laporan Kuartal': return 'Quarterly Report';
-      case 'Laporan Semester': return 'Semester Report';
+      case 'Laporan Semester': return 'Mid Year Report';
       case 'Laporan Tahunan': return 'Annual Report';
       case 'Laporan Final': return 'Final Project Report';
       default: return type;
     }
   }
-  return type;
+  switch (type) {
+    case 'Laporan Semester': return 'Laporan Mid Year';
+    case 'Laporan Tahunan': return 'Laporan Annual';
+    default: return type;
+  }
 };
 
 export const formatReportStatus = (status: ReportStatus | string, lang: Language): string => {
@@ -188,14 +192,22 @@ export const formatReportingFrequency = (freq: string, lang: Language): string =
   if (lang === 'en') {
     switch (freq) {
       case 'Bulanan': return 'Monthly';
+      case 'Kuartal':
       case 'Triwulanan': return 'Quarterly';
-      case 'Semesteran': return 'Semi-Annually';
-      case 'Tahunan': return 'Annually';
+      case 'Mid Year':
+      case 'Semesteran': return 'Mid Year';
+      case 'Annual':
+      case 'Tahunan': return 'Annual';
       case 'Akhir Proyek': return 'End of Project';
       default: return freq;
     }
   }
-  return freq;
+  switch (freq) {
+    case 'Triwulanan': return 'Kuartal';
+    case 'Semesteran': return 'Mid Year';
+    case 'Tahunan': return 'Annual';
+    default: return freq;
+  }
 };
 
 export const formatTargetGroup = (tg: string | undefined, lang: Language): string => {

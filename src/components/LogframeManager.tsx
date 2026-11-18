@@ -161,7 +161,7 @@ export default function LogframeManager({
   const [indFormActual, setIndFormActual] = useState<number>(0);
   const [indFormUnit, setIndFormUnit] = useState<IndicatorUnit>('Orang / Individu');
   const [indFormMov, setIndFormMov] = useState('');
-  const [indFormFreq, setIndFormFreq] = useState<'Bulanan' | 'Triwulanan' | 'Semesteran' | 'Tahunan' | 'Akhir Proyek'>('Semesteran');
+  const [indFormFreq, setIndFormFreq] = useState<'Bulanan' | 'Kuartal' | 'Mid Year' | 'Annual' | 'Triwulanan' | 'Semesteran' | 'Tahunan' | 'Akhir Proyek'>('Kuartal');
   const [indFormStatus, setIndFormStatus] = useState<StatusProgress>('Belum Dimulai');
 
   const activeProject = projects.find(p => p.id === (selectedProjectId === 'all' ? projects[0]?.id : selectedProjectId)) || projects[0];
@@ -551,7 +551,7 @@ export default function LogframeManager({
     setIndFormActual(0);
     setIndFormUnit('Orang / Individu');
     setIndFormMov(isId ? 'Daftar Presensi & Laporan Pelaksanaan' : 'Attendance List & Implementation Report');
-    setIndFormFreq('Semesteran');
+    setIndFormFreq('Kuartal');
     setIndFormStatus('Belum Dimulai');
 
     setShowAddIndicatorModal({ parentLevel, parentId, parentTitle });
@@ -1879,14 +1879,19 @@ export default function LogframeManager({
                 <div>
                   <label className="font-semibold block mb-1 text-slate-700">{isId ? 'Frekuensi Pelaporan:' : 'Reporting Frequency:'}</label>
                   <select
-                    value={indFormFreq}
+                    value={
+                      indFormFreq === 'Triwulanan' ? 'Kuartal'
+                      : indFormFreq === 'Semesteran' ? 'Mid Year'
+                      : indFormFreq === 'Tahunan' ? 'Annual'
+                      : indFormFreq
+                    }
                     onChange={(e) => setIndFormFreq(e.target.value as any)}
                     className="w-full p-2.5 bg-orange-50/40 border border-orange-200 rounded-xl outline-hidden focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="Bulanan">{formatReportingFrequency('Bulanan', language)}</option>
-                    <option value="Triwulanan">{formatReportingFrequency('Triwulanan', language)}</option>
-                    <option value="Semesteran">{formatReportingFrequency('Semesteran', language)}</option>
-                    <option value="Tahunan">{formatReportingFrequency('Tahunan', language)}</option>
+                    <option value="Kuartal">{formatReportingFrequency('Kuartal', language)}</option>
+                    <option value="Mid Year">{formatReportingFrequency('Mid Year', language)}</option>
+                    <option value="Annual">{formatReportingFrequency('Annual', language)}</option>
                     <option value="Akhir Proyek">{formatReportingFrequency('Akhir Proyek', language)}</option>
                   </select>
                 </div>

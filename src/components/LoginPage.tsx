@@ -23,7 +23,9 @@ import {
   Clock,
   ExternalLink,
   Copy,
-  Check
+  Check,
+  Cloud,
+  CloudOff
 } from 'lucide-react';
 import { UserSession, UserAccount, Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -34,6 +36,11 @@ interface LoginPageProps {
   onLogin: (session: UserSession) => void;
   onResetPassword?: (userId: string, newPassword: string) => void;
   onBackToPublic?: () => void;
+  firebaseUser?: { email: string | null; uid: string } | null;
+  firebaseSyncing?: boolean;
+  firebaseError?: string | null;
+  onConnectFirebase?: () => void;
+  onDisconnectFirebase?: () => void;
 }
 
 export default function LoginPage({ 
@@ -41,7 +48,12 @@ export default function LoginPage({
   projects = [], 
   onLogin, 
   onResetPassword,
-  onBackToPublic 
+  onBackToPublic,
+  firebaseUser,
+  firebaseSyncing = false,
+  firebaseError,
+  onConnectFirebase,
+  onDisconnectFirebase
 }: LoginPageProps) {
   const { language, setLanguage } = useLanguage();
   const isId = language === 'id';
@@ -398,6 +410,68 @@ export default function LoginPage({
                   >
                     {isId ? '← Beranda' : '← Home'}
                   </button>
+                )}
+              </div>
+
+              {/* Firebase Cloud Database Sync Card */}
+              <div className={`p-3 rounded-xl border text-xs space-y-2 ${
+                firebaseUser
+                  ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
+                  : 'bg-orange-50/70 border-orange-200 text-slate-800'
+              }`}>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {firebaseUser ? (
+                      <Cloud className="w-4 h-4 text-emerald-600 shrink-0" />
+                    ) : (
+                      <CloudOff className="w-4 h-4 text-orange-600 shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-bold truncate">
+                        {firebaseUser
+                          ? (isId ? 'Database Firebase Terhubung' : 'Firebase Database Connected')
+                          : (isId ? 'Sinkronisasi Cloud Firebase' : 'Firebase Cloud Sync')}
+                      </p>
+                      <p className="text-[11px] opacity-80 truncate">
+                        {firebaseUser
+                          ? (firebaseSyncing
+                              ? (isId ? 'Menyinkronkan data...' : 'Syncing data...')
+                              : (firebaseUser.email || 'Google Auth Active'))
+                          : (isId ? 'Simpan & sinkronkan data lintas perangkat' : 'Store & sync data across all devices')}
+                      </p>
+                    </div>
+                  </div>
+
+                  {firebaseUser ? (
+                    onDisconnectFirebase && (
+                      <button
+                        type="button"
+                        onClick={onDisconnectFirebase}
+                        className="px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-emerald-800 hover:bg-emerald-100 text-[11px] font-semibold shrink-0 transition"
+                      >
+                        {isId ? 'Putuskan' : 'Disconnect'}
+                      </button>
+                    )
+                  ) : (
+                    onConnectFirebase && (
+                      <button
+                        type="button"
+                        onClick={onConnectFirebase}
+                        disabled={firebaseSyncing}
+                        className="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white text-[11px] font-bold shrink-0 shadow-2xs transition cursor-pointer"
+                      >
+                        {firebaseSyncing
+                          ? (isId ? 'Menghubungkan...' : 'Connecting...')
+                          : (isId ? 'Hubungkan Google' : 'Connect Google')}
+                      </button>
+                    )
+                  )}
+                </div>
+
+                {firebaseError && (
+                  <p className="text-[11px] text-rose-700 font-medium bg-rose-50 border border-rose-200 rounded-lg px-2.5 py-1.5">
+                    {firebaseError}
+                  </p>
                 )}
               </div>
 

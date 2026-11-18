@@ -1,4 +1,16 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from './firebase';
+import {
+  batchDeleteFromFirestore,
+  batchUpsertToFirestore,
+  deleteDocFromFirestore,
+  ensureWorkspaceSeeded,
+  signInWithGoogleFirebase,
+  signOutFirebase,
+  subscribeToWorkspace,
+  upsertDocToFirestore,
+} from './services/firebaseSync';
 import { 
   Project, 
   Beneficiary, 
@@ -251,15 +263,137 @@ export default function App() {
   const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
+  // Firebase Auth & Real-Time Firestore Synchronization State
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
+  const [firebaseSyncing, setFirebaseSyncing] = useState(false);
+  const [firebaseError, setFirebaseError] = useState<string | null>(null);
+
+  const latestDataRef = useRef({
+    projects,
+    beneficiaries,
+    attendances,
+    accompaniedGroups,
+    knowledgeProducts,
+    storiesOfChange,
+    mediaCoverages,
+    learnings,
+    reports,
+    users,
+    errorReports,
+  });
+
+  latestDataRef.current = {
+    projects,
+    beneficiaries,
+    attendances,
+    accompaniedGroups,
+    knowledgeProducts,
+    storiesOfChange,
+    mediaCoverages,
+    learnings,
+    reports,
+    users,
+    errorReports,
+  };
+
+  useEffect(() => {
+    let unsubscribeWorkspace: (() => void) | null = null;
+    let isCancelled = false;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (unsubscribeWorkspace) {
+        unsubscribeWorkspace();
+        unsubscribeWorkspace = null;
+      }
+
+      if (!user || !user.emailVerified) {
+        setFirebaseUser(null);
+        setFirebaseSyncing(false);
+        return;
+      }
+
+      setFirebaseUser(user);
+      setFirebaseError(null);
+      setFirebaseSyncing(true);
+
+      try {
+        await ensureWorkspaceSeeded(user, latestDataRef.current);
+        if (isCancelled) return;
+
+        unsubscribeWorkspace = subscribeToWorkspace(user, {
+          onProjects: (data) => setProjects(data),
+          onBeneficiaries: (data) => setBeneficiaries(data),
+          onAttendances: (data) => setAttendances(data),
+          onAccompaniedGroups: (data) => setAccompaniedGroups(data),
+          onKnowledgeProducts: (data) => setKnowledgeProducts(data),
+          onStoriesOfChange: (data) => setStoriesOfChange(data),
+          onMediaCoverages: (data) => setMediaCoverages(data),
+          onLearnings: (data) => setLearnings(data),
+          onReports: (data) => setReports(data),
+          onUsers: (data) => {
+            if (data.length > 0) setUsers(data);
+          },
+          onErrorReports: (data) => setErrorReports(data),
+          onSyncUpdate: () => setFirebaseSyncing(false),
+        });
+      } catch (err) {
+        if (!isCancelled) {
+          setFirebaseSyncing(false);
+          setFirebaseError(err instanceof Error ? err.message : 'Gagal menyambung ke Firebase Firestore.');
+        }
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+      unsubscribeAuth();
+      if (unsubscribeWorkspace) unsubscribeWorkspace();
+    };
+  }, []);
+
+  const handleConnectFirebase = async () => {
+    setFirebaseError(null);
+    setFirebaseSyncing(true);
+    try {
+      await signInWithGoogleFirebase();
+    } catch (err) {
+      setFirebaseSyncing(false);
+      setFirebaseError(
+        err instanceof Error
+          ? err.message
+          : 'Gagal menghubungkan akun Google ke Firebase.'
+      );
+    }
+  };
+
+  const handleDisconnectFirebase = async () => {
+    setFirebaseError(null);
+    await signOutFirebase();
+    setFirebaseUser(null);
+  };
+
+  const isCloudConnected = Boolean(firebaseUser && firebaseUser.emailVerified);
+
   // Login / Logout Handlers
   const handleLogin = (session: UserSession) => {
     setUserSession(session);
     setShowLoginToast(true);
 
-    // Update lastLogin in users state
+    // Update lastLogin in users state & Firestore
     const now = new Date();
     const formattedDate = `${now.toISOString().split('T')[0]} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    setUsers(prev => prev.map(u => (u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())) ? { ...u, lastLogin: formattedDate } : u));
+    const updatedUsers = users.map(u =>
+      u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
+        ? { ...u, lastLogin: formattedDate }
+        : u
+    );
+    setUsers(updatedUsers);
+    if (isCloudConnected) {
+      const targetUser = updatedUsers.find(
+        u => u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
+      );
+      if (targetUser) void upsertDocToFirestore('appUsers', targetUser);
+    }
 
     // Determine initial project scope
     const hasAllAccess = session.role === 'Super Admin' || session.assignedProjectIds?.includes('all');
@@ -282,17 +416,18 @@ export default function App() {
 
   // Beneficiary Handlers
   const handleSaveBeneficiary = (beneficiaryData: Omit<Beneficiary, 'id'> | Beneficiary) => {
+    let savedRecord: Beneficiary;
     if ('id' in beneficiaryData && beneficiaryData.id) {
-      // Edit
-      setBeneficiaries(prev => prev.map(b => b.id === beneficiaryData.id ? beneficiaryData as Beneficiary : b));
+      savedRecord = beneficiaryData as Beneficiary;
+      setBeneficiaries(prev => prev.map(b => b.id === savedRecord.id ? savedRecord : b));
     } else {
-      // Add
-      const newBeneficiary: Beneficiary = {
+      savedRecord = {
         ...beneficiaryData,
         id: `ben-${Date.now().toString().slice(-6)}`
       };
-      setBeneficiaries(prev => [newBeneficiary, ...prev]);
+      setBeneficiaries(prev => [savedRecord, ...prev]);
     }
+    if (isCloudConnected) void upsertDocToFirestore('beneficiaries', savedRecord);
     setEditingBeneficiary(null);
   };
 
@@ -302,14 +437,24 @@ export default function App() {
   };
 
   const handleDeleteBeneficiary = (id: string) => {
+    const removedAttendanceIds = attendances.filter(a => a.beneficiaryId === id).map(a => a.id);
     setBeneficiaries(prev => prev.filter(b => b.id !== id));
     setAttendances(prev => prev.filter(a => a.beneficiaryId !== id));
+    if (isCloudConnected) {
+      void deleteDocFromFirestore('beneficiaries', id);
+      if (removedAttendanceIds.length > 0) void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+    }
   };
 
   const handleDeleteMultipleBeneficiaries = (ids: string[]) => {
     const idSet = new Set(ids);
+    const removedAttendanceIds = attendances.filter(a => idSet.has(a.beneficiaryId)).map(a => a.id);
     setBeneficiaries(prev => prev.filter(b => !idSet.has(b.id)));
     setAttendances(prev => prev.filter(a => !idSet.has(a.beneficiaryId)));
+    if (isCloudConnected) {
+      void batchDeleteFromFirestore('beneficiaries', ids);
+      if (removedAttendanceIds.length > 0) void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+    }
   };
 
   const handleBatchImportBeneficiaries = (
@@ -334,6 +479,18 @@ export default function App() {
       // Prepend new unique beneficiaries
       return [...newItems, ...updatedList];
     });
+    if (isCloudConnected) {
+      void batchUpsertToFirestore('beneficiaries', [...newItems, ...updatedBeneficiariesData]);
+    }
+  };
+
+  const updateProjectAndSync = (projectId: string, updater: (project: Project) => Project) => {
+    const nextProjects = projects.map(p => (p.id === projectId ? updater(p) : p));
+    setProjects(nextProjects);
+    if (isCloudConnected) {
+      const updated = nextProjects.find(p => p.id === projectId);
+      if (updated) void upsertDocToFirestore('projects', updated);
+    }
   };
 
   // Project Handlers
@@ -344,6 +501,7 @@ export default function App() {
       setProjects(prev => [...prev, projectData]);
       setSelectedProjectId(projectData.id);
     }
+    if (isCloudConnected) void upsertDocToFirestore('projects', projectData);
     setEditingProject(null);
   };
 
@@ -360,8 +518,13 @@ export default function App() {
   };
 
   const handleConfirmDeleteProject = (projectId: string) => {
+    const removedAttendanceIds = attendances.filter(a => a.projectId === projectId).map(a => a.id);
     setProjects(prev => prev.filter(p => p.id !== projectId));
     setAttendances(prev => prev.filter(a => a.projectId !== projectId));
+    if (isCloudConnected) {
+      void deleteDocFromFirestore('projects', projectId);
+      if (removedAttendanceIds.length > 0) void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+    }
     if (selectedProjectId === projectId) {
       setSelectedProjectId('all');
     }
@@ -374,36 +537,23 @@ export default function App() {
       ...memberData,
       id: `tm-${Date.now().toString().slice(-5)}`
     };
-    setProjects(prev => prev.map(p => {
-      if (p.id === projectId) {
-        return {
-          ...p,
-          teamMembers: [...p.teamMembers, newMember]
-        };
-      }
-      return p;
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      teamMembers: [...p.teamMembers, newMember]
     }));
   };
 
   const handleUpdateTeamMember = (projectId: string, memberId: string, updatedData: Partial<TeamMember>) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        teamMembers: p.teamMembers.map(m => m.id === memberId ? { ...m, ...updatedData } : m)
-      };
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      teamMembers: p.teamMembers.map(m => m.id === memberId ? { ...m, ...updatedData } : m)
     }));
   };
 
   const handleRemoveTeamMember = (projectId: string, memberId: string) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id === projectId) {
-        return {
-          ...p,
-          teamMembers: p.teamMembers.filter(m => m.id !== memberId)
-        };
-      }
-      return p;
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      teamMembers: p.teamMembers.filter(m => m.id !== memberId)
     }));
   };
 
@@ -439,9 +589,7 @@ export default function App() {
       };
     };
 
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-
+    updateProjectAndSync(projectId, p => {
       const updatedGoalInds = p.goalIndicators?.map(ind => updateHelper(ind));
 
       const updatedOutcomes = p.outcomes.map(oc => {
@@ -466,7 +614,7 @@ export default function App() {
         goalIndicators: updatedGoalInds,
         outcomes: updatedOutcomes
       };
-    }));
+    });
   };
 
   const handleAddOutcome = (projectId: string, outcome: Partial<Outcome>) => {
@@ -480,37 +628,23 @@ export default function App() {
       outputs: outcome.outputs || []
     };
 
-    setProjects(prev => prev.map(p => {
-      if (p.id === projectId) {
-        return { ...p, outcomes: [...p.outcomes, newOc] };
-      }
-      return p;
-    }));
+    updateProjectAndSync(projectId, p => ({ ...p, outcomes: [...p.outcomes, newOc] }));
   };
 
   const handleUpdateOutcome = (projectId: string, outcomeId: string, updatedData: Partial<Outcome>) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        outcomes: p.outcomes.map(oc => {
-          if (oc.id !== outcomeId) return oc;
-          return {
-            ...oc,
-            ...updatedData
-          };
-        })
-      };
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      outcomes: p.outcomes.map(oc => {
+        if (oc.id !== outcomeId) return oc;
+        return { ...oc, ...updatedData };
+      })
     }));
   };
 
   const handleDeleteOutcome = (projectId: string, outcomeId: string) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        outcomes: p.outcomes.filter(oc => oc.id !== outcomeId)
-      };
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      outcomes: p.outcomes.filter(oc => oc.id !== outcomeId)
     }));
   };
 
@@ -526,53 +660,41 @@ export default function App() {
       activities: output.activities || []
     };
 
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        outcomes: p.outcomes.map(oc => {
-          if (oc.id !== outcomeId) return oc;
-          return { ...oc, outputs: [...oc.outputs, newOp] };
-        })
-      };
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      outcomes: p.outcomes.map(oc => {
+        if (oc.id !== outcomeId) return oc;
+        return { ...oc, outputs: [...oc.outputs, newOp] };
+      })
     }));
   };
 
   const handleUpdateOutput = (projectId: string, outcomeId: string, outputId: string, updatedData: Partial<Output>) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        outcomes: p.outcomes.map(oc => {
-          if (oc.id !== outcomeId) return oc;
-          return {
-            ...oc,
-            outputs: oc.outputs.map(op => {
-              if (op.id !== outputId) return op;
-              return {
-                ...op,
-                ...updatedData
-              };
-            })
-          };
-        })
-      };
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      outcomes: p.outcomes.map(oc => {
+        if (oc.id !== outcomeId) return oc;
+        return {
+          ...oc,
+          outputs: oc.outputs.map(op => {
+            if (op.id !== outputId) return op;
+            return { ...op, ...updatedData };
+          })
+        };
+      })
     }));
   };
 
   const handleDeleteOutput = (projectId: string, outcomeId: string, outputId: string) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        outcomes: p.outcomes.map(oc => {
-          if (oc.id !== outcomeId) return oc;
-          return {
-            ...oc,
-            outputs: oc.outputs.filter(op => op.id !== outputId)
-          };
-        })
-      };
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      outcomes: p.outcomes.map(oc => {
+        if (oc.id !== outcomeId) return oc;
+        return {
+          ...oc,
+          outputs: oc.outputs.filter(op => op.id !== outputId)
+        };
+      })
     }));
   };
 
@@ -586,9 +708,7 @@ export default function App() {
       };
     };
 
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-
+    updateProjectAndSync(projectId, p => {
       const updatedGoalInds = p.goalIndicators?.map(ind => updateDetails(ind));
 
       const updatedOutcomes = p.outcomes.map(oc => {
@@ -613,13 +733,11 @@ export default function App() {
         goalIndicators: updatedGoalInds,
         outcomes: updatedOutcomes
       };
-    }));
+    });
   };
 
   const handleDeleteIndicator = (projectId: string, indicatorId: string) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-
+    updateProjectAndSync(projectId, p => {
       const updatedGoalInds = p.goalIndicators?.filter(ind => ind.id !== indicatorId);
 
       const updatedOutcomes = p.outcomes.map(oc => {
@@ -644,7 +762,7 @@ export default function App() {
         goalIndicators: updatedGoalInds,
         outcomes: updatedOutcomes
       };
-    }));
+    });
   };
 
   const handleOpenNewActivity = (projectId?: string, outputId?: string) => {
@@ -683,9 +801,7 @@ export default function App() {
       createdAt: activityData.createdAt || new Date().toISOString()
     };
 
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-
+    updateProjectAndSync(projectId, p => {
       // Check if this activity already exists in any output to update it
       let activityUpdated = false;
 
@@ -716,14 +832,19 @@ export default function App() {
 
       // If output wasn't matched directly (e.g. first outcome/output fallback)
       if (!activityUpdated && updatedOutcomes[0]?.outputs[0]) {
-        updatedOutcomes[0].outputs[0].activities.push(newAct);
+        updatedOutcomes[0] = {
+          ...updatedOutcomes[0],
+          outputs: updatedOutcomes[0].outputs.map((op, idx) =>
+            idx === 0 ? { ...op, activities: [...op.activities, newAct] } : op
+          ),
+        };
       }
 
       return {
         ...p,
         outcomes: updatedOutcomes
       };
-    }));
+    });
 
     setShowActivityModal(false);
     setEditingActivity(null);
@@ -734,20 +855,21 @@ export default function App() {
   };
 
   const handleDeleteActivity = (projectId: string, activityId: string) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-      return {
-        ...p,
-        outcomes: p.outcomes.map(oc => ({
-          ...oc,
-          outputs: oc.outputs.map(op => ({
-            ...op,
-            activities: op.activities.filter(a => a.id !== activityId)
-          }))
+    const removedAttendanceIds = attendances.filter(att => att.activityId === activityId).map(att => att.id);
+    updateProjectAndSync(projectId, p => ({
+      ...p,
+      outcomes: p.outcomes.map(oc => ({
+        ...oc,
+        outputs: oc.outputs.map(op => ({
+          ...op,
+          activities: op.activities.filter(a => a.id !== activityId)
         }))
-      };
+      }))
     }));
     setAttendances(prev => prev.filter(att => att.activityId !== activityId));
+    if (isCloudConnected && removedAttendanceIds.length > 0) {
+      void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+    }
   };
 
   const handleAddIndicator = (
@@ -768,15 +890,13 @@ export default function App() {
       actual: indicator.actual || 0,
       unit: indicator.unit || 'Orang / Individu',
       meansOfVerification: indicator.meansOfVerification || 'Daftar Presensi / Laporan',
-      frequency: indicator.frequency || 'Triwulanan',
+      frequency: indicator.frequency || 'Kuartal',
       disaggregationRequired: indicator.disaggregationRequired ?? true,
       status: indicator.status || 'Belum Dimulai',
       lastUpdated: new Date().toISOString().split('T')[0]
     };
 
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-
+    updateProjectAndSync(projectId, p => {
       if (parentLevel === 'Goal') {
         return { ...p, goalIndicators: [...(p.goalIndicators || []), newInd] };
       }
@@ -821,7 +941,7 @@ export default function App() {
       }
 
       return p;
-    }));
+    });
   };
 
   // Attendance Handlers
@@ -838,119 +958,146 @@ export default function App() {
       id: `att-${Date.now().toString().slice(-6)}`
     };
     setAttendances(prev => [newAtt, ...prev]);
+    if (isCloudConnected) void upsertDocToFirestore('attendances', newAtt);
     return { success: true, message: 'Peserta berhasil ditambahkan ke daftar hadir.' };
   };
 
   const handleRemoveAttendance = (attendanceId: string) => {
     setAttendances(prev => prev.filter(a => a.id !== attendanceId));
+    if (isCloudConnected) void deleteDocFromFirestore('attendances', attendanceId);
   };
 
   const handleRestoreBackup = (backupData: any) => {
-    if (backupData.projects) setProjects(backupData.projects);
-    if (backupData.beneficiaries) setBeneficiaries(backupData.beneficiaries);
-    if (backupData.attendances) setAttendances(backupData.attendances);
-    if (backupData.knowledgeProducts) setKnowledgeProducts(backupData.knowledgeProducts);
-    if (backupData.storiesOfChange) setStoriesOfChange(backupData.storiesOfChange);
-    if (backupData.mediaCoverages) setMediaCoverages(backupData.mediaCoverages);
-    if (backupData.learnings) setLearnings(backupData.learnings);
-    if (backupData.reports) setReports(backupData.reports);
-    else if (backupData.deliverables) setReports(backupData.deliverables);
+    if (backupData.projects) {
+      setProjects(backupData.projects);
+      if (isCloudConnected) void batchUpsertToFirestore('projects', backupData.projects);
+    }
+    if (backupData.beneficiaries) {
+      setBeneficiaries(backupData.beneficiaries);
+      if (isCloudConnected) void batchUpsertToFirestore('beneficiaries', backupData.beneficiaries);
+    }
+    if (backupData.attendances) {
+      setAttendances(backupData.attendances);
+      if (isCloudConnected) void batchUpsertToFirestore('attendances', backupData.attendances);
+    }
+    if (backupData.accompaniedGroups) {
+      setAccompaniedGroups(backupData.accompaniedGroups);
+      if (isCloudConnected) void batchUpsertToFirestore('accompaniedGroups', backupData.accompaniedGroups);
+    }
+    if (backupData.knowledgeProducts) {
+      setKnowledgeProducts(backupData.knowledgeProducts);
+      if (isCloudConnected) void batchUpsertToFirestore('knowledgeProducts', backupData.knowledgeProducts);
+    }
+    if (backupData.storiesOfChange) {
+      setStoriesOfChange(backupData.storiesOfChange);
+      if (isCloudConnected) void batchUpsertToFirestore('storiesOfChange', backupData.storiesOfChange);
+    }
+    if (backupData.mediaCoverages) {
+      setMediaCoverages(backupData.mediaCoverages);
+      if (isCloudConnected) void batchUpsertToFirestore('mediaCoverages', backupData.mediaCoverages);
+    }
+    if (backupData.learnings) {
+      setLearnings(backupData.learnings);
+      if (isCloudConnected) void batchUpsertToFirestore('learnings', backupData.learnings);
+    }
+    if (backupData.reports) {
+      setReports(backupData.reports);
+      if (isCloudConnected) void batchUpsertToFirestore('reports', backupData.reports);
+    } else if (backupData.deliverables) {
+      setReports(backupData.deliverables);
+      if (isCloudConnected) void batchUpsertToFirestore('reports', backupData.deliverables);
+    }
   };
 
   // Reports Handlers
   const handleSaveReport = (item: ReportItem) => {
-    setReports(prev => {
-      const exists = prev.some(d => d.id === item.id);
-      if (exists) {
-        return prev.map(d => d.id === item.id ? { ...item, updatedAt: new Date().toISOString() } : d);
-      }
-      return [{ ...item, createdAt: item.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() }, ...prev];
-    });
+    const exists = reports.some(d => d.id === item.id);
+    const savedItem: ReportItem = exists
+      ? { ...item, updatedAt: new Date().toISOString() }
+      : { ...item, createdAt: item.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+    setReports(prev => (exists ? prev.map(d => d.id === item.id ? savedItem : d) : [savedItem, ...prev]));
+    if (isCloudConnected) void upsertDocToFirestore('reports', savedItem);
   };
 
   const handleDeleteReport = (id: string) => {
     setReports(prev => prev.filter(d => d.id !== id));
+    if (isCloudConnected) void deleteDocFromFirestore('reports', id);
   };
 
   const handleUpdateReportStatus = (id: string, status: ReportStatus, reviewNotes?: string) => {
-    setReports(prev => prev.map(d => {
-      if (d.id !== id) return d;
-      return {
-        ...d,
-        status,
-        reviewNotes: reviewNotes !== undefined ? reviewNotes : d.reviewNotes,
-        updatedAt: new Date().toISOString()
-      };
-    }));
+    const target = reports.find(d => d.id === id);
+    if (!target) return;
+    const updatedItem: ReportItem = {
+      ...target,
+      status,
+      reviewNotes: reviewNotes !== undefined ? reviewNotes : target.reviewNotes,
+      updatedAt: new Date().toISOString()
+    };
+    setReports(prev => prev.map(d => (d.id === id ? updatedItem : d)));
+    if (isCloudConnected) void upsertDocToFirestore('reports', updatedItem);
   };
 
   // Learning Matrix Handlers
   const handleSaveLearning = (item: ProjectLearning) => {
-    setLearnings(prev => {
-      const exists = prev.some(l => l.id === item.id);
-      if (exists) {
-        return prev.map(l => l.id === item.id ? { ...item, updatedAt: new Date().toISOString() } : l);
-      }
-      return [item, ...prev];
-    });
+    const exists = learnings.some(l => l.id === item.id);
+    const savedItem: ProjectLearning = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
+    setLearnings(prev => (exists ? prev.map(l => l.id === item.id ? savedItem : l) : [savedItem, ...prev]));
+    if (isCloudConnected) void upsertDocToFirestore('learnings', savedItem);
   };
 
   const handleDeleteLearning = (id: string) => {
     setLearnings(prev => prev.filter(l => l.id !== id));
+    if (isCloudConnected) void deleteDocFromFirestore('learnings', id);
   };
 
   // Publication Handlers: Knowledge Products
   const handleSaveKnowledgeProduct = (item: KnowledgeProduct) => {
-    setKnowledgeProducts(prev => {
-      const exists = prev.some(k => k.id === item.id);
-      if (exists) {
-        return prev.map(k => k.id === item.id ? { ...item, updatedAt: new Date().toISOString() } : k);
-      }
-      return [item, ...prev];
-    });
+    const exists = knowledgeProducts.some(k => k.id === item.id);
+    const savedItem: KnowledgeProduct = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
+    setKnowledgeProducts(prev => (exists ? prev.map(k => k.id === item.id ? savedItem : k) : [savedItem, ...prev]));
+    if (isCloudConnected) void upsertDocToFirestore('knowledgeProducts', savedItem);
   };
 
   const handleDeleteKnowledgeProduct = (id: string) => {
     setKnowledgeProducts(prev => prev.filter(k => k.id !== id));
+    if (isCloudConnected) void deleteDocFromFirestore('knowledgeProducts', id);
   };
 
   // Publication Handlers: Stories of Change
   const handleSaveStoryOfChange = (item: StoryOfChange) => {
-    setStoriesOfChange(prev => {
-      const exists = prev.some(s => s.id === item.id);
-      if (exists) {
-        return prev.map(s => s.id === item.id ? { ...item, updatedAt: new Date().toISOString() } : s);
-      }
-      return [item, ...prev];
-    });
+    const exists = storiesOfChange.some(s => s.id === item.id);
+    const savedItem: StoryOfChange = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
+    setStoriesOfChange(prev => (exists ? prev.map(s => s.id === item.id ? savedItem : s) : [savedItem, ...prev]));
+    if (isCloudConnected) void upsertDocToFirestore('storiesOfChange', savedItem);
   };
 
   const handleDeleteStoryOfChange = (id: string) => {
     setStoriesOfChange(prev => prev.filter(s => s.id !== id));
+    if (isCloudConnected) void deleteDocFromFirestore('storiesOfChange', id);
   };
 
   // Publication Handlers: Media Coverage
   const handleSaveMediaCoverage = (item: MediaCoverage) => {
-    setMediaCoverages(prev => {
-      const exists = prev.some(m => m.id === item.id);
-      if (exists) {
-        return prev.map(m => m.id === item.id ? { ...item, updatedAt: new Date().toISOString() } : m);
-      }
-      return [item, ...prev];
-    });
+    const exists = mediaCoverages.some(m => m.id === item.id);
+    const savedItem: MediaCoverage = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
+    setMediaCoverages(prev => (exists ? prev.map(m => m.id === item.id ? savedItem : m) : [savedItem, ...prev]));
+    if (isCloudConnected) void upsertDocToFirestore('mediaCoverages', savedItem);
   };
 
   const handleDeleteMediaCoverage = (id: string) => {
     setMediaCoverages(prev => prev.filter(m => m.id !== id));
+    if (isCloudConnected) void deleteDocFromFirestore('mediaCoverages', id);
   };
 
   // User Management Handlers
   const handleAddUser = (newUser: UserAccount) => {
     setUsers(prev => [newUser, ...prev]);
+    if (isCloudConnected) void upsertDocToFirestore('appUsers', newUser);
   };
 
   const handleUpdateUser = (updatedUser: UserAccount) => {
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+    if (isCloudConnected) void upsertDocToFirestore('appUsers', updatedUser);
     if (userSession && (userSession.id === updatedUser.id || (userSession.username && userSession.username.toLowerCase() === updatedUser.username.toLowerCase()))) {
       setUserSession(prev => prev ? {
         ...prev,
@@ -967,67 +1114,77 @@ export default function App() {
 
   const handleDeleteUser = (userId: string) => {
     setUsers(prev => prev.filter(u => u.id !== userId));
+    if (isCloudConnected) void deleteDocFromFirestore('appUsers', userId);
   };
 
   // Error Report Handlers
   const handleAddErrorReport = (newReport: ErrorReport) => {
     setErrorReports(prev => [newReport, ...prev]);
+    if (isCloudConnected) void upsertDocToFirestore('errorReports', newReport);
   };
 
   const handleUpdateErrorReport = (updatedReport: ErrorReport) => {
     setErrorReports(prev => prev.map(r => r.id === updatedReport.id ? updatedReport : r));
+    if (isCloudConnected) void upsertDocToFirestore('errorReports', updatedReport);
   };
 
   const handleDeleteErrorReport = (reportId: string) => {
     setErrorReports(prev => prev.filter(r => r.id !== reportId));
+    if (isCloudConnected) void deleteDocFromFirestore('errorReports', reportId);
   };
 
   // Accompanied Community Groups Handlers
   const handleAddAccompaniedGroup = (newGroup: AccompaniedGroup) => {
     setAccompaniedGroups(prev => [newGroup, ...prev]);
+    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', newGroup);
   };
 
   const handleUpdateAccompaniedGroup = (updatedGroup: AccompaniedGroup) => {
     setAccompaniedGroups(prev => prev.map(g => g.id === updatedGroup.id ? updatedGroup : g));
+    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
   };
 
   const handleDeleteAccompaniedGroup = (groupId: string) => {
     setAccompaniedGroups(prev => prev.filter(g => g.id !== groupId));
+    if (isCloudConnected) void deleteDocFromFirestore('accompaniedGroups', groupId);
   };
 
   const handleAddMembersToGroup = (groupId: string, newMembers: AccompaniedGroupMember[]) => {
-    setAccompaniedGroups(prev => prev.map(g => {
-      if (g.id !== groupId) return g;
-      const existingIds = new Set(g.members.map(m => m.beneficiaryId));
-      const filteredNew = newMembers.filter(m => !existingIds.has(m.beneficiaryId));
-      return {
-        ...g,
-        members: [...g.members, ...filteredNew],
-        updatedAt: new Date().toISOString().slice(0, 10)
-      };
-    }));
+    const target = accompaniedGroups.find(g => g.id === groupId);
+    if (!target) return;
+    const existingIds = new Set(target.members.map(m => m.beneficiaryId));
+    const filteredNew = newMembers.filter(m => !existingIds.has(m.beneficiaryId));
+    const updatedGroup: AccompaniedGroup = {
+      ...target,
+      members: [...target.members, ...filteredNew],
+      updatedAt: new Date().toISOString().slice(0, 10)
+    };
+    setAccompaniedGroups(prev => prev.map(g => (g.id === groupId ? updatedGroup : g)));
+    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
   };
 
   const handleRemoveMemberFromGroup = (groupId: string, beneficiaryId: string) => {
-    setAccompaniedGroups(prev => prev.map(g => {
-      if (g.id !== groupId) return g;
-      return {
-        ...g,
-        members: g.members.filter(m => m.beneficiaryId !== beneficiaryId),
-        updatedAt: new Date().toISOString().slice(0, 10)
-      };
-    }));
+    const target = accompaniedGroups.find(g => g.id === groupId);
+    if (!target) return;
+    const updatedGroup: AccompaniedGroup = {
+      ...target,
+      members: target.members.filter(m => m.beneficiaryId !== beneficiaryId),
+      updatedAt: new Date().toISOString().slice(0, 10)
+    };
+    setAccompaniedGroups(prev => prev.map(g => (g.id === groupId ? updatedGroup : g)));
+    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
   };
 
   const handleUpdateMemberRole = (groupId: string, beneficiaryId: string, newRole: string) => {
-    setAccompaniedGroups(prev => prev.map(g => {
-      if (g.id !== groupId) return g;
-      return {
-        ...g,
-        members: g.members.map(m => m.beneficiaryId === beneficiaryId ? { ...m, roleInGroup: newRole } : m),
-        updatedAt: new Date().toISOString().slice(0, 10)
-      };
-    }));
+    const target = accompaniedGroups.find(g => g.id === groupId);
+    if (!target) return;
+    const updatedGroup: AccompaniedGroup = {
+      ...target,
+      members: target.members.map(m => m.beneficiaryId === beneficiaryId ? { ...m, roleInGroup: newRole } : m),
+      updatedAt: new Date().toISOString().slice(0, 10)
+    };
+    setAccompaniedGroups(prev => prev.map(g => (g.id === groupId ? updatedGroup : g)));
+    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
   };
 
   // Projects sorted by Start Date & Year
@@ -1052,6 +1209,40 @@ export default function App() {
            (userSession.username && u.username.toLowerCase() === userSession.username.toLowerCase())
     ) || null;
   }, [users, userSession]);
+
+  // Keep active userSession in sync if account details change from another device via Firestore
+  useEffect(() => {
+    if (!userSession || !currentUserAccount) return;
+    const nextProjects =
+      currentUserAccount.assignedProjectIds && currentUserAccount.assignedProjectIds.length > 0
+        ? currentUserAccount.assignedProjectIds
+        : ['all'];
+    const projectsChanged =
+      JSON.stringify(userSession.assignedProjectIds || []) !== JSON.stringify(nextProjects);
+    if (
+      userSession.name !== currentUserAccount.fullName ||
+      userSession.email !== currentUserAccount.email ||
+      userSession.username !== currentUserAccount.username ||
+      userSession.role !== currentUserAccount.role ||
+      userSession.avatarUrl !== currentUserAccount.avatarUrl ||
+      projectsChanged
+    ) {
+      setUserSession(prev =>
+        prev
+          ? {
+              ...prev,
+              id: currentUserAccount.id,
+              username: currentUserAccount.username,
+              name: currentUserAccount.fullName,
+              email: currentUserAccount.email,
+              role: currentUserAccount.role,
+              assignedProjectIds: nextProjects,
+              avatarUrl: currentUserAccount.avatarUrl,
+            }
+          : prev
+      );
+    }
+  }, [currentUserAccount, userSession]);
 
   const isAdmin = userSession?.role === 'Super Admin' || userSession?.role === 'Admin';
   const canEdit = isAdmin || userSession?.role === 'Staff M&E' || userSession?.role === 'Field Coordinator';
@@ -1131,9 +1322,7 @@ export default function App() {
     doc: MoVDocument,
     indicatorId?: string
   ) => {
-    setProjects(prev => prev.map(p => {
-      if (p.id !== projectId) return p;
-
+    updateProjectAndSync(projectId, p => {
       const appendToInd = (ind: Indicator): Indicator => {
         const existingDocs = ind.movDocuments || [];
         return {
@@ -1164,7 +1353,7 @@ export default function App() {
             unit: 'Dokumen / Kebijakan',
             meansOfVerification: doc.title,
             movDocuments: [doc],
-            frequency: 'Tahunan',
+            frequency: 'Annual',
             status: 'Tercapai',
             lastUpdated: new Date().toISOString().split('T')[0]
           };
@@ -1200,7 +1389,7 @@ export default function App() {
                 unit: 'Dokumen / Kebijakan',
                 meansOfVerification: doc.title,
                 movDocuments: [doc],
-                frequency: 'Semesteran',
+                frequency: 'Mid Year',
                 status: 'Tercapai',
                 lastUpdated: new Date().toISOString().split('T')[0]
               };
@@ -1240,7 +1429,7 @@ export default function App() {
                   unit: 'Dokumen / Kebijakan',
                   meansOfVerification: doc.title,
                   movDocuments: [doc],
-                  frequency: 'Triwulanan',
+                  frequency: 'Kuartal',
                   status: 'Tercapai',
                   lastUpdated: new Date().toISOString().split('T')[0]
                 };
@@ -1299,20 +1488,22 @@ export default function App() {
       }
 
       return p;
-    }));
+    });
   };
 
   const handleDeleteMoVDocument = (projectId: string, docId: string) => {
-    setProjects(prev => prev.map(p => {
-      // If a specific projectId is provided and it's not 'all', only process that project (unless searching globally)
+    const changedProjects: Project[] = [];
+    const nextProjects = projects.map(p => {
       if (projectId && projectId !== 'all' && p.id !== projectId) {
         return p;
       }
 
+      let modified = false;
       const filterDocs = (ind: Indicator): Indicator => {
         const hasDoc = ind.movDocuments?.some(d => d.id === docId);
         const hasHistoryDoc = ind.progressHistory?.some(h => h.movDocuments?.some(d => d.id === docId));
         if (!hasDoc && !hasHistoryDoc) return ind;
+        modified = true;
 
         return {
           ...ind,
@@ -1340,12 +1531,19 @@ export default function App() {
         return { ...oc, indicators: ocInds, outputs: updatedOutputs };
       });
 
-      return {
+      const updatedProj = {
         ...p,
         goalIndicators: updatedGoalInds,
         outcomes: updatedOutcomes
       };
-    }));
+      if (modified) changedProjects.push(updatedProj);
+      return updatedProj;
+    });
+
+    setProjects(nextProjects);
+    if (isCloudConnected && changedProjects.length > 0) {
+      void batchUpsertToFirestore('projects', changedProjects);
+    }
   };
 
   // If in Public Visitor Mode, display the Public Home & Statistics Page
@@ -1372,9 +1570,19 @@ export default function App() {
         projects={sortedProjects}
         onLogin={handleLogin} 
         onResetPassword={(userId, newPassword) => {
-          setUsers(prev => prev.map(u => u.id === userId ? { ...u, password: newPassword } : u));
+          const updatedUsers = users.map(u => u.id === userId ? { ...u, password: newPassword } : u);
+          setUsers(updatedUsers);
+          if (isCloudConnected) {
+            const target = updatedUsers.find(u => u.id === userId);
+            if (target) void upsertDocToFirestore('appUsers', target);
+          }
         }}
-        onBackToPublic={() => setViewMode('public')} 
+        onBackToPublic={() => setViewMode('public')}
+        firebaseUser={firebaseUser ? { email: firebaseUser.email, uid: firebaseUser.uid } : null}
+        firebaseSyncing={firebaseSyncing}
+        firebaseError={firebaseError}
+        onConnectFirebase={handleConnectFirebase}
+        onDisconnectFirebase={handleDisconnectFirebase}
       />
     );
   }
@@ -1405,6 +1613,10 @@ export default function App() {
       onOpenAccountSettings={() => setShowAccountSettingsModal(true)}
       showLoginToast={showLoginToast}
       onDismissToast={() => setShowLoginToast(false)}
+      firebaseUser={firebaseUser ? { email: firebaseUser.email, uid: firebaseUser.uid } : null}
+      firebaseSyncing={firebaseSyncing}
+      onConnectFirebase={handleConnectFirebase}
+      onDisconnectFirebase={handleDisconnectFirebase}
     >
       {/* Dynamic View by Selected Tab */}
       {currentTab === 'dashboard' && (

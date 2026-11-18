@@ -61,8 +61,10 @@ export default function IndicatorPeriodicUpdateModal({
   const [activeTab, setActiveTab] = useState<'update' | 'mov' | 'history'>('update');
 
   // Periodic input states
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState<string>(String(currentYear >= 2024 && currentYear <= 2028 ? currentYear : 2026));
   const [periodType, setPeriodType] = useState<'preset' | 'custom'>('preset');
-  const [periodPreset, setPeriodPreset] = useState<string>('Triwulan 1 (Q1) 2025');
+  const [periodPresetKey, setPeriodPresetKey] = useState<string>('Kuartal 1 (Q1)');
   const [customPeriod, setCustomPeriod] = useState<string>('');
   const [dateRecorded, setDateRecorded] = useState<string>(new Date().toISOString().split('T')[0]);
   
@@ -147,7 +149,9 @@ export default function IndicatorPeriodicUpdateModal({
   };
 
   const handleSave = () => {
-    const finalPeriodLabel = periodType === 'preset' ? periodPreset : (customPeriod.trim() || (isId ? 'Periode Baru' : 'New Period'));
+    const finalPeriodLabel = periodType === 'preset'
+      ? `${periodPresetKey} ${selectedYear}`
+      : (customPeriod.trim() || (isId ? 'Periode Baru' : 'New Period'));
 
     const periodicLog: PeriodicProgressLog = {
       id: `log-${Date.now().toString().slice(-6)}`,
@@ -280,41 +284,69 @@ export default function IndicatorPeriodicUpdateModal({
               {/* Periode Pelaporan */}
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">
-                  {isId ? 'Periode Pelaporan:' : 'Reporting Period:'}
+                  {isId ? 'Periode Pelaporan (Bulanan / Kuartal / Mid Year / Annual):' : 'Reporting Period (Monthly / Quarterly / Mid Year / Annual):'}
                 </label>
                 <div className="space-y-1.5">
-                  <select
-                    value={periodType === 'preset' ? periodPreset : 'custom'}
-                    onChange={(e) => {
-                      if (e.target.value === 'custom') {
-                        setPeriodType('custom');
-                      } else {
-                        setPeriodType('preset');
-                        setPeriodPreset(e.target.value);
-                      }
-                    }}
-                    className="w-full text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-medium"
-                  >
-                    <option value="Bulan Januari 2025">{isId ? 'Bulan Januari 2025' : 'January 2025'}</option>
-                    <option value="Bulan Februari 2025">{isId ? 'Bulan Februari 2025' : 'February 2025'}</option>
-                    <option value="Bulan Maret 2025">{isId ? 'Bulan Maret 2025' : 'March 2025'}</option>
-                    <option value="Bulan April 2025">{isId ? 'Bulan April 2025' : 'April 2025'}</option>
-                    <option value="Bulan Mei 2025">{isId ? 'Bulan Mei 2025' : 'May 2025'}</option>
-                    <option value="Bulan Juni 2025">{isId ? 'Bulan Juni 2025' : 'June 2025'}</option>
-                    <option value="Triwulan 1 (Q1) 2025">{isId ? 'Triwulan 1 (Q1) 2025' : 'Quarter 1 (Q1) 2025'}</option>
-                    <option value="Triwulan 2 (Q2) 2025">{isId ? 'Triwulan 2 (Q2) 2025' : 'Quarter 2 (Q2) 2025'}</option>
-                    <option value="Triwulan 3 (Q3) 2025">{isId ? 'Triwulan 3 (Q3) 2025' : 'Quarter 3 (Q3) 2025'}</option>
-                    <option value="Triwulan 4 (Q4) 2025">{isId ? 'Triwulan 4 (Q4) 2025' : 'Quarter 4 (Q4) 2025'}</option>
-                    <option value="Semester 1 2025">{isId ? 'Semester 1 2025' : 'Semester 1 2025'}</option>
-                    <option value="Semester 2 2025">{isId ? 'Semester 2 2025' : 'Semester 2 2025'}</option>
-                    <option value="Tahunan 2025">{isId ? 'Tahunan 2025' : 'Annual 2025'}</option>
-                    <option value="custom">{isId ? '+ Kustom Periode Lainnya...' : '+ Custom Other Period...'}</option>
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={periodType === 'preset' ? periodPresetKey : 'custom'}
+                      onChange={(e) => {
+                        if (e.target.value === 'custom') {
+                          setPeriodType('custom');
+                        } else {
+                          setPeriodType('preset');
+                          setPeriodPresetKey(e.target.value);
+                        }
+                      }}
+                      className="flex-1 min-w-0 text-xs p-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-medium bg-white"
+                    >
+                      <optgroup label={isId ? 'Bulanan (Monthly)' : 'Monthly'}>
+                        <option value="Bulan Januari">{isId ? `Bulan Januari ${selectedYear}` : `January ${selectedYear}`}</option>
+                        <option value="Bulan Februari">{isId ? `Bulan Februari ${selectedYear}` : `February ${selectedYear}`}</option>
+                        <option value="Bulan Maret">{isId ? `Bulan Maret ${selectedYear}` : `March ${selectedYear}`}</option>
+                        <option value="Bulan April">{isId ? `Bulan April ${selectedYear}` : `April ${selectedYear}`}</option>
+                        <option value="Bulan Mei">{isId ? `Bulan Mei ${selectedYear}` : `May ${selectedYear}`}</option>
+                        <option value="Bulan Juni">{isId ? `Bulan Juni ${selectedYear}` : `June ${selectedYear}`}</option>
+                        <option value="Bulan Juli">{isId ? `Bulan Juli ${selectedYear}` : `July ${selectedYear}`}</option>
+                        <option value="Bulan Agustus">{isId ? `Bulan Agustus ${selectedYear}` : `August ${selectedYear}`}</option>
+                        <option value="Bulan September">{isId ? `Bulan September ${selectedYear}` : `September ${selectedYear}`}</option>
+                        <option value="Bulan Oktober">{isId ? `Bulan Oktober ${selectedYear}` : `October ${selectedYear}`}</option>
+                        <option value="Bulan November">{isId ? `Bulan November ${selectedYear}` : `November ${selectedYear}`}</option>
+                        <option value="Bulan Desember">{isId ? `Bulan Desember ${selectedYear}` : `December ${selectedYear}`}</option>
+                      </optgroup>
+                      <optgroup label={isId ? 'Kuartal (Quarterly)' : 'Quarterly'}>
+                        <option value="Kuartal 1 (Q1)">{isId ? `Kuartal 1 (Q1) ${selectedYear}` : `Quarter 1 (Q1) ${selectedYear}`}</option>
+                        <option value="Kuartal 2 (Q2)">{isId ? `Kuartal 2 (Q2) ${selectedYear}` : `Quarter 2 (Q2) ${selectedYear}`}</option>
+                        <option value="Kuartal 3 (Q3)">{isId ? `Kuartal 3 (Q3) ${selectedYear}` : `Quarter 3 (Q3) ${selectedYear}`}</option>
+                        <option value="Kuartal 4 (Q4)">{isId ? `Kuartal 4 (Q4) ${selectedYear}` : `Quarter 4 (Q4) ${selectedYear}`}</option>
+                      </optgroup>
+                      <optgroup label="Mid Year & Annual">
+                        <option value="Mid Year">{`Mid Year ${selectedYear}`}</option>
+                        <option value="Annual">{`Annual ${selectedYear}`}</option>
+                      </optgroup>
+                      <option value="custom">{isId ? '+ Kustom Periode Lainnya...' : '+ Custom Other Period...'}</option>
+                    </select>
+
+                    {periodType === 'preset' && (
+                      <select
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(e.target.value)}
+                        aria-label={isId ? 'Tahun Periode' : 'Period Year'}
+                        className="w-20 shrink-0 text-xs p-2 rounded-lg border border-orange-200 bg-orange-50/50 text-orange-900 focus:ring-2 focus:ring-orange-500 font-bold"
+                      >
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                      </select>
+                    )}
+                  </div>
 
                   {periodType === 'custom' && (
                     <input
                       type="text"
-                      placeholder={isId ? 'Masukkan nama periode kustom (misal: Monev Lapangan Mei 2025)' : 'Enter custom period name (e.g. Field M&E May 2025)'}
+                      placeholder={isId ? 'Masukkan nama periode kustom (misal: Monev Lapangan Mei 2026)' : 'Enter custom period name (e.g. Field M&E May 2026)'}
                       value={customPeriod}
                       onChange={(e) => setCustomPeriod(e.target.value)}
                       className="w-full text-xs p-2 rounded-lg border border-orange-300 focus:ring-2 focus:ring-orange-500"

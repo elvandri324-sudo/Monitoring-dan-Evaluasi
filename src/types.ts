@@ -118,7 +118,7 @@ export interface Indicator {
   meansOfVerification: string; // Deskripsi metode / jenis bukti verifikasi
   movDocuments?: MoVDocument[]; // Koleksi dokumen fisik/digital MoV terlampir
   progressHistory?: PeriodicProgressLog[]; // Riwayat pencatatan capaian berkala
-  frequency: 'Bulanan' | 'Triwulanan' | 'Semesteran' | 'Tahunan' | 'Akhir Proyek';
+  frequency: 'Bulanan' | 'Kuartal' | 'Mid Year' | 'Annual' | 'Triwulanan' | 'Semesteran' | 'Tahunan' | 'Akhir Proyek';
   status: StatusProgress;
   notes?: string;
   lastUpdated: string;
@@ -358,6 +358,7 @@ export interface KnowledgeProduct {
   releaseDate?: string;
   coverImageUrl?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 // ==========================================
@@ -379,6 +380,7 @@ export interface StoryOfChange {
   authorOrWriter?: string;
   dateRecorded: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 // ==========================================
@@ -404,6 +406,7 @@ export interface MediaCoverage {
   releaseDate: string;
   summaryNotes?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export type Language = 'id' | 'en';

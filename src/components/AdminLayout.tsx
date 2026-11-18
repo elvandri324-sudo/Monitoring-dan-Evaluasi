@@ -26,7 +26,9 @@ import {
   Bug,
   Edit3,
   Building2,
-  KeyRound
+  KeyRound,
+  Cloud,
+  CloudOff
 } from 'lucide-react';
 import { Project, UserSession } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -63,6 +65,10 @@ interface AdminLayoutProps {
   onOpenAccountSettings?: () => void;
   showLoginToast: boolean;
   onDismissToast: () => void;
+  firebaseUser?: { email: string | null; uid: string } | null;
+  firebaseSyncing?: boolean;
+  onConnectFirebase?: () => void;
+  onDisconnectFirebase?: () => void;
   children: ReactNode;
 }
 
@@ -83,6 +89,10 @@ export default function AdminLayout({
   onOpenAccountSettings,
   showLoginToast,
   onDismissToast,
+  firebaseUser,
+  firebaseSyncing = false,
+  onConnectFirebase,
+  onDisconnectFirebase,
   children
 }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -221,6 +231,52 @@ export default function AdminLayout({
 
         {/* Sidebar Bottom Actions */}
         <div className="pt-4 border-t border-orange-100 space-y-3">
+          {/* Firebase Cloud Sync Control */}
+          <div className={`px-3 py-2 rounded-xl border text-xs space-y-1.5 ${
+            firebaseUser
+              ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
+              : 'bg-orange-50/70 border-orange-200 text-slate-800'
+          }`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                {firebaseUser ? (
+                  <Cloud className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                ) : (
+                  <CloudOff className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                )}
+                <span className="font-bold truncate">
+                  {firebaseUser
+                    ? (firebaseSyncing ? (isId ? 'Menyinkronkan...' : 'Syncing...') : (isId ? 'Firebase Tersinkron' : 'Firebase Synced'))
+                    : (isId ? 'Cloud Belum Aktif' : 'Cloud Not Linked')}
+                </span>
+              </div>
+              {firebaseUser ? (
+                onDisconnectFirebase && (
+                  <button
+                    type="button"
+                    onClick={onDisconnectFirebase}
+                    className="text-[10px] font-semibold text-emerald-700 hover:underline shrink-0"
+                  >
+                    {isId ? 'Putuskan' : 'Unlink'}
+                  </button>
+                )
+              ) : (
+                onConnectFirebase && (
+                  <button
+                    type="button"
+                    onClick={onConnectFirebase}
+                    className="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-600 text-white hover:bg-orange-700 shrink-0 transition"
+                  >
+                    {isId ? 'Hubungkan' : 'Connect'}
+                  </button>
+                )
+              )}
+            </div>
+            {firebaseUser?.email && (
+              <p className="text-[10px] text-emerald-700 truncate">{firebaseUser.email}</p>
+            )}
+          </div>
+
           {/* Language Switcher in Sidebar */}
           <div className="flex items-center justify-between px-3 py-1.5 bg-orange-50/50 border border-orange-100 rounded-xl text-xs">
             <span className="text-slate-600 font-medium flex items-center gap-1.5">
@@ -545,6 +601,28 @@ export default function AdminLayout({
 
         {/* Dynamic Page Container */}
         <main className="flex-1 p-3.5 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden max-w-7xl w-full mx-auto min-w-0">
+          {!firebaseUser && onConnectFirebase && (
+            <div className="mb-4 p-3 sm:p-3.5 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+              <div className="flex items-center gap-2 text-slate-800 min-w-0">
+                <CloudOff className="w-4 h-4 text-orange-600 shrink-0" />
+                <span className="leading-snug">
+                  {isId
+                    ? 'Saat ini data tersimpan di browser lokal. Hubungkan akun Google agar data tersimpan di database Firebase dan sinkron di semua perangkat.'
+                    : 'Data is currently saved locally. Connect your Google account to save and sync data to Firebase across devices.'}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={onConnectFirebase}
+                disabled={firebaseSyncing}
+                className="px-3 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white font-bold text-xs shadow-2xs shrink-0 transition cursor-pointer"
+              >
+                {firebaseSyncing
+                  ? (isId ? 'Menghubungkan...' : 'Connecting...')
+                  : (isId ? 'Hubungkan Database Firebase' : 'Connect Firebase Database')}
+              </button>
+            </div>
+          )}
           {children}
         </main>
       </div>

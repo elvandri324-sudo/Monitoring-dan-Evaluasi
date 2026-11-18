@@ -1,0 +1,549 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "M&E project master record including logframe hierarchy, indicators, activities, and project team members.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "code": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 300 },
+        "donor": { "type": "string", "maxLength": 200 },
+        "partnerOrg": { "type": "string", "maxLength": 200 },
+        "budgetTotal": { "type": "number" },
+        "budgetCurrency": { "type": "string", "maxLength": 16 },
+        "startDate": { "type": "string", "maxLength": 32 },
+        "endDate": { "type": "string", "maxLength": 32 },
+        "status": {
+          "type": "string",
+          "maxLength": 40,
+          "enum": ["Aktif", "Selesai", "Perencanaan", "Masa Perpanjangan"]
+        },
+        "province": { "type": "string", "maxLength": 120 },
+        "targetLocations": { "type": "array" },
+        "targetVillages": { "type": "array" },
+        "goalStatement": { "type": "string", "maxLength": 2000 },
+        "goalIndicators": { "type": "array" },
+        "outcomes": { "type": "array" },
+        "teamMembers": { "type": "array" },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "code",
+        "title",
+        "donor",
+        "partnerOrg",
+        "budgetTotal",
+        "budgetCurrency",
+        "startDate",
+        "endDate",
+        "status",
+        "province",
+        "targetLocations",
+        "goalStatement",
+        "goalIndicators",
+        "outcomes",
+        "teamMembers",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Beneficiary": {
+      "title": "Beneficiary",
+      "description": "PII-isolated individual beneficiary record with GESI & IPLC disaggregation attributes.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "nikOrIdentifier": { "type": "string", "maxLength": 80 },
+        "fullName": { "type": "string", "maxLength": 200 },
+        "gender": { "type": "string", "maxLength": 20, "enum": ["Laki-laki", "Perempuan"] },
+        "birthYear": { "type": "number" },
+        "age": { "type": "number" },
+        "ageGroup": { "type": "string", "maxLength": 16 },
+        "hasDisability": { "type": "boolean" },
+        "disabilityType": { "type": "string", "maxLength": 80 },
+        "disabilityDifficultyLevel": { "type": "string", "maxLength": 80 },
+        "disabilityBarrierNotes": { "type": "string", "maxLength": 500 },
+        "iplcStatus": { "type": "string", "maxLength": 80 },
+        "customIplcCommunityName": { "type": "string", "maxLength": 150 },
+        "targetGroup": { "type": "string", "maxLength": 150 },
+        "beneficiaryLevel": { "type": "string", "maxLength": 40 },
+        "levelName": { "type": "string", "maxLength": 150 },
+        "institutionOrAgency": { "type": "string", "maxLength": 200 },
+        "province": { "type": "string", "maxLength": 120 },
+        "regency": { "type": "string", "maxLength": 120 },
+        "district": { "type": "string", "maxLength": 120 },
+        "village": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "occupation": { "type": "string", "maxLength": 120 },
+        "registeredProjectId": { "type": "string", "maxLength": 128 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "nikOrIdentifier",
+        "fullName",
+        "gender",
+        "birthYear",
+        "age",
+        "ageGroup",
+        "hasDisability",
+        "iplcStatus",
+        "province",
+        "regency",
+        "village",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ActivityAttendance": {
+      "title": "ActivityAttendance",
+      "description": "Deduplicated attendance record linking a beneficiary to an activity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "activityId": { "type": "string", "maxLength": 128 },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "beneficiaryId": { "type": "string", "maxLength": 128 },
+        "attendanceDate": { "type": "string", "maxLength": 40 },
+        "roleInActivity": { "type": "string", "maxLength": 80 },
+        "attendanceStatus": { "type": "string", "maxLength": 40 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "verifiedBy": { "type": "string", "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "activityId",
+        "projectId",
+        "beneficiaryId",
+        "attendanceDate",
+        "attendanceStatus",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AccompaniedGroup": {
+      "title": "AccompaniedGroup",
+      "description": "Accompanied community group record (OPS, POKJA, KADER, TPS3R, PDU, Bank Sampah, Pokdarwis, etc.).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "maxLength": 120 },
+        "customType": { "type": "string", "maxLength": 120 },
+        "village": { "type": "string", "maxLength": 120 },
+        "district": { "type": "string", "maxLength": 120 },
+        "regency": { "type": "string", "maxLength": 120 },
+        "province": { "type": "string", "maxLength": 120 },
+        "establishmentDate": { "type": "string", "maxLength": 40 },
+        "legalStatus": { "type": "string", "maxLength": 120 },
+        "legalDocumentNumber": { "type": "string", "maxLength": 120 },
+        "leaderName": { "type": "string", "maxLength": 150 },
+        "leaderPhone": { "type": "string", "maxLength": 40 },
+        "focusArea": { "type": "string", "maxLength": 300 },
+        "status": { "type": "string", "maxLength": 40 },
+        "notes": { "type": "string", "maxLength": 2000 },
+        "members": { "type": "array" },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "recordUpdatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "projectId",
+        "code",
+        "name",
+        "type",
+        "village",
+        "regency",
+        "province",
+        "status",
+        "members",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "KnowledgeProduct": {
+      "title": "KnowledgeProduct",
+      "description": "Published knowledge product and communication media.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 120 },
+        "title": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 3000 },
+        "language": { "type": "string", "maxLength": 80 },
+        "publisherAuthor": { "type": "string", "maxLength": 200 },
+        "contributeToOutputOutcome": { "type": "string", "maxLength": 300 },
+        "linkDocument": { "type": "string", "maxLength": 2000 },
+        "fileFormat": { "type": "string", "maxLength": 40 },
+        "fileSize": { "type": "string", "maxLength": 40 },
+        "releaseDate": { "type": "string", "maxLength": 40 },
+        "coverImageUrl": { "type": "string", "maxLength": 400000 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "recordUpdatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "type",
+        "title",
+        "description",
+        "language",
+        "publisherAuthor",
+        "contributeToOutputOutcome",
+        "linkDocument",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "StoryOfChange": {
+      "title": "StoryOfChange",
+      "description": "Human-interest and impact Story of Change entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "storyTitle": { "type": "string", "maxLength": 300 },
+        "storiesLocation": { "type": "string", "maxLength": 200 },
+        "whoHasChanged": { "type": "string", "maxLength": 300 },
+        "beneficiaryId": { "type": "string", "maxLength": 128 },
+        "highlightBefore": { "type": "string", "maxLength": 4000 },
+        "highlightAfter": { "type": "string", "maxLength": 4000 },
+        "importantQuotes": { "type": "string", "maxLength": 2000 },
+        "noteFullStory": { "type": "string", "maxLength": 4000 },
+        "categoryTheme": { "type": "string", "maxLength": 120 },
+        "photoUrl": { "type": "string", "maxLength": 400000 },
+        "authorOrWriter": { "type": "string", "maxLength": 200 },
+        "dateRecorded": { "type": "string", "maxLength": 40 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "recordUpdatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "storyTitle",
+        "storiesLocation",
+        "whoHasChanged",
+        "highlightBefore",
+        "highlightAfter",
+        "importantQuotes",
+        "noteFullStory",
+        "dateRecorded",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "MediaCoverage": {
+      "title": "MediaCoverage",
+      "description": "External media and social coverage record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 300 },
+        "type": { "type": "string", "maxLength": 120 },
+        "platform": { "type": "string", "maxLength": 80 },
+        "publisherMedia": { "type": "string", "maxLength": 200 },
+        "linkToPublication": { "type": "string", "maxLength": 2000 },
+        "releaseDate": { "type": "string", "maxLength": 40 },
+        "summaryNotes": { "type": "string", "maxLength": 2000 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "recordUpdatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "title",
+        "type",
+        "platform",
+        "linkToPublication",
+        "releaseDate",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ProjectLearning": {
+      "title": "ProjectLearning",
+      "description": "Project adaptive learning matrix entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 300 },
+        "learningFocus": { "type": "string", "maxLength": 120 },
+        "customFocus": { "type": "string", "maxLength": 200 },
+        "keyLearning": { "type": "string", "maxLength": 4000 },
+        "whatWeDidDifferently": { "type": "string", "maxLength": 4000 },
+        "nextPhaseConduct": { "type": "string", "maxLength": 4000 },
+        "internalCapacityAdvocacyComm": { "type": "string", "maxLength": 4000 },
+        "whenToLearnImplement": { "type": "string", "maxLength": 200 },
+        "status": { "type": "string", "maxLength": 60 },
+        "recordedBy": { "type": "string", "maxLength": 150 },
+        "dateRecorded": { "type": "string", "maxLength": 40 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "recordUpdatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "title",
+        "learningFocus",
+        "keyLearning",
+        "whatWeDidDifferently",
+        "nextPhaseConduct",
+        "internalCapacityAdvocacyComm",
+        "whenToLearnImplement",
+        "dateRecorded",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ReportItem": {
+      "title": "ReportItem",
+      "description": "Project reporting archive document (Activity, Monthly, Quarterly, Mid Year, Annual, Final).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 300 },
+        "type": { "type": "string", "maxLength": 60 },
+        "period": { "type": "string", "maxLength": 150 },
+        "year": { "type": "number" },
+        "submissionDeadline": { "type": "string", "maxLength": 40 },
+        "submittedDate": { "type": "string", "maxLength": 40 },
+        "authorOrLead": { "type": "string", "maxLength": 200 },
+        "reviewerOrDonor": { "type": "string", "maxLength": 200 },
+        "status": { "type": "string", "maxLength": 40 },
+        "summaryHighlights": { "type": "string", "maxLength": 5000 },
+        "keyAchievements": { "type": "array" },
+        "challengesAndMitigation": { "type": "string", "maxLength": 4000 },
+        "fileUrl": { "type": "string", "maxLength": 2000 },
+        "fileName": { "type": "string", "maxLength": 260 },
+        "fileSize": { "type": "string", "maxLength": 40 },
+        "fileData": { "type": "string", "maxLength": 500000 },
+        "fileType": { "type": "string", "maxLength": 120 },
+        "targetBeneficiariesPeriod": { "type": "number" },
+        "actualBeneficiariesPeriod": { "type": "number" },
+        "budgetSpentPeriod": { "type": "number" },
+        "reviewNotes": { "type": "string", "maxLength": 2000 },
+        "ratingOrScore": { "type": "number" },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "recordUpdatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "projectId",
+        "title",
+        "type",
+        "period",
+        "year",
+        "submissionDeadline",
+        "authorOrLead",
+        "status",
+        "summaryHighlights",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AppUser": {
+      "title": "AppUser",
+      "description": "PII-isolated M&E workspace user account directory.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "username": { "type": "string", "maxLength": 80 },
+        "fullName": { "type": "string", "maxLength": 200 },
+        "email": { "type": "string", "maxLength": 200 },
+        "password": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "maxLength": 60 },
+        "assignedProjectIds": { "type": "array" },
+        "status": { "type": "string", "maxLength": 30 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "avatarUrl": { "type": "string", "maxLength": 500000 },
+        "lastLogin": { "type": "string", "maxLength": 60 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "username",
+        "fullName",
+        "email",
+        "role",
+        "assignedProjectIds",
+        "status",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ErrorReport": {
+      "title": "ErrorReport",
+      "description": "System issue and error reporting ticket.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 300 },
+        "module": { "type": "string", "maxLength": 100 },
+        "severity": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 4000 },
+        "stepsToReproduce": { "type": "string", "maxLength": 3000 },
+        "expectedBehavior": { "type": "string", "maxLength": 2000 },
+        "actualBehavior": { "type": "string", "maxLength": 2000 },
+        "screenshotUrl": { "type": "string", "maxLength": 400000 },
+        "systemInfo": { "type": "string", "maxLength": 500 },
+        "reportedBy": { "type": "string", "maxLength": 150 },
+        "reporterEmail": { "type": "string", "maxLength": 200 },
+        "assignedTo": { "type": "string", "maxLength": 150 },
+        "resolutionNotes": { "type": "string", "maxLength": 3000 },
+        "resolvedAt": { "type": "string", "maxLength": 40 },
+        "recordCreatedAt": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "title",
+        "module",
+        "severity",
+        "status",
+        "description",
+        "reportedBy",
+        "recordCreatedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WorkspaceMeta": {
+      "title": "WorkspaceMeta",
+      "description": "Tracks initial cloud workspace seeding and last synchronization metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerUid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "seeded": { "type": "boolean" },
+        "lastSyncedByEmail": { "type": "string", "maxLength": 200 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerUid", "seeded", "lastSyncedByEmail", "createdAt", "updatedAt"]
+    },
+    "AdminEntry": {
+      "title": "AdminEntry",
+      "description": "Trusted admin registry keyed by Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 200 },
+        "role": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/Project" },
+      "description": "Projects and embedded Logframe hierarchy (outcomes, outputs, activities, indicators, teamMembers)."
+    },
+    "/beneficiaries/{beneficiaryId}": {
+      "schema": { "$ref": "#/entities/Beneficiary" },
+      "description": "PII-protected individual beneficiaries and GESI/IPLC disaggregation records."
+    },
+    "/attendances/{attendanceId}": {
+      "schema": { "$ref": "#/entities/ActivityAttendance" },
+      "description": "Deduplicated activity attendance entries."
+    },
+    "/accompaniedGroups/{groupId}": {
+      "schema": { "$ref": "#/entities/AccompaniedGroup" },
+      "description": "Accompanied community groups (OPS, POKJA, KADER, TPS3R, PDU, Bank Sampah, Pokdarwis, etc.)."
+    },
+    "/knowledgeProducts/{productId}": {
+      "schema": { "$ref": "#/entities/KnowledgeProduct" },
+      "description": "Knowledge products and communication materials."
+    },
+    "/storiesOfChange/{storyId}": {
+      "schema": { "$ref": "#/entities/StoryOfChange" },
+      "description": "Stories of Change qualitative impact records."
+    },
+    "/mediaCoverages/{mediaId}": {
+      "schema": { "$ref": "#/entities/MediaCoverage" },
+      "description": "Media and social coverage links."
+    },
+    "/learnings/{learningId}": {
+      "schema": { "$ref": "#/entities/ProjectLearning" },
+      "description": "Project adaptive learning matrix items."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/ReportItem" },
+      "description": "Project reports repository (Activity, Monthly, Quarterly, Mid Year, Annual, Final)."
+    },
+    "/appUsers/{appUserId}": {
+      "schema": { "$ref": "#/entities/AppUser" },
+      "description": "PII-isolated M&E application user accounts and role assignments."
+    },
+    "/errorReports/{errorId}": {
+      "schema": { "$ref": "#/entities/ErrorReport" },
+      "description": "Error reporting and bug tracking tickets."
+    },
+    "/workspaceMeta/{workspaceId}": {
+      "schema": { "$ref": "#/entities/WorkspaceMeta" },
+      "description": "Workspace synchronization and seed state metadata per ownerUid."
+    },
+    "/admins/{userId}": {
+      "schema": { "$ref": "#/entities/AdminEntry" },
+      "description": "Authorized admin role registry keyed by Firebase UID."
+    }
+  }
+}
