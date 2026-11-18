@@ -1,4 +1,4 @@
-import { ReportItem } from '../types';
+import type { ReportItem } from '../types.ts';
 
 export const INITIAL_REPORTS: ReportItem[] = [
   // 1. LAPORAN KEGIATAN

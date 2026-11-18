@@ -44,7 +44,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
       try {
         const parsed = JSON.parse(this.state.errorMessage);
         if (parsed && parsed.error) {
-          friendlyMessage = `Sinkronisasi database terhenti (${parsed.operationType || 'read'} pada ${parsed.path || 'Firestore'}): ${parsed.error}`;
+          friendlyMessage = `Sinkronisasi database terhenti (${parsed.operationType || 'read'} pada ${parsed.path || 'server'}): ${parsed.error}`;
         }
       } catch {
         // Keep original message

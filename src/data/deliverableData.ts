@@ -1,1 +1,1 @@
-export * from './reportData';
+export * from './reportData.ts';

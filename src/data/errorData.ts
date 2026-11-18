@@ -1,4 +1,4 @@
-import { ErrorReport } from '../types';
+import type { ErrorReport } from '../types.ts';
 
 export const INITIAL_ERROR_REPORTS: ErrorReport[] = [
   {

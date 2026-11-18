@@ -2,18 +2,17 @@ import { useState, useEffect, useMemo } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from './firebase';
 import {
-  batchDeleteFromFirestore,
-  batchUpsertToFirestore,
-  connectFirebaseAndFetchUsers,
-  deleteDocFromFirestore,
-  ensureWorkspaceSeeded,
+  batchDeleteRecordsFromCloud,
+  batchUpsertRecordsToCloud,
+  connectAndFetchWorkspace,
+  deleteRecordFromCloud,
+  fetchPublicPortal,
+  fetchWorkspace,
   PublicPortalData,
-  publishPublicSnapshot,
-  subscribeToPublicSnapshot,
-  subscribeToWorkspace,
-  upsertDocToFirestore,
-  WorkspaceSeedData,
-} from './services/firebaseSync';
+  restoreBackupToCloud,
+  upsertRecordToCloud,
+  WorkspaceData,
+} from './services/cloudApi';
 import { 
   Project, 
   Beneficiary, 
@@ -38,13 +37,6 @@ import {
   AccompaniedGroup,
   AccompaniedGroupMember
 } from './types';
-import { INITIAL_PROJECTS, INITIAL_BENEFICIARIES, INITIAL_ATTENDANCES } from './data/initialData';
-import { INITIAL_ACCOMPANIED_GROUPS } from './data/groupData';
-import { INITIAL_KNOWLEDGE_PRODUCTS, INITIAL_STORIES_OF_CHANGE, INITIAL_MEDIA_COVERAGES } from './data/publicationData';
-import { INITIAL_PROJECT_LEARNINGS } from './data/learningData';
-import { INITIAL_REPORTS } from './data/reportData';
-import { INITIAL_USERS } from './data/userData';
-import { INITIAL_ERROR_REPORTS } from './data/errorData';
 import LoginPage from './components/LoginPage';
 import AdminLayout, { AdminTabType } from './components/AdminLayout';
 import DashboardOverview from './components/DashboardOverview';
@@ -85,20 +77,6 @@ const LEGACY_LOCAL_STORAGE_KEYS = [
   'simev_error_reports_v1',
 ];
 
-const DEFAULT_WORKSPACE_SEED: WorkspaceSeedData = {
-  projects: INITIAL_PROJECTS,
-  beneficiaries: INITIAL_BENEFICIARIES,
-  attendances: INITIAL_ATTENDANCES,
-  accompaniedGroups: INITIAL_ACCOMPANIED_GROUPS,
-  knowledgeProducts: INITIAL_KNOWLEDGE_PRODUCTS,
-  storiesOfChange: INITIAL_STORIES_OF_CHANGE,
-  mediaCoverages: INITIAL_MEDIA_COVERAGES,
-  learnings: INITIAL_PROJECT_LEARNINGS,
-  reports: INITIAL_REPORTS,
-  users: INITIAL_USERS,
-  errorReports: INITIAL_ERROR_REPORTS,
-};
-
 export default function App() {
   // View mode: 'public' (Home page statistik pengunjung) vs 'admin' (Entri data & manajemen)
   const [viewMode, setViewMode] = useState<'public' | 'admin'>('public');
@@ -111,7 +89,7 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<AdminTabType>('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
 
-  // Database-driven States (Populated exclusively from Firebase Firestore)
+  // Database-driven States (Populated exclusively from Cloud PostgreSQL via /api)
   const [projects, setProjects] = useState<Project[]>([]);
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [attendances, setAttendances] = useState<ActivityAttendance[]>([]);
@@ -124,7 +102,7 @@ export default function App() {
   const [accompaniedGroups, setAccompaniedGroups] = useState<AccompaniedGroup[]>([]);
   const [errorReports, setErrorReports] = useState<ErrorReport[]>([]);
 
-  // Purge any legacy browser localStorage data keys so all browsers read exclusively from Firestore
+  // Purge any legacy browser localStorage data keys so all browsers read exclusively from database
   useEffect(() => {
     try {
       LEGACY_LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
@@ -149,7 +127,7 @@ export default function App() {
   const [showAccountSettingsModal, setShowAccountSettingsModal] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
-  // Firebase Auth & Real-Time Firestore Synchronization State
+  // Firebase Auth & Cloud Synchronization State
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [firebaseSyncing, setFirebaseSyncing] = useState(false);
@@ -158,16 +136,24 @@ export default function App() {
   const [publicSnapshot, setPublicSnapshot] = useState<PublicPortalData | null>(null);
   const [publicSnapshotLoaded, setPublicSnapshotLoaded] = useState(false);
 
+  const applyWorkspaceData = (data: WorkspaceData) => {
+    setProjects(data.projects || []);
+    setBeneficiaries(data.beneficiaries || []);
+    setAttendances(data.attendances || []);
+    setAccompaniedGroups(data.accompaniedGroups || []);
+    setKnowledgeProducts(data.knowledgeProducts || []);
+    setStoriesOfChange(data.storiesOfChange || []);
+    setMediaCoverages(data.mediaCoverages || []);
+    setLearnings(data.learnings || []);
+    setReports(data.reports || []);
+    setUsers(data.users || []);
+    setErrorReports(data.errorReports || []);
+  };
+
   useEffect(() => {
-    let unsubscribeWorkspace: (() => void) | null = null;
     let isCancelled = false;
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
-      if (unsubscribeWorkspace) {
-        unsubscribeWorkspace();
-        unsubscribeWorkspace = null;
-      }
-
       setAuthChecked(true);
 
       if (!user || !user.emailVerified) {
@@ -194,30 +180,15 @@ export default function App() {
       setFirebaseSyncing(true);
 
       try {
-        await ensureWorkspaceSeeded(user, DEFAULT_WORKSPACE_SEED);
+        const data = await fetchWorkspace();
         if (isCancelled) return;
-
-        unsubscribeWorkspace = subscribeToWorkspace(user, {
-          onProjects: (data) => setProjects(data),
-          onBeneficiaries: (data) => setBeneficiaries(data),
-          onAttendances: (data) => setAttendances(data),
-          onAccompaniedGroups: (data) => setAccompaniedGroups(data),
-          onKnowledgeProducts: (data) => setKnowledgeProducts(data),
-          onStoriesOfChange: (data) => setStoriesOfChange(data),
-          onMediaCoverages: (data) => setMediaCoverages(data),
-          onLearnings: (data) => setLearnings(data),
-          onReports: (data) => setReports(data),
-          onUsers: (data) => setUsers(data),
-          onErrorReports: (data) => setErrorReports(data),
-          onSyncUpdate: () => {
-            setFirebaseSyncing(false);
-            setWorkspaceSyncedOnce(true);
-          },
-        });
+        applyWorkspaceData(data);
+        setWorkspaceSyncedOnce(true);
+        setFirebaseSyncing(false);
       } catch (err) {
         if (!isCancelled) {
           setFirebaseSyncing(false);
-          setFirebaseError(err instanceof Error ? err.message : 'Gagal menyambung ke Firebase Firestore.');
+          setFirebaseError(err instanceof Error ? err.message : 'Gagal memuat data.');
         }
       }
     });
@@ -225,59 +196,42 @@ export default function App() {
     return () => {
       isCancelled = true;
       unsubscribeAuth();
-      if (unsubscribeWorkspace) unsubscribeWorkspace();
     };
   }, []);
 
   const isCloudConnected = Boolean(firebaseUser && firebaseUser.emailVerified);
 
-  // Automatic Public Portal listener so visitors across Preview and any other browser immediately see identical live data
+  // Automatic Public Portal loader so visitors in Preview & every browser see identical live data
   useEffect(() => {
     if (isCloudConnected) return;
-    const unsubscribePublic = subscribeToPublicSnapshot((data) => {
-      setPublicSnapshot(data);
-      setPublicSnapshotLoaded(true);
-    });
-    return () => unsubscribePublic();
-  }, [isCloudConnected]);
-
-  // Automatically keep the zero-PII publicPortal/snapshot synchronized whenever workspace data updates
-  useEffect(() => {
-    if (!isCloudConnected || !workspaceSyncedOnce) return;
-    const timer = setTimeout(() => {
-      void publishPublicSnapshot({
-        projects,
-        beneficiaries,
-        attendances,
-        knowledgeProducts,
-        storiesOfChange,
-        mediaCoverages,
-        learnings,
+    let isCancelled = false;
+    fetchPublicPortal()
+      .then((data) => {
+        if (!isCancelled) {
+          setPublicSnapshot(data);
+          setPublicSnapshotLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setPublicSnapshotLoaded(true);
+        }
       });
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [
-    isCloudConnected,
-    workspaceSyncedOnce,
-    projects,
-    beneficiaries,
-    attendances,
-    knowledgeProducts,
-    storiesOfChange,
-    mediaCoverages,
-    learnings,
-  ]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [isCloudConnected, viewMode]);
 
   const handleConnectAndFetchUsers = async (): Promise<UserAccount[] | null> => {
     setFirebaseError(null);
     setFirebaseSyncing(true);
     try {
-      const result = await connectFirebaseAndFetchUsers(DEFAULT_WORKSPACE_SEED);
+      const result = await connectAndFetchWorkspace();
       setFirebaseUser(result.user);
-      if (result.users.length > 0) {
-        setUsers(result.users);
-      }
-      return result.users;
+      applyWorkspaceData(result.workspace);
+      setWorkspaceSyncedOnce(true);
+      setFirebaseSyncing(false);
+      return result.workspace.users;
     } catch (err) {
       setFirebaseSyncing(false);
       const msg = err instanceof Error ? err.message : '';
@@ -287,7 +241,7 @@ export default function App() {
         );
       } else if (msg.includes('popup-closed-by-user') || msg.includes('cancelled-popup-request')) {
         setFirebaseError(
-          'Verifikasi Google dibatalkan. Silakan selesaikan verifikasi agar aplikasi terhubung langsung ke database Firebase.'
+          'Verifikasi Google dibatalkan. Silakan selesaikan verifikasi untuk masuk ke dashboard.'
         );
       } else if (msg) {
         setFirebaseError(msg);
@@ -301,7 +255,7 @@ export default function App() {
     setUserSession(session);
     setShowLoginToast(true);
 
-    // Update lastLogin in users state & Firestore
+    // Update lastLogin in users state & cloud database
     const now = new Date();
     const formattedDate = `${now.toISOString().split('T')[0]} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     setUsers(prev => {
@@ -314,7 +268,7 @@ export default function App() {
         const targetUser = next.find(
           u => u.email.toLowerCase() === session.email.toLowerCase() || (session.username && u.username.toLowerCase() === session.username.toLowerCase())
         );
-        if (targetUser) void upsertDocToFirestore('appUsers', targetUser);
+        if (targetUser) void upsertRecordToCloud('appUsers', targetUser);
       }
       return next;
     });
@@ -351,7 +305,7 @@ export default function App() {
       };
       setBeneficiaries(prev => [savedRecord, ...prev]);
     }
-    if (isCloudConnected) void upsertDocToFirestore('beneficiaries', savedRecord);
+    if (isCloudConnected) void upsertRecordToCloud('beneficiaries', savedRecord);
     setEditingBeneficiary(null);
   };
 
@@ -365,8 +319,8 @@ export default function App() {
     setBeneficiaries(prev => prev.filter(b => b.id !== id));
     setAttendances(prev => prev.filter(a => a.beneficiaryId !== id));
     if (isCloudConnected) {
-      void deleteDocFromFirestore('beneficiaries', id);
-      if (removedAttendanceIds.length > 0) void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+      void deleteRecordFromCloud('beneficiaries', id);
+      if (removedAttendanceIds.length > 0) void batchDeleteRecordsFromCloud('attendances', removedAttendanceIds);
     }
   };
 
@@ -376,8 +330,8 @@ export default function App() {
     setBeneficiaries(prev => prev.filter(b => !idSet.has(b.id)));
     setAttendances(prev => prev.filter(a => !idSet.has(a.beneficiaryId)));
     if (isCloudConnected) {
-      void batchDeleteFromFirestore('beneficiaries', ids);
-      if (removedAttendanceIds.length > 0) void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+      void batchDeleteRecordsFromCloud('beneficiaries', ids);
+      if (removedAttendanceIds.length > 0) void batchDeleteRecordsFromCloud('attendances', removedAttendanceIds);
     }
   };
 
@@ -404,7 +358,7 @@ export default function App() {
       return [...newItems, ...updatedList];
     });
     if (isCloudConnected) {
-      void batchUpsertToFirestore('beneficiaries', [...newItems, ...updatedBeneficiariesData]);
+      void batchUpsertRecordsToCloud('beneficiaries', [...newItems, ...updatedBeneficiariesData]);
     }
   };
 
@@ -413,7 +367,7 @@ export default function App() {
     setProjects(nextProjects);
     if (isCloudConnected) {
       const updated = nextProjects.find(p => p.id === projectId);
-      if (updated) void upsertDocToFirestore('projects', updated);
+      if (updated) void upsertRecordToCloud('projects', updated);
     }
   };
 
@@ -425,7 +379,7 @@ export default function App() {
       setProjects(prev => [...prev, projectData]);
       setSelectedProjectId(projectData.id);
     }
-    if (isCloudConnected) void upsertDocToFirestore('projects', projectData);
+    if (isCloudConnected) void upsertRecordToCloud('projects', projectData);
     setEditingProject(null);
   };
 
@@ -446,8 +400,8 @@ export default function App() {
     setProjects(prev => prev.filter(p => p.id !== projectId));
     setAttendances(prev => prev.filter(a => a.projectId !== projectId));
     if (isCloudConnected) {
-      void deleteDocFromFirestore('projects', projectId);
-      if (removedAttendanceIds.length > 0) void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+      void deleteRecordFromCloud('projects', projectId);
+      if (removedAttendanceIds.length > 0) void batchDeleteRecordsFromCloud('attendances', removedAttendanceIds);
     }
     if (selectedProjectId === projectId) {
       setSelectedProjectId('all');
@@ -792,7 +746,7 @@ export default function App() {
     }));
     setAttendances(prev => prev.filter(att => att.activityId !== activityId));
     if (isCloudConnected && removedAttendanceIds.length > 0) {
-      void batchDeleteFromFirestore('attendances', removedAttendanceIds);
+      void batchDeleteRecordsFromCloud('attendances', removedAttendanceIds);
     }
   };
 
@@ -882,54 +836,54 @@ export default function App() {
       id: `att-${Date.now().toString().slice(-6)}`
     };
     setAttendances(prev => [newAtt, ...prev]);
-    if (isCloudConnected) void upsertDocToFirestore('attendances', newAtt);
+    if (isCloudConnected) void upsertRecordToCloud('attendances', newAtt);
     return { success: true, message: 'Peserta berhasil ditambahkan ke daftar hadir.' };
   };
 
   const handleRemoveAttendance = (attendanceId: string) => {
     setAttendances(prev => prev.filter(a => a.id !== attendanceId));
-    if (isCloudConnected) void deleteDocFromFirestore('attendances', attendanceId);
+    if (isCloudConnected) void deleteRecordFromCloud('attendances', attendanceId);
   };
 
   const handleRestoreBackup = (backupData: any) => {
     if (backupData.projects) {
       setProjects(backupData.projects);
-      if (isCloudConnected) void batchUpsertToFirestore('projects', backupData.projects);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('projects', backupData.projects);
     }
     if (backupData.beneficiaries) {
       setBeneficiaries(backupData.beneficiaries);
-      if (isCloudConnected) void batchUpsertToFirestore('beneficiaries', backupData.beneficiaries);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('beneficiaries', backupData.beneficiaries);
     }
     if (backupData.attendances) {
       setAttendances(backupData.attendances);
-      if (isCloudConnected) void batchUpsertToFirestore('attendances', backupData.attendances);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('attendances', backupData.attendances);
     }
     if (backupData.accompaniedGroups) {
       setAccompaniedGroups(backupData.accompaniedGroups);
-      if (isCloudConnected) void batchUpsertToFirestore('accompaniedGroups', backupData.accompaniedGroups);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('accompaniedGroups', backupData.accompaniedGroups);
     }
     if (backupData.knowledgeProducts) {
       setKnowledgeProducts(backupData.knowledgeProducts);
-      if (isCloudConnected) void batchUpsertToFirestore('knowledgeProducts', backupData.knowledgeProducts);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('knowledgeProducts', backupData.knowledgeProducts);
     }
     if (backupData.storiesOfChange) {
       setStoriesOfChange(backupData.storiesOfChange);
-      if (isCloudConnected) void batchUpsertToFirestore('storiesOfChange', backupData.storiesOfChange);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('storiesOfChange', backupData.storiesOfChange);
     }
     if (backupData.mediaCoverages) {
       setMediaCoverages(backupData.mediaCoverages);
-      if (isCloudConnected) void batchUpsertToFirestore('mediaCoverages', backupData.mediaCoverages);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('mediaCoverages', backupData.mediaCoverages);
     }
     if (backupData.learnings) {
       setLearnings(backupData.learnings);
-      if (isCloudConnected) void batchUpsertToFirestore('learnings', backupData.learnings);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('learnings', backupData.learnings);
     }
     if (backupData.reports) {
       setReports(backupData.reports);
-      if (isCloudConnected) void batchUpsertToFirestore('reports', backupData.reports);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('reports', backupData.reports);
     } else if (backupData.deliverables) {
       setReports(backupData.deliverables);
-      if (isCloudConnected) void batchUpsertToFirestore('reports', backupData.deliverables);
+      if (isCloudConnected) void batchUpsertRecordsToCloud('reports', backupData.deliverables);
     }
   };
 
@@ -940,12 +894,12 @@ export default function App() {
       ? { ...item, updatedAt: new Date().toISOString() }
       : { ...item, createdAt: item.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
     setReports(prev => (exists ? prev.map(d => d.id === item.id ? savedItem : d) : [savedItem, ...prev]));
-    if (isCloudConnected) void upsertDocToFirestore('reports', savedItem);
+    if (isCloudConnected) void upsertRecordToCloud('reports', savedItem);
   };
 
   const handleDeleteReport = (id: string) => {
     setReports(prev => prev.filter(d => d.id !== id));
-    if (isCloudConnected) void deleteDocFromFirestore('reports', id);
+    if (isCloudConnected) void deleteRecordFromCloud('reports', id);
   };
 
   const handleUpdateReportStatus = (id: string, status: ReportStatus, reviewNotes?: string) => {
@@ -958,7 +912,7 @@ export default function App() {
       updatedAt: new Date().toISOString()
     };
     setReports(prev => prev.map(d => (d.id === id ? updatedItem : d)));
-    if (isCloudConnected) void upsertDocToFirestore('reports', updatedItem);
+    if (isCloudConnected) void upsertRecordToCloud('reports', updatedItem);
   };
 
   // Learning Matrix Handlers
@@ -966,12 +920,12 @@ export default function App() {
     const exists = learnings.some(l => l.id === item.id);
     const savedItem: ProjectLearning = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
     setLearnings(prev => (exists ? prev.map(l => l.id === item.id ? savedItem : l) : [savedItem, ...prev]));
-    if (isCloudConnected) void upsertDocToFirestore('learnings', savedItem);
+    if (isCloudConnected) void upsertRecordToCloud('learnings', savedItem);
   };
 
   const handleDeleteLearning = (id: string) => {
     setLearnings(prev => prev.filter(l => l.id !== id));
-    if (isCloudConnected) void deleteDocFromFirestore('learnings', id);
+    if (isCloudConnected) void deleteRecordFromCloud('learnings', id);
   };
 
   // Publication Handlers: Knowledge Products
@@ -979,12 +933,12 @@ export default function App() {
     const exists = knowledgeProducts.some(k => k.id === item.id);
     const savedItem: KnowledgeProduct = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
     setKnowledgeProducts(prev => (exists ? prev.map(k => k.id === item.id ? savedItem : k) : [savedItem, ...prev]));
-    if (isCloudConnected) void upsertDocToFirestore('knowledgeProducts', savedItem);
+    if (isCloudConnected) void upsertRecordToCloud('knowledgeProducts', savedItem);
   };
 
   const handleDeleteKnowledgeProduct = (id: string) => {
     setKnowledgeProducts(prev => prev.filter(k => k.id !== id));
-    if (isCloudConnected) void deleteDocFromFirestore('knowledgeProducts', id);
+    if (isCloudConnected) void deleteRecordFromCloud('knowledgeProducts', id);
   };
 
   // Publication Handlers: Stories of Change
@@ -992,12 +946,12 @@ export default function App() {
     const exists = storiesOfChange.some(s => s.id === item.id);
     const savedItem: StoryOfChange = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
     setStoriesOfChange(prev => (exists ? prev.map(s => s.id === item.id ? savedItem : s) : [savedItem, ...prev]));
-    if (isCloudConnected) void upsertDocToFirestore('storiesOfChange', savedItem);
+    if (isCloudConnected) void upsertRecordToCloud('storiesOfChange', savedItem);
   };
 
   const handleDeleteStoryOfChange = (id: string) => {
     setStoriesOfChange(prev => prev.filter(s => s.id !== id));
-    if (isCloudConnected) void deleteDocFromFirestore('storiesOfChange', id);
+    if (isCloudConnected) void deleteRecordFromCloud('storiesOfChange', id);
   };
 
   // Publication Handlers: Media Coverage
@@ -1005,23 +959,23 @@ export default function App() {
     const exists = mediaCoverages.some(m => m.id === item.id);
     const savedItem: MediaCoverage = exists ? { ...item, updatedAt: new Date().toISOString() } : item;
     setMediaCoverages(prev => (exists ? prev.map(m => m.id === item.id ? savedItem : m) : [savedItem, ...prev]));
-    if (isCloudConnected) void upsertDocToFirestore('mediaCoverages', savedItem);
+    if (isCloudConnected) void upsertRecordToCloud('mediaCoverages', savedItem);
   };
 
   const handleDeleteMediaCoverage = (id: string) => {
     setMediaCoverages(prev => prev.filter(m => m.id !== id));
-    if (isCloudConnected) void deleteDocFromFirestore('mediaCoverages', id);
+    if (isCloudConnected) void deleteRecordFromCloud('mediaCoverages', id);
   };
 
   // User Management Handlers
   const handleAddUser = (newUser: UserAccount) => {
     setUsers(prev => [newUser, ...prev]);
-    if (isCloudConnected) void upsertDocToFirestore('appUsers', newUser);
+    if (isCloudConnected) void upsertRecordToCloud('appUsers', newUser);
   };
 
   const handleUpdateUser = (updatedUser: UserAccount) => {
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
-    if (isCloudConnected) void upsertDocToFirestore('appUsers', updatedUser);
+    if (isCloudConnected) void upsertRecordToCloud('appUsers', updatedUser);
     if (userSession && (userSession.id === updatedUser.id || (userSession.username && userSession.username.toLowerCase() === updatedUser.username.toLowerCase()))) {
       setUserSession(prev => prev ? {
         ...prev,
@@ -1038,39 +992,39 @@ export default function App() {
 
   const handleDeleteUser = (userId: string) => {
     setUsers(prev => prev.filter(u => u.id !== userId));
-    if (isCloudConnected) void deleteDocFromFirestore('appUsers', userId);
+    if (isCloudConnected) void deleteRecordFromCloud('appUsers', userId);
   };
 
   // Error Report Handlers
   const handleAddErrorReport = (newReport: ErrorReport) => {
     setErrorReports(prev => [newReport, ...prev]);
-    if (isCloudConnected) void upsertDocToFirestore('errorReports', newReport);
+    if (isCloudConnected) void upsertRecordToCloud('errorReports', newReport);
   };
 
   const handleUpdateErrorReport = (updatedReport: ErrorReport) => {
     setErrorReports(prev => prev.map(r => r.id === updatedReport.id ? updatedReport : r));
-    if (isCloudConnected) void upsertDocToFirestore('errorReports', updatedReport);
+    if (isCloudConnected) void upsertRecordToCloud('errorReports', updatedReport);
   };
 
   const handleDeleteErrorReport = (reportId: string) => {
     setErrorReports(prev => prev.filter(r => r.id !== reportId));
-    if (isCloudConnected) void deleteDocFromFirestore('errorReports', reportId);
+    if (isCloudConnected) void deleteRecordFromCloud('errorReports', reportId);
   };
 
   // Accompanied Community Groups Handlers
   const handleAddAccompaniedGroup = (newGroup: AccompaniedGroup) => {
     setAccompaniedGroups(prev => [newGroup, ...prev]);
-    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', newGroup);
+    if (isCloudConnected) void upsertRecordToCloud('accompaniedGroups', newGroup);
   };
 
   const handleUpdateAccompaniedGroup = (updatedGroup: AccompaniedGroup) => {
     setAccompaniedGroups(prev => prev.map(g => g.id === updatedGroup.id ? updatedGroup : g));
-    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
+    if (isCloudConnected) void upsertRecordToCloud('accompaniedGroups', updatedGroup);
   };
 
   const handleDeleteAccompaniedGroup = (groupId: string) => {
     setAccompaniedGroups(prev => prev.filter(g => g.id !== groupId));
-    if (isCloudConnected) void deleteDocFromFirestore('accompaniedGroups', groupId);
+    if (isCloudConnected) void deleteRecordFromCloud('accompaniedGroups', groupId);
   };
 
   const handleAddMembersToGroup = (groupId: string, newMembers: AccompaniedGroupMember[]) => {
@@ -1084,7 +1038,7 @@ export default function App() {
       updatedAt: new Date().toISOString().slice(0, 10)
     };
     setAccompaniedGroups(prev => prev.map(g => (g.id === groupId ? updatedGroup : g)));
-    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
+    if (isCloudConnected) void upsertRecordToCloud('accompaniedGroups', updatedGroup);
   };
 
   const handleRemoveMemberFromGroup = (groupId: string, beneficiaryId: string) => {
@@ -1096,7 +1050,7 @@ export default function App() {
       updatedAt: new Date().toISOString().slice(0, 10)
     };
     setAccompaniedGroups(prev => prev.map(g => (g.id === groupId ? updatedGroup : g)));
-    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
+    if (isCloudConnected) void upsertRecordToCloud('accompaniedGroups', updatedGroup);
   };
 
   const handleUpdateMemberRole = (groupId: string, beneficiaryId: string, newRole: string) => {
@@ -1108,7 +1062,7 @@ export default function App() {
       updatedAt: new Date().toISOString().slice(0, 10)
     };
     setAccompaniedGroups(prev => prev.map(g => (g.id === groupId ? updatedGroup : g)));
-    if (isCloudConnected) void upsertDocToFirestore('accompaniedGroups', updatedGroup);
+    if (isCloudConnected) void upsertRecordToCloud('accompaniedGroups', updatedGroup);
   };
 
   // Projects sorted by Start Date & Year
@@ -1134,7 +1088,7 @@ export default function App() {
     ) || null;
   }, [users, userSession]);
 
-  // Keep active userSession in sync if account details change from another device via Firestore
+  // Keep active userSession in sync if account details change from another device via cloud database
   useEffect(() => {
     if (!userSession || !currentUserAccount) return;
     const nextProjects =
@@ -1466,11 +1420,11 @@ export default function App() {
 
     setProjects(nextProjects);
     if (isCloudConnected && changedProjects.length > 0) {
-      void batchUpsertToFirestore('projects', changedProjects);
+      void batchUpsertRecordsToCloud('projects', changedProjects);
     }
   };
 
-  // If in Public Visitor Mode, render strictly from Firestore (snapshot or authenticated live collections)
+  // If in Public Visitor Mode, render strictly from Cloud SQL API (or authenticated live state)
   if (viewMode === 'public') {
     const waitingForPublicDb = isCloudConnected ? !workspaceSyncedOnce : !publicSnapshotLoaded;
     if (waitingForPublicDb) {
@@ -1478,7 +1432,7 @@ export default function App() {
         <div className="min-h-screen bg-[#FFFBF7] flex items-center justify-center p-4">
           <div className="bg-white border border-orange-100 rounded-2xl shadow-lg px-6 py-5 flex items-center gap-3">
             <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm font-semibold text-slate-700">Memuat data dari database Firebase...</span>
+            <span className="text-sm font-semibold text-slate-700">Memuat data platform...</span>
           </div>
         </div>
       );
@@ -1503,19 +1457,19 @@ export default function App() {
     );
   }
 
-  // Wait briefly for Firebase Auth & workspace synchronization before rendering Admin screens
+  // Wait briefly for Auth & workspace loading before rendering Admin screens
   if (!authChecked || (isCloudConnected && !workspaceSyncedOnce)) {
     return (
       <div className="min-h-screen bg-[#FFFBF7] flex items-center justify-center p-4">
         <div className="bg-white border border-orange-100 rounded-2xl shadow-lg px-6 py-5 flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-semibold text-slate-700">Menyinkronkan data database Firebase...</span>
+          <span className="text-sm font-semibold text-slate-700">Menyiapkan sesi sistem...</span>
         </div>
       </div>
     );
   }
 
-  // Strictly require active Firebase database connection AND valid logged-in session to enter Admin Dashboard
+  // Strictly require active cloud auth connection AND valid logged-in session to enter Admin Dashboard
   if (!isCloudConnected || !userSession || !userSession.isLoggedIn) {
     return (
       <LoginPage 
@@ -1527,7 +1481,7 @@ export default function App() {
           setUsers(updatedUsers);
           if (isCloudConnected) {
             const target = updatedUsers.find(u => u.id === userId);
-            if (target) void upsertDocToFirestore('appUsers', target);
+            if (target) void upsertRecordToCloud('appUsers', target);
           }
         }}
         onBackToPublic={() => setViewMode('public')}

@@ -1,4 +1,4 @@
-import { ProjectLearning } from '../types';
+import type { ProjectLearning } from '../types.ts';
 
 export const INITIAL_PROJECT_LEARNINGS: ProjectLearning[] = [
   {

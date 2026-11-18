@@ -1,4 +1,4 @@
-import { AccompaniedGroup } from '../types';
+import type { AccompaniedGroup } from '../types.ts';
 
 export const INITIAL_ACCOMPANIED_GROUPS: AccompaniedGroup[] = [
   {

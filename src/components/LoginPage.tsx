@@ -126,14 +126,14 @@ export default function LoginPage({
     setIsLoggingIn(true);
     let candidateUsers = users;
 
-    // Require active Firebase database connection before authenticating against Firestore appUsers
+    // Require active cloud session before authenticating against server database
     if (!firebaseUser) {
       if (!onConnectAndFetchUsers) {
         setIsLoggingIn(false);
         setErrorMessage(
           isId
-            ? 'Koneksi database Firebase belum tersedia.'
-            : 'Firebase database connection is unavailable.'
+            ? 'Koneksi cloud belum tersedia.'
+            : 'Cloud connection is unavailable.'
         );
         return;
       }
@@ -142,8 +142,8 @@ export default function LoginPage({
         setIsLoggingIn(false);
         setErrorMessage(
           isId
-            ? 'Gagal terhubung ke database Firebase. Izinkan popup verifikasi Google atau buka aplikasi di tab browser penuh agar data tersinkron.'
-            : 'Failed to connect to Firebase database. Allow Google verification popup or open in a full browser tab.'
+            ? 'Gagal terhubung ke server. Izinkan popup verifikasi Google atau buka aplikasi di tab browser penuh agar data tersinkron.'
+            : 'Failed to connect to the server. Allow Google verification popup or open in a full browser tab.'
         );
         return;
       }
@@ -545,7 +545,7 @@ export default function LoginPage({
                 </button>
               </form>
 
-              {/* Registered Users Reference Accordion (shown when Firestore users loaded) */}
+              {/* Registered Users Reference Accordion (shown when database users loaded) */}
               {users.length > 0 && (
                 <div className="pt-2 border-t border-orange-100">
                   <button

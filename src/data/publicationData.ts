@@ -1,4 +1,4 @@
-import { KnowledgeProduct, StoryOfChange, MediaCoverage } from '../types';
+import type { KnowledgeProduct, StoryOfChange, MediaCoverage } from '../types.ts';
 
 export const INITIAL_KNOWLEDGE_PRODUCTS: KnowledgeProduct[] = [
   {

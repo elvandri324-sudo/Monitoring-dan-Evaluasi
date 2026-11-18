@@ -1,4 +1,4 @@
-import { UserAccount } from '../types';
+import type { UserAccount } from '../types.ts';
 
 export const INITIAL_USERS: UserAccount[] = [
   {

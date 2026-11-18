@@ -1,4 +1,4 @@
-import { Project, Beneficiary, ActivityAttendance } from '../types';
+import type { Project, Beneficiary, ActivityAttendance } from '../types.ts';
 
 export const INITIAL_PROJECTS: Project[] = [
   {
